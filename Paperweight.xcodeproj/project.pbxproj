@@ -1,0 +1,640 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1E9AA01D943B0093FF4E8043 /* PaperweightWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		236D3E1A7F54C81B6219E82A /* PaperweightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */; };
+		343373EAD62D693C32ADF916 /* PaperweightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264A71AAA48B827E09F01182 /* PaperweightTests.swift */; };
+		650E12E7894E8260902B4AB5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
+		66609E28E7C5F449FAD0D3CE /* PaperweightWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */; };
+		8E0D86BC891DB8660253F9BF /* PaperweightMonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BDEBCA32A049E3FA07DC0C3B /* PaperweightMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */; };
+		C52C44661DB163A6A674CD94 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
+		E55D32A33640531235C912C0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		338520E716FE4034184B620A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E6ACD68C01D066401A4AD6B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BAC30A900654386918FD9C87;
+			remoteInfo = PaperweightMonitor;
+		};
+		E275C35268146F5682BB94A2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E6ACD68C01D066401A4AD6B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B31792123AFFB03E53C3177F;
+			remoteInfo = Paperweight;
+		};
+		EA9FE098286CC13BA125FB44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E6ACD68C01D066401A4AD6B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F0EC1157078CEBB370267E5;
+			remoteInfo = PaperweightWatch;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		64F06184EB1DD364B900F6F8 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				1E9AA01D943B0093FF4E8043 /* PaperweightWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF07C0CEE76710A1813B47A8 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8E0D86BC891DB8660253F9BF /* PaperweightMonitor.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = PaperweightMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		264A71AAA48B827E09F01182 /* PaperweightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightTests.swift; sourceTree = "<group>"; };
+		49A7C4DD89DB4B7220D987F3 /* PaperweightMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PaperweightMonitor.entitlements; sourceTree = "<group>"; };
+		6C7930F0F3E94F416D019E71 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightWatchApp.swift; sourceTree = "<group>"; };
+		831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaperweightWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8E24AC0D3BBE607941DBA376 /* Paperweight.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Paperweight.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightMonitor.swift; sourceTree = "<group>"; };
+		9C1B25209D67A66461DCA107 /* PaperweightWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PaperweightWatch.entitlements; sourceTree = "<group>"; };
+		A2D5EC807AF58E21436D3AC4 /* PaperweightTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PaperweightTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A9A7DCD7D164C6FCF489982A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B2C4F583245D32301B7B51FA /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		BDAAADECFF58B99FC5491C06 /* Paperweight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Paperweight.entitlements; sourceTree = "<group>"; };
+		DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightApp.swift; sourceTree = "<group>"; };
+		F5F14F5172FEB39E2DACC7C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		040D720044C7F8ED4C62B38D = {
+			isa = PBXGroup;
+			children = (
+				F511CFA2C41D8B37D7A58687 /* Paperweight */,
+				ADBE16A08DF4F7DBE0A88803 /* PaperweightMonitor */,
+				C5BFA2ECD9018099B0F47A2D /* PaperweightTests */,
+				F12F3519BF9E2F37F3946225 /* PaperweightWatch */,
+				E7AF17536E1B9128C2C977E9 /* Shared */,
+				E9E126D579897321F3F23B63 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		ADBE16A08DF4F7DBE0A88803 /* PaperweightMonitor */ = {
+			isa = PBXGroup;
+			children = (
+				A9A7DCD7D164C6FCF489982A /* Info.plist */,
+				49A7C4DD89DB4B7220D987F3 /* PaperweightMonitor.entitlements */,
+				90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */,
+			);
+			path = PaperweightMonitor;
+			sourceTree = "<group>";
+		};
+		C5BFA2ECD9018099B0F47A2D /* PaperweightTests */ = {
+			isa = PBXGroup;
+			children = (
+				264A71AAA48B827E09F01182 /* PaperweightTests.swift */,
+			);
+			path = PaperweightTests;
+			sourceTree = "<group>";
+		};
+		E7AF17536E1B9128C2C977E9 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				B2C4F583245D32301B7B51FA /* Constants.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		E9E126D579897321F3F23B63 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8E24AC0D3BBE607941DBA376 /* Paperweight.app */,
+				14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */,
+				A2D5EC807AF58E21436D3AC4 /* PaperweightTests.xctest */,
+				831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F12F3519BF9E2F37F3946225 /* PaperweightWatch */ = {
+			isa = PBXGroup;
+			children = (
+				F5F14F5172FEB39E2DACC7C7 /* Info.plist */,
+				9C1B25209D67A66461DCA107 /* PaperweightWatch.entitlements */,
+				712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */,
+			);
+			path = PaperweightWatch;
+			sourceTree = "<group>";
+		};
+		F511CFA2C41D8B37D7A58687 /* Paperweight */ = {
+			isa = PBXGroup;
+			children = (
+				6C7930F0F3E94F416D019E71 /* Info.plist */,
+				BDAAADECFF58B99FC5491C06 /* Paperweight.entitlements */,
+				DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */,
+			);
+			path = Paperweight;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8F0EC1157078CEBB370267E5 /* PaperweightWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 438CF65160C618CCC905ABF1 /* Build configuration list for PBXNativeTarget "PaperweightWatch" */;
+			buildPhases = (
+				6F69ECF3DB024BF81D5B467F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PaperweightWatch;
+			packageProductDependencies = (
+			);
+			productName = PaperweightWatch;
+			productReference = 831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B31792123AFFB03E53C3177F /* Paperweight */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13988AA8C3DF887923264289 /* Build configuration list for PBXNativeTarget "Paperweight" */;
+			buildPhases = (
+				C2D5C27273CB6625D7FB36A9 /* Sources */,
+				BF07C0CEE76710A1813B47A8 /* Embed Foundation Extensions */,
+				64F06184EB1DD364B900F6F8 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A3BD179639079AC178CF6B2C /* PBXTargetDependency */,
+				519BC03059C454C4C8C03790 /* PBXTargetDependency */,
+			);
+			name = Paperweight;
+			packageProductDependencies = (
+			);
+			productName = Paperweight;
+			productReference = 8E24AC0D3BBE607941DBA376 /* Paperweight.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B8DCF9B93F82CB05909096C3 /* PaperweightTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 626BCE36291D04BF74D6240D /* Build configuration list for PBXNativeTarget "PaperweightTests" */;
+			buildPhases = (
+				CE45D616D489C4D1F955BC9D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AC2B65F6F957152E5F8C5095 /* PBXTargetDependency */,
+			);
+			name = PaperweightTests;
+			packageProductDependencies = (
+			);
+			productName = PaperweightTests;
+			productReference = A2D5EC807AF58E21436D3AC4 /* PaperweightTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		BAC30A900654386918FD9C87 /* PaperweightMonitor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC1CC2DD98A9CFF0D9040221 /* Build configuration list for PBXNativeTarget "PaperweightMonitor" */;
+			buildPhases = (
+				D02ECC2E5D64BD858307E75D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PaperweightMonitor;
+			packageProductDependencies = (
+			);
+			productName = PaperweightMonitor;
+			productReference = 14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3E6ACD68C01D066401A4AD6B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					8F0EC1157078CEBB370267E5 = {
+						DevelopmentTeam = 6X54AWP53W;
+					};
+					B31792123AFFB03E53C3177F = {
+						DevelopmentTeam = 6X54AWP53W;
+					};
+					B8DCF9B93F82CB05909096C3 = {
+						DevelopmentTeam = 6X54AWP53W;
+					};
+					BAC30A900654386918FD9C87 = {
+						DevelopmentTeam = 6X54AWP53W;
+					};
+				};
+			};
+			buildConfigurationList = E004B01222D5E859105C49F2 /* Build configuration list for PBXProject "Paperweight" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 040D720044C7F8ED4C62B38D;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = E9E126D579897321F3F23B63 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B31792123AFFB03E53C3177F /* Paperweight */,
+				BAC30A900654386918FD9C87 /* PaperweightMonitor */,
+				B8DCF9B93F82CB05909096C3 /* PaperweightTests */,
+				8F0EC1157078CEBB370267E5 /* PaperweightWatch */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6F69ECF3DB024BF81D5B467F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E55D32A33640531235C912C0 /* Constants.swift in Sources */,
+				66609E28E7C5F449FAD0D3CE /* PaperweightWatchApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2D5C27273CB6625D7FB36A9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				650E12E7894E8260902B4AB5 /* Constants.swift in Sources */,
+				236D3E1A7F54C81B6219E82A /* PaperweightApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE45D616D489C4D1F955BC9D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				343373EAD62D693C32ADF916 /* PaperweightTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D02ECC2E5D64BD858307E75D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C52C44661DB163A6A674CD94 /* Constants.swift in Sources */,
+				BDEBCA32A049E3FA07DC0C3B /* PaperweightMonitor.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		519BC03059C454C4C8C03790 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F0EC1157078CEBB370267E5 /* PaperweightWatch */;
+			targetProxy = EA9FE098286CC13BA125FB44 /* PBXContainerItemProxy */;
+		};
+		A3BD179639079AC178CF6B2C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BAC30A900654386918FD9C87 /* PaperweightMonitor */;
+			targetProxy = 338520E716FE4034184B620A /* PBXContainerItemProxy */;
+		};
+		AC2B65F6F957152E5F8C5095 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B31792123AFFB03E53C3177F /* Paperweight */;
+			targetProxy = E275C35268146F5682BB94A2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		124928CBE5A4662D89743C3D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = PaperweightWatch/PaperweightWatch.entitlements;
+				INFOPLIST_FILE = PaperweightWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app.watchapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		14C24AC43273B29E22456739 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Paperweight/Paperweight.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Paperweight/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		3F974E60ECEAABD39894CA0F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PaperweightMonitor/PaperweightMonitor.entitlements;
+				INFOPLIST_FILE = PaperweightMonitor/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app.monitor;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		7FB8233D0A9CE37D1A5F830C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 6X54AWP53W;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		8FA27906E8504534F4E6D006 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PaperweightMonitor/PaperweightMonitor.entitlements;
+				INFOPLIST_FILE = PaperweightMonitor/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app.monitor;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B043B4169FD5E864900897D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = PaperweightWatch/PaperweightWatch.entitlements;
+				INFOPLIST_FILE = PaperweightWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app.watchapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		D7317B99EC25D8C3EA041629 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 6X54AWP53W;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		D8A1444893787DB40B43E76E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Paperweight/Paperweight.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Paperweight/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		DA2E04A9A1280E09DC2FB4B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.PaperweightTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Paperweight.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Paperweight";
+			};
+			name = Debug;
+		};
+		FAC9F0B5462B335D2582B951 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.PaperweightTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Paperweight.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Paperweight";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		13988AA8C3DF887923264289 /* Build configuration list for PBXNativeTarget "Paperweight" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14C24AC43273B29E22456739 /* Debug */,
+				D8A1444893787DB40B43E76E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		438CF65160C618CCC905ABF1 /* Build configuration list for PBXNativeTarget "PaperweightWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				124928CBE5A4662D89743C3D /* Debug */,
+				B043B4169FD5E864900897D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		626BCE36291D04BF74D6240D /* Build configuration list for PBXNativeTarget "PaperweightTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DA2E04A9A1280E09DC2FB4B5 /* Debug */,
+				FAC9F0B5462B335D2582B951 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BC1CC2DD98A9CFF0D9040221 /* Build configuration list for PBXNativeTarget "PaperweightMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8FA27906E8504534F4E6D006 /* Debug */,
+				3F974E60ECEAABD39894CA0F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E004B01222D5E859105C49F2 /* Build configuration list for PBXProject "Paperweight" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D7317B99EC25D8C3EA041629 /* Debug */,
+				7FB8233D0A9CE37D1A5F830C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3E6ACD68C01D066401A4AD6B /* Project object */;
+}
