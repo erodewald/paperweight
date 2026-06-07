@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0419FAEDB15C6EC1BF639783 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		0BF7C0BA9F3338BA1CE6B82C /* UnlockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497698F50F8F5D38D66B556C /* UnlockService.swift */; };
+		0FD70B4533B20650D7424324 /* WatchSessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AABAC42EB3F5CFB37449E /* WatchSessionService.swift */; };
 		17DCEE5B4E8546ACE60993A1 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
 		18BD42D7B852803D64AE1A29 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		1C19F68A182B0A9FEAE5495F /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
@@ -35,6 +36,7 @@
 		5D3A5E0B30D512F498412888 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
 		5EC0D88794BAA83D5A2E1336 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
 		5FB4A31E86CBF59A93F84E8B /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
+		607E11DB3417A76739DF2E19 /* ConfirmUnlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9926973113F59267BAFE8FEE /* ConfirmUnlockView.swift */; };
 		635F665B2460E2705D1035EF /* MockNFCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547419179AFC16EBCAE9BE6A /* MockNFCService.swift */; };
 		650E12E7894E8260902B4AB5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		6514A59845272D81E15ABEFF /* NFCError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D9688BE57BB64F825FADF /* NFCError.swift */; };
@@ -88,6 +90,7 @@
 		F485D39ECAB798E93AFC8B0F /* UnlockError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A3B6F147C20B902A2DC11F /* UnlockError.swift */; };
 		F5F68C74DA31D2A3967CDADC /* UnlockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497698F50F8F5D38D66B556C /* UnlockService.swift */; };
 		FC015DB3B839A98F3647235A /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
+		FD0EA9F8EFDE14856E793040 /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9FB998664C51496BE2C1811 /* StatusView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,6 +158,7 @@
 		90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightMonitor.swift; sourceTree = "<group>"; };
 		92A3B6F147C20B902A2DC11F /* UnlockError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockError.swift; sourceTree = "<group>"; };
 		9718F6AD0F49D6618322A25C /* CoreNFC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreNFC.framework; path = System/Library/Frameworks/CoreNFC.framework; sourceTree = SDKROOT; };
+		9926973113F59267BAFE8FEE /* ConfirmUnlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmUnlockView.swift; sourceTree = "<group>"; };
 		9C1B25209D67A66461DCA107 /* PaperweightWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PaperweightWatch.entitlements; sourceTree = "<group>"; };
 		A2D5EC807AF58E21436D3AC4 /* PaperweightTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PaperweightTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8EAABD1B8EF17ADDF63430A /* MockManagedSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockManagedSettingsStore.swift; sourceTree = "<group>"; };
@@ -173,12 +177,14 @@
 		D16052C368FABF3E1EF3AF80 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		D34DAC18D1685AAB35D06CA2 /* HomeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModelTests.swift; sourceTree = "<group>"; };
 		D87CF16D7FC3A797014E83CF /* ScheduleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleService.swift; sourceTree = "<group>"; };
+		DA4AABAC42EB3F5CFB37449E /* WatchSessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionService.swift; sourceTree = "<group>"; };
 		DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightApp.swift; sourceTree = "<group>"; };
 		E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		E73E8039E73078EDAFA8A63A /* ConfigStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigStore.swift; sourceTree = "<group>"; };
 		F18D9688BE57BB64F825FADF /* NFCError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCError.swift; sourceTree = "<group>"; };
 		F5F14F5172FEB39E2DACC7C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F9EB3CD52DBC2A49F6823617 /* WatchConnectivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityService.swift; sourceTree = "<group>"; };
+		F9FB998664C51496BE2C1811 /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -248,6 +254,23 @@
 				547419179AFC16EBCAE9BE6A /* MockNFCService.swift */,
 			);
 			path = Mocks;
+			sourceTree = "<group>";
+		};
+		2935375120C61AF459EBB433 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9926973113F59267BAFE8FEE /* ConfirmUnlockView.swift */,
+				F9FB998664C51496BE2C1811 /* StatusView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4DAC84F32907B75849031072 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				DA4AABAC42EB3F5CFB37449E /* WatchSessionService.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		4F9A3E42B645E59D0E5FE246 /* Services */ = {
@@ -369,6 +392,8 @@
 		F12F3519BF9E2F37F3946225 /* PaperweightWatch */ = {
 			isa = PBXGroup;
 			children = (
+				4DAC84F32907B75849031072 /* Services */,
+				2935375120C61AF459EBB433 /* Views */,
 				F5F14F5172FEB39E2DACC7C7 /* Info.plist */,
 				9C1B25209D67A66461DCA107 /* PaperweightWatch.entitlements */,
 				712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */,
@@ -535,6 +560,7 @@
 			files = (
 				0419FAEDB15C6EC1BF639783 /* AppScheduleOverride.swift in Sources */,
 				BFF1BE028BB52C71E72F7AFB /* ConfigStore.swift in Sources */,
+				607E11DB3417A76739DF2E19 /* ConfirmUnlockView.swift in Sources */,
 				E55D32A33640531235C912C0 /* Constants.swift in Sources */,
 				92C1A5EE122647AC9A8E104D /* FamilyControlsServiceProtocol.swift in Sources */,
 				2D7EBE16171798DAE57F47E7 /* HomeViewModel.swift in Sources */,
@@ -544,8 +570,10 @@
 				66609E28E7C5F449FAD0D3CE /* PaperweightWatchApp.swift in Sources */,
 				17DCEE5B4E8546ACE60993A1 /* RestrictionService.swift in Sources */,
 				51274230D6754D3396BCC5E3 /* RestrictionServiceProtocols.swift in Sources */,
+				FD0EA9F8EFDE14856E793040 /* StatusView.swift in Sources */,
 				F485D39ECAB798E93AFC8B0F /* UnlockError.swift in Sources */,
 				0BF7C0BA9F3338BA1CE6B82C /* UnlockService.swift in Sources */,
+				0FD70B4533B20650D7424324 /* WatchSessionService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -647,7 +675,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PaperweightWatch/PaperweightWatch.entitlements;
 				INFOPLIST_FILE = PaperweightWatch/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app.watchapp;
+				PRODUCT_BUNDLE_IDENTIFIER = media.baltar.paperweight.watchapp;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -667,7 +695,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app;
+				PRODUCT_BUNDLE_IDENTIFIER = media.baltar.paperweight;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -684,7 +712,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app.monitor;
+				PRODUCT_BUNDLE_IDENTIFIER = media.baltar.paperweight.monitor;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -758,7 +786,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app.monitor;
+				PRODUCT_BUNDLE_IDENTIFIER = media.baltar.paperweight.monitor;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -770,7 +798,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PaperweightWatch/PaperweightWatch.entitlements;
 				INFOPLIST_FILE = PaperweightWatch/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app.watchapp;
+				PRODUCT_BUNDLE_IDENTIFIER = media.baltar.paperweight.watchapp;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -854,7 +882,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app;
+				PRODUCT_BUNDLE_IDENTIFIER = media.baltar.paperweight;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -871,7 +899,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = media.baltar.paperweight.tests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -888,7 +916,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = media.baltar.paperweight.tests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

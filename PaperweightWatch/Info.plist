@@ -5,7 +5,7 @@
     <key>CFBundleDisplayName</key>
     <string>Paperweight</string>
     <key>WKCompanionAppBundleIdentifier</key>
-    <string>com.paperweight.app</string>
+    <string>media.baltar.paperweight</string>
     <key>WKWatchOnly</key>
     <false/>
 </dict>
