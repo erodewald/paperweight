@@ -8,15 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		0419FAEDB15C6EC1BF639783 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
+		17DCEE5B4E8546ACE60993A1 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
 		18BD42D7B852803D64AE1A29 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		1C19F68A182B0A9FEAE5495F /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
 		1E9AA01D943B0093FF4E8043 /* PaperweightWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		231C780B7D6E28FAD793E4BB /* MockFamilyControlsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2684C065EBF920C9D38FBD2E /* MockFamilyControlsService.swift */; };
 		236D3E1A7F54C81B6219E82A /* PaperweightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */; };
+		2CD399E9A43A551F6AD5AA08 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
 		32E61BBDBB546858D9D37A59 /* FamilyControlsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */; };
 		343373EAD62D693C32ADF916 /* PaperweightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264A71AAA48B827E09F01182 /* PaperweightTests.swift */; };
 		3561F8097DD9F96CD4CE0255 /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
+		4656D694A0BC116B5C3C310D /* RestrictionServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */; };
+		51274230D6754D3396BCC5E3 /* RestrictionServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */; };
 		5356D37A9C4CCDE78AA00F68 /* FamilyControlsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */; };
+		56A632507F2C3965376DCEB1 /* RestrictionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F146F4B009BC0C785B756F9 /* RestrictionServiceTests.swift */; };
 		5D3A5E0B30D512F498412888 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
 		5EC0D88794BAA83D5A2E1336 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
 		5FB4A31E86CBF59A93F84E8B /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
@@ -24,6 +29,7 @@
 		66609E28E7C5F449FAD0D3CE /* PaperweightWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */; };
 		68A04CA76B3553BC9590FD78 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
 		73E676B9CFAB3F345FE496C5 /* FamilyControlsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */; };
+		81E670B9862CFB149B8BA647 /* MockManagedSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EAABD1B8EF17ADDF63430A /* MockManagedSettingsStore.swift */; };
 		89A5E3CB6E85F46BFA2444D8 /* ConfigStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA5321F30E75F5E4C18054 /* ConfigStoreTests.swift */; };
 		8BD8EA08C0DF578A025D69B0 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		8E0D86BC891DB8660253F9BF /* PaperweightMonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -33,15 +39,19 @@
 		A348E46CC02DA56F28126EAE /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		A53DA99915F59AA209AC5529 /* PaperweightConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61140B5FB638BF2A018B6B9 /* PaperweightConfigTests.swift */; };
 		A7D129795779FC6DB2893F51 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
+		AB33A18842DBE7B2E5FE13EF /* RestrictionServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */; };
 		AC2A289D780D35CAA93E81BE /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
+		AFD4876C736B06CA0FA4D105 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
 		B42620646E967A28A80E0588 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
 		BA8884DEF16AC136977095A0 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		BDEBCA32A049E3FA07DC0C3B /* PaperweightMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */; };
 		BFF1BE028BB52C71E72F7AFB /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		C52C44661DB163A6A674CD94 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		C6523CE66E1247875864A35D /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
+		C871CD3DFEC37637DA7E4D27 /* RestrictionServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */; };
 		CFF71B13D0936160DF62DF25 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		D77BA22D048D5BC84FAD3A61 /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
+		DFECF6080B935CA87530DE30 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
 		E55D32A33640531235C912C0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		E59D5A2C7ACFE311F51E25AB /* FamilyControlsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3559557FC1A539F56DBF5628 /* FamilyControlsService.swift */; };
 		E7389ADA39ACF946603D5564 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
@@ -93,8 +103,10 @@
 /* Begin PBXFileReference section */
 		14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = PaperweightMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		15E0A914AA260D4008747A4F /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = SDKROOT; };
+		1F146F4B009BC0C785B756F9 /* RestrictionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestrictionServiceTests.swift; sourceTree = "<group>"; };
 		264A71AAA48B827E09F01182 /* PaperweightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightTests.swift; sourceTree = "<group>"; };
 		2684C065EBF920C9D38FBD2E /* MockFamilyControlsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFamilyControlsService.swift; sourceTree = "<group>"; };
+		3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestrictionServiceProtocols.swift; sourceTree = "<group>"; };
 		33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightConfig.swift; sourceTree = "<group>"; };
 		3559557FC1A539F56DBF5628 /* FamilyControlsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyControlsService.swift; sourceTree = "<group>"; };
 		49A7C4DD89DB4B7220D987F3 /* PaperweightMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PaperweightMonitor.entitlements; sourceTree = "<group>"; };
@@ -106,7 +118,9 @@
 		90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightMonitor.swift; sourceTree = "<group>"; };
 		9C1B25209D67A66461DCA107 /* PaperweightWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PaperweightWatch.entitlements; sourceTree = "<group>"; };
 		A2D5EC807AF58E21436D3AC4 /* PaperweightTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PaperweightTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8EAABD1B8EF17ADDF63430A /* MockManagedSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockManagedSettingsStore.swift; sourceTree = "<group>"; };
 		A9A7DCD7D164C6FCF489982A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		ABF61317C7984B6647AAAC75 /* RestrictionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestrictionService.swift; sourceTree = "<group>"; };
 		B2C4F583245D32301B7B51FA /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B61140B5FB638BF2A018B6B9 /* PaperweightConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightConfigTests.swift; sourceTree = "<group>"; };
 		B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppScheduleOverride.swift; sourceTree = "<group>"; };
@@ -153,6 +167,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		03AC6FA5F0FC837EB66182F6 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				1F146F4B009BC0C785B756F9 /* RestrictionServiceTests.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		040D720044C7F8ED4C62B38D = {
 			isa = PBXGroup;
 			children = (
@@ -170,6 +192,7 @@
 			isa = PBXGroup;
 			children = (
 				2684C065EBF920C9D38FBD2E /* MockFamilyControlsService.swift */,
+				A8EAABD1B8EF17ADDF63430A /* MockManagedSettingsStore.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -196,6 +219,7 @@
 			isa = PBXGroup;
 			children = (
 				4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */,
+				3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -224,6 +248,7 @@
 			children = (
 				253900743923A7AF7722212B /* Mocks */,
 				C0F41B88848F993F8DBEA92D /* Models */,
+				03AC6FA5F0FC837EB66182F6 /* Services */,
 				264A71AAA48B827E09F01182 /* PaperweightTests.swift */,
 			);
 			path = PaperweightTests;
@@ -243,6 +268,7 @@
 			children = (
 				CA08F45503351CFBEA49734D /* Models */,
 				8BFE49421532224803FDAFBD /* Protocols */,
+				FE21F11EE500E925BBEDD157 /* Services */,
 				F8DAE340FD057341AD1F7D36 /* Store */,
 				B2C4F583245D32301B7B51FA /* Constants.swift */,
 			);
@@ -287,6 +313,14 @@
 				E73E8039E73078EDAFA8A63A /* ConfigStore.swift */,
 			);
 			path = Store;
+			sourceTree = "<group>";
+		};
+		FE21F11EE500E925BBEDD157 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				ABF61317C7984B6647AAAC75 /* RestrictionService.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -423,6 +457,8 @@
 				92C1A5EE122647AC9A8E104D /* FamilyControlsServiceProtocol.swift in Sources */,
 				3561F8097DD9F96CD4CE0255 /* PaperweightConfig.swift in Sources */,
 				66609E28E7C5F449FAD0D3CE /* PaperweightWatchApp.swift in Sources */,
+				17DCEE5B4E8546ACE60993A1 /* RestrictionService.swift in Sources */,
+				51274230D6754D3396BCC5E3 /* RestrictionServiceProtocols.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,6 +473,8 @@
 				73E676B9CFAB3F345FE496C5 /* FamilyControlsServiceProtocol.swift in Sources */,
 				236D3E1A7F54C81B6219E82A /* PaperweightApp.swift in Sources */,
 				D77BA22D048D5BC84FAD3A61 /* PaperweightConfig.swift in Sources */,
+				2CD399E9A43A551F6AD5AA08 /* RestrictionService.swift in Sources */,
+				C871CD3DFEC37637DA7E4D27 /* RestrictionServiceProtocols.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -450,9 +488,13 @@
 				A7D129795779FC6DB2893F51 /* Constants.swift in Sources */,
 				5356D37A9C4CCDE78AA00F68 /* FamilyControlsServiceProtocol.swift in Sources */,
 				231C780B7D6E28FAD793E4BB /* MockFamilyControlsService.swift in Sources */,
+				81E670B9862CFB149B8BA647 /* MockManagedSettingsStore.swift in Sources */,
 				AC2A289D780D35CAA93E81BE /* PaperweightConfig.swift in Sources */,
 				A53DA99915F59AA209AC5529 /* PaperweightConfigTests.swift in Sources */,
 				343373EAD62D693C32ADF916 /* PaperweightTests.swift in Sources */,
+				DFECF6080B935CA87530DE30 /* RestrictionService.swift in Sources */,
+				AB33A18842DBE7B2E5FE13EF /* RestrictionServiceProtocols.swift in Sources */,
+				56A632507F2C3965376DCEB1 /* RestrictionServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,6 +508,8 @@
 				32E61BBDBB546858D9D37A59 /* FamilyControlsServiceProtocol.swift in Sources */,
 				5FB4A31E86CBF59A93F84E8B /* PaperweightConfig.swift in Sources */,
 				BDEBCA32A049E3FA07DC0C3B /* PaperweightMonitor.swift in Sources */,
+				AFD4876C736B06CA0FA4D105 /* RestrictionService.swift in Sources */,
+				4656D694A0BC116B5C3C310D /* RestrictionServiceProtocols.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
