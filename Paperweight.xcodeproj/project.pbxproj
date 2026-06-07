@@ -14,21 +14,31 @@
 		1E9AA01D943B0093FF4E8043 /* PaperweightWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		231C780B7D6E28FAD793E4BB /* MockFamilyControlsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2684C065EBF920C9D38FBD2E /* MockFamilyControlsService.swift */; };
 		236D3E1A7F54C81B6219E82A /* PaperweightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */; };
+		278FFD23A1D63FECCF6D55BF /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */; };
 		2CD399E9A43A551F6AD5AA08 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
+		2D7EBE16171798DAE57F47E7 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */; };
+		2D9AA9D10A2B06AC21BD531A /* NFCServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */; };
 		32E61BBDBB546858D9D37A59 /* FamilyControlsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */; };
 		343373EAD62D693C32ADF916 /* PaperweightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264A71AAA48B827E09F01182 /* PaperweightTests.swift */; };
 		3561F8097DD9F96CD4CE0255 /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
 		4656D694A0BC116B5C3C310D /* RestrictionServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */; };
+		4665B03758F0126826B2AC47 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16052C368FABF3E1EF3AF80 /* HomeView.swift */; };
+		4F58CACFF6415F405CE76572 /* HomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34DAC18D1685AAB35D06CA2 /* HomeViewModelTests.swift */; };
 		51274230D6754D3396BCC5E3 /* RestrictionServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */; };
 		5356D37A9C4CCDE78AA00F68 /* FamilyControlsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */; };
 		56A632507F2C3965376DCEB1 /* RestrictionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F146F4B009BC0C785B756F9 /* RestrictionServiceTests.swift */; };
 		5D3A5E0B30D512F498412888 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
 		5EC0D88794BAA83D5A2E1336 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
 		5FB4A31E86CBF59A93F84E8B /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
+		635F665B2460E2705D1035EF /* MockNFCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547419179AFC16EBCAE9BE6A /* MockNFCService.swift */; };
 		650E12E7894E8260902B4AB5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
+		6514A59845272D81E15ABEFF /* NFCError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D9688BE57BB64F825FADF /* NFCError.swift */; };
 		66609E28E7C5F449FAD0D3CE /* PaperweightWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */; };
 		68A04CA76B3553BC9590FD78 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
+		6D5F7540E174A627BABDE9B3 /* NFCServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */; };
+		7033EAF2C0ABBF499384B243 /* NFCServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */; };
 		73E676B9CFAB3F345FE496C5 /* FamilyControlsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */; };
+		79EE2079919843270EA8647F /* ScheduleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87CF16D7FC3A797014E83CF /* ScheduleService.swift */; };
 		81E670B9862CFB149B8BA647 /* MockManagedSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EAABD1B8EF17ADDF63430A /* MockManagedSettingsStore.swift */; };
 		89A5E3CB6E85F46BFA2444D8 /* ConfigStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA5321F30E75F5E4C18054 /* ConfigStoreTests.swift */; };
 		8BD8EA08C0DF578A025D69B0 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
@@ -36,25 +46,35 @@
 		92C1A5EE122647AC9A8E104D /* FamilyControlsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */; };
 		9D43ED8403454EB38E4B7ED5 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
 		A1CFC8B8F51C8EE1A2D04D84 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
+		A26ACC8ECB32908F3EB398A4 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */; };
+		A302E708456D7170EED1527A /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */; };
 		A348E46CC02DA56F28126EAE /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		A53DA99915F59AA209AC5529 /* PaperweightConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61140B5FB638BF2A018B6B9 /* PaperweightConfigTests.swift */; };
 		A7D129795779FC6DB2893F51 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		AB33A18842DBE7B2E5FE13EF /* RestrictionServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */; };
 		AC2A289D780D35CAA93E81BE /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
 		AFD4876C736B06CA0FA4D105 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
+		B3B16CBBAF9C7007E03A1C2D /* NFCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5F811117BA243EEA446573 /* NFCService.swift */; };
 		B42620646E967A28A80E0588 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
+		B8D200F1968016B8D3A39B1C /* NFCError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D9688BE57BB64F825FADF /* NFCError.swift */; };
 		BA8884DEF16AC136977095A0 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		BDEBCA32A049E3FA07DC0C3B /* PaperweightMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */; };
 		BFF1BE028BB52C71E72F7AFB /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		C52C44661DB163A6A674CD94 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		C6523CE66E1247875864A35D /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
 		C871CD3DFEC37637DA7E4D27 /* RestrictionServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */; };
+		C9721FF3565FB9142E9D0A3B /* CoreNFC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9718F6AD0F49D6618322A25C /* CoreNFC.framework */; };
 		CFF71B13D0936160DF62DF25 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
+		D31857E0FDE54BDC9194C2F7 /* CoreNFC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9718F6AD0F49D6618322A25C /* CoreNFC.framework */; };
 		D77BA22D048D5BC84FAD3A61 /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
+		DB8C14210D8D7D49B3B80C92 /* NFCError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D9688BE57BB64F825FADF /* NFCError.swift */; };
 		DFECF6080B935CA87530DE30 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
+		E00E508CC05A4079C6A99AD4 /* NFCServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */; };
 		E55D32A33640531235C912C0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		E59D5A2C7ACFE311F51E25AB /* FamilyControlsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3559557FC1A539F56DBF5628 /* FamilyControlsService.swift */; };
 		E7389ADA39ACF946603D5564 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
+		EF65ED71C4FF21E93D27E722 /* ScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A67E90D190AAFCA2C024FF7 /* ScheduleView.swift */; };
+		F226E770514F86CD56A48425 /* NFCError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D9688BE57BB64F825FADF /* NFCError.swift */; };
 		FC015DB3B839A98F3647235A /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
 /* End PBXBuildFile section */
 
@@ -110,12 +130,16 @@
 		33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightConfig.swift; sourceTree = "<group>"; };
 		3559557FC1A539F56DBF5628 /* FamilyControlsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyControlsService.swift; sourceTree = "<group>"; };
 		49A7C4DD89DB4B7220D987F3 /* PaperweightMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PaperweightMonitor.entitlements; sourceTree = "<group>"; };
+		4A67E90D190AAFCA2C024FF7 /* ScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleView.swift; sourceTree = "<group>"; };
 		4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyControlsServiceProtocol.swift; sourceTree = "<group>"; };
+		547419179AFC16EBCAE9BE6A /* MockNFCService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNFCService.swift; sourceTree = "<group>"; };
+		6B5F811117BA243EEA446573 /* NFCService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCService.swift; sourceTree = "<group>"; };
 		6C7930F0F3E94F416D019E71 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightWatchApp.swift; sourceTree = "<group>"; };
 		831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaperweightWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E24AC0D3BBE607941DBA376 /* Paperweight.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Paperweight.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightMonitor.swift; sourceTree = "<group>"; };
+		9718F6AD0F49D6618322A25C /* CoreNFC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreNFC.framework; path = System/Library/Frameworks/CoreNFC.framework; sourceTree = SDKROOT; };
 		9C1B25209D67A66461DCA107 /* PaperweightWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PaperweightWatch.entitlements; sourceTree = "<group>"; };
 		A2D5EC807AF58E21436D3AC4 /* PaperweightTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PaperweightTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8EAABD1B8EF17ADDF63430A /* MockManagedSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockManagedSettingsStore.swift; sourceTree = "<group>"; };
@@ -127,9 +151,15 @@
 		BDAAADECFF58B99FC5491C06 /* Paperweight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Paperweight.entitlements; sourceTree = "<group>"; };
 		C9EA5321F30E75F5E4C18054 /* ConfigStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigStoreTests.swift; sourceTree = "<group>"; };
 		CD13470A08F204624DA65F74 /* FamilyControls.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = SDKROOT; };
+		D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCServiceProtocol.swift; sourceTree = "<group>"; };
+		D16052C368FABF3E1EF3AF80 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		D34DAC18D1685AAB35D06CA2 /* HomeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModelTests.swift; sourceTree = "<group>"; };
+		D87CF16D7FC3A797014E83CF /* ScheduleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleService.swift; sourceTree = "<group>"; };
 		DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightApp.swift; sourceTree = "<group>"; };
 		E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		E73E8039E73078EDAFA8A63A /* ConfigStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigStore.swift; sourceTree = "<group>"; };
+		F18D9688BE57BB64F825FADF /* NFCError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCError.swift; sourceTree = "<group>"; };
 		F5F14F5172FEB39E2DACC7C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -141,6 +171,7 @@
 				FC015DB3B839A98F3647235A /* FamilyControls.framework in Frameworks */,
 				1C19F68A182B0A9FEAE5495F /* ManagedSettings.framework in Frameworks */,
 				B42620646E967A28A80E0588 /* DeviceActivity.framework in Frameworks */,
+				C9721FF3565FB9142E9D0A3B /* CoreNFC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,6 +182,7 @@
 				5D3A5E0B30D512F498412888 /* FamilyControls.framework in Frameworks */,
 				C6523CE66E1247875864A35D /* ManagedSettings.framework in Frameworks */,
 				9D43ED8403454EB38E4B7ED5 /* DeviceActivity.framework in Frameworks */,
+				D31857E0FDE54BDC9194C2F7 /* CoreNFC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -170,6 +202,7 @@
 		03AC6FA5F0FC837EB66182F6 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				D34DAC18D1685AAB35D06CA2 /* HomeViewModelTests.swift */,
 				1F146F4B009BC0C785B756F9 /* RestrictionServiceTests.swift */,
 			);
 			path = Services;
@@ -193,6 +226,7 @@
 			children = (
 				2684C065EBF920C9D38FBD2E /* MockFamilyControlsService.swift */,
 				A8EAABD1B8EF17ADDF63430A /* MockManagedSettingsStore.swift */,
+				547419179AFC16EBCAE9BE6A /* MockNFCService.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -201,13 +235,25 @@
 			isa = PBXGroup;
 			children = (
 				3559557FC1A539F56DBF5628 /* FamilyControlsService.swift */,
+				6B5F811117BA243EEA446573 /* NFCService.swift */,
+				D87CF16D7FC3A797014E83CF /* ScheduleService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		54CEC16E43EFB8F35C02EBEB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D16052C368FABF3E1EF3AF80 /* HomeView.swift */,
+				4A67E90D190AAFCA2C024FF7 /* ScheduleView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		80BD27DCFA49CCF604CE4441 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9718F6AD0F49D6618322A25C /* CoreNFC.framework */,
 				E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */,
 				CD13470A08F204624DA65F74 /* FamilyControls.framework */,
 				15E0A914AA260D4008747A4F /* ManagedSettings.framework */,
@@ -219,6 +265,7 @@
 			isa = PBXGroup;
 			children = (
 				4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */,
+				D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */,
 				3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */,
 			);
 			path = Protocols;
@@ -258,6 +305,7 @@
 			isa = PBXGroup;
 			children = (
 				B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */,
+				F18D9688BE57BB64F825FADF /* NFCError.swift */,
 				33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */,
 			);
 			path = Models;
@@ -270,6 +318,7 @@
 				8BFE49421532224803FDAFBD /* Protocols */,
 				FE21F11EE500E925BBEDD157 /* Services */,
 				F8DAE340FD057341AD1F7D36 /* Store */,
+				E9FCD26CE4FF570F56CC907A /* ViewModels */,
 				B2C4F583245D32301B7B51FA /* Constants.swift */,
 			);
 			path = Shared;
@@ -286,6 +335,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		E9FCD26CE4FF570F56CC907A /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		F12F3519BF9E2F37F3946225 /* PaperweightWatch */ = {
 			isa = PBXGroup;
 			children = (
@@ -300,6 +357,7 @@
 			isa = PBXGroup;
 			children = (
 				4F9A3E42B645E59D0E5FE246 /* Services */,
+				54CEC16E43EFB8F35C02EBEB /* Views */,
 				6C7930F0F3E94F416D019E71 /* Info.plist */,
 				BDAAADECFF58B99FC5491C06 /* Paperweight.entitlements */,
 				DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */,
@@ -455,6 +513,9 @@
 				BFF1BE028BB52C71E72F7AFB /* ConfigStore.swift in Sources */,
 				E55D32A33640531235C912C0 /* Constants.swift in Sources */,
 				92C1A5EE122647AC9A8E104D /* FamilyControlsServiceProtocol.swift in Sources */,
+				2D7EBE16171798DAE57F47E7 /* HomeViewModel.swift in Sources */,
+				6514A59845272D81E15ABEFF /* NFCError.swift in Sources */,
+				E00E508CC05A4079C6A99AD4 /* NFCServiceProtocol.swift in Sources */,
 				3561F8097DD9F96CD4CE0255 /* PaperweightConfig.swift in Sources */,
 				66609E28E7C5F449FAD0D3CE /* PaperweightWatchApp.swift in Sources */,
 				17DCEE5B4E8546ACE60993A1 /* RestrictionService.swift in Sources */,
@@ -471,10 +532,17 @@
 				650E12E7894E8260902B4AB5 /* Constants.swift in Sources */,
 				E59D5A2C7ACFE311F51E25AB /* FamilyControlsService.swift in Sources */,
 				73E676B9CFAB3F345FE496C5 /* FamilyControlsServiceProtocol.swift in Sources */,
+				4665B03758F0126826B2AC47 /* HomeView.swift in Sources */,
+				A302E708456D7170EED1527A /* HomeViewModel.swift in Sources */,
+				F226E770514F86CD56A48425 /* NFCError.swift in Sources */,
+				B3B16CBBAF9C7007E03A1C2D /* NFCService.swift in Sources */,
+				6D5F7540E174A627BABDE9B3 /* NFCServiceProtocol.swift in Sources */,
 				236D3E1A7F54C81B6219E82A /* PaperweightApp.swift in Sources */,
 				D77BA22D048D5BC84FAD3A61 /* PaperweightConfig.swift in Sources */,
 				2CD399E9A43A551F6AD5AA08 /* RestrictionService.swift in Sources */,
 				C871CD3DFEC37637DA7E4D27 /* RestrictionServiceProtocols.swift in Sources */,
+				79EE2079919843270EA8647F /* ScheduleService.swift in Sources */,
+				EF65ED71C4FF21E93D27E722 /* ScheduleView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -487,8 +555,13 @@
 				89A5E3CB6E85F46BFA2444D8 /* ConfigStoreTests.swift in Sources */,
 				A7D129795779FC6DB2893F51 /* Constants.swift in Sources */,
 				5356D37A9C4CCDE78AA00F68 /* FamilyControlsServiceProtocol.swift in Sources */,
+				A26ACC8ECB32908F3EB398A4 /* HomeViewModel.swift in Sources */,
+				4F58CACFF6415F405CE76572 /* HomeViewModelTests.swift in Sources */,
 				231C780B7D6E28FAD793E4BB /* MockFamilyControlsService.swift in Sources */,
 				81E670B9862CFB149B8BA647 /* MockManagedSettingsStore.swift in Sources */,
+				635F665B2460E2705D1035EF /* MockNFCService.swift in Sources */,
+				DB8C14210D8D7D49B3B80C92 /* NFCError.swift in Sources */,
+				7033EAF2C0ABBF499384B243 /* NFCServiceProtocol.swift in Sources */,
 				AC2A289D780D35CAA93E81BE /* PaperweightConfig.swift in Sources */,
 				A53DA99915F59AA209AC5529 /* PaperweightConfigTests.swift in Sources */,
 				343373EAD62D693C32ADF916 /* PaperweightTests.swift in Sources */,
@@ -506,6 +579,9 @@
 				CFF71B13D0936160DF62DF25 /* ConfigStore.swift in Sources */,
 				C52C44661DB163A6A674CD94 /* Constants.swift in Sources */,
 				32E61BBDBB546858D9D37A59 /* FamilyControlsServiceProtocol.swift in Sources */,
+				278FFD23A1D63FECCF6D55BF /* HomeViewModel.swift in Sources */,
+				B8D200F1968016B8D3A39B1C /* NFCError.swift in Sources */,
+				2D9AA9D10A2B06AC21BD531A /* NFCServiceProtocol.swift in Sources */,
 				5FB4A31E86CBF59A93F84E8B /* PaperweightConfig.swift in Sources */,
 				BDEBCA32A049E3FA07DC0C3B /* PaperweightMonitor.swift in Sources */,
 				AFD4876C736B06CA0FA4D105 /* RestrictionService.swift in Sources */,

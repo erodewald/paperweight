@@ -44,6 +44,7 @@ targets:
       - sdk: FamilyControls.framework
       - sdk: ManagedSettings.framework
       - sdk: DeviceActivity.framework
+      - sdk: CoreNFC.framework
 
   PaperweightMonitor:
     type: app-extension
@@ -100,3 +101,4 @@ targets:
       - sdk: FamilyControls.framework
       - sdk: ManagedSettings.framework
       - sdk: DeviceActivity.framework
+      - sdk: CoreNFC.framework
