@@ -20,6 +20,7 @@
 		650E12E7894E8260902B4AB5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		66609E28E7C5F449FAD0D3CE /* PaperweightWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */; };
 		68A04CA76B3553BC9590FD78 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
+		89A5E3CB6E85F46BFA2444D8 /* ConfigStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA5321F30E75F5E4C18054 /* ConfigStoreTests.swift */; };
 		8BD8EA08C0DF578A025D69B0 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		8E0D86BC891DB8660253F9BF /* PaperweightMonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		9D43ED8403454EB38E4B7ED5 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
@@ -29,11 +30,15 @@
 		A7D129795779FC6DB2893F51 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		AC2A289D780D35CAA93E81BE /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
 		B42620646E967A28A80E0588 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
+		BA8884DEF16AC136977095A0 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		BDEBCA32A049E3FA07DC0C3B /* PaperweightMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */; };
+		BFF1BE028BB52C71E72F7AFB /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		C52C44661DB163A6A674CD94 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		C6523CE66E1247875864A35D /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
+		CFF71B13D0936160DF62DF25 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		D77BA22D048D5BC84FAD3A61 /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
 		E55D32A33640531235C912C0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
+		E7389ADA39ACF946603D5564 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		FC015DB3B839A98F3647235A /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
 /* End PBXBuildFile section */
 
@@ -97,9 +102,11 @@
 		B61140B5FB638BF2A018B6B9 /* PaperweightConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightConfigTests.swift; sourceTree = "<group>"; };
 		B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppScheduleOverride.swift; sourceTree = "<group>"; };
 		BDAAADECFF58B99FC5491C06 /* Paperweight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Paperweight.entitlements; sourceTree = "<group>"; };
+		C9EA5321F30E75F5E4C18054 /* ConfigStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigStoreTests.swift; sourceTree = "<group>"; };
 		CD13470A08F204624DA65F74 /* FamilyControls.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = SDKROOT; };
 		DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightApp.swift; sourceTree = "<group>"; };
 		E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
+		E73E8039E73078EDAFA8A63A /* ConfigStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigStore.swift; sourceTree = "<group>"; };
 		F5F14F5172FEB39E2DACC7C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -173,6 +180,7 @@
 		C0F41B88848F993F8DBEA92D /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				C9EA5321F30E75F5E4C18054 /* ConfigStoreTests.swift */,
 				B61140B5FB638BF2A018B6B9 /* PaperweightConfigTests.swift */,
 			);
 			path = Models;
@@ -200,6 +208,7 @@
 			isa = PBXGroup;
 			children = (
 				CA08F45503351CFBEA49734D /* Models */,
+				F8DAE340FD057341AD1F7D36 /* Store */,
 				B2C4F583245D32301B7B51FA /* Constants.swift */,
 			);
 			path = Shared;
@@ -234,6 +243,14 @@
 				DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */,
 			);
 			path = Paperweight;
+			sourceTree = "<group>";
+		};
+		F8DAE340FD057341AD1F7D36 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				E73E8039E73078EDAFA8A63A /* ConfigStore.swift */,
+			);
+			path = Store;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -365,6 +382,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0419FAEDB15C6EC1BF639783 /* AppScheduleOverride.swift in Sources */,
+				BFF1BE028BB52C71E72F7AFB /* ConfigStore.swift in Sources */,
 				E55D32A33640531235C912C0 /* Constants.swift in Sources */,
 				3561F8097DD9F96CD4CE0255 /* PaperweightConfig.swift in Sources */,
 				66609E28E7C5F449FAD0D3CE /* PaperweightWatchApp.swift in Sources */,
@@ -376,6 +394,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8BD8EA08C0DF578A025D69B0 /* AppScheduleOverride.swift in Sources */,
+				BA8884DEF16AC136977095A0 /* ConfigStore.swift in Sources */,
 				650E12E7894E8260902B4AB5 /* Constants.swift in Sources */,
 				236D3E1A7F54C81B6219E82A /* PaperweightApp.swift in Sources */,
 				D77BA22D048D5BC84FAD3A61 /* PaperweightConfig.swift in Sources */,
@@ -387,6 +406,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A348E46CC02DA56F28126EAE /* AppScheduleOverride.swift in Sources */,
+				E7389ADA39ACF946603D5564 /* ConfigStore.swift in Sources */,
+				89A5E3CB6E85F46BFA2444D8 /* ConfigStoreTests.swift in Sources */,
 				A7D129795779FC6DB2893F51 /* Constants.swift in Sources */,
 				AC2A289D780D35CAA93E81BE /* PaperweightConfig.swift in Sources */,
 				A53DA99915F59AA209AC5529 /* PaperweightConfigTests.swift in Sources */,
@@ -399,6 +420,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				18BD42D7B852803D64AE1A29 /* AppScheduleOverride.swift in Sources */,
+				CFF71B13D0936160DF62DF25 /* ConfigStore.swift in Sources */,
 				C52C44661DB163A6A674CD94 /* Constants.swift in Sources */,
 				5FB4A31E86CBF59A93F84E8B /* PaperweightConfig.swift in Sources */,
 				BDEBCA32A049E3FA07DC0C3B /* PaperweightMonitor.swift in Sources */,
