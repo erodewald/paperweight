@@ -1,6 +1,4 @@
 import XCTest
-import FamilyControls
-@testable import Paperweight
 
 final class PaperweightConfigTests: XCTestCase {
 

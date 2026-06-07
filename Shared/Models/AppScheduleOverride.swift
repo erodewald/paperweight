@@ -1,5 +1,7 @@
+#if os(iOS)
 import Foundation
 import FamilyControls
+import ManagedSettings
 
 struct AppScheduleOverride: Codable, Identifiable {
     let id: UUID
@@ -11,3 +13,4 @@ struct AppScheduleOverride: Codable, Identifiable {
         case alwaysFree
     }
 }
+#endif

@@ -9,20 +9,32 @@
 /* Begin PBXBuildFile section */
 		0419FAEDB15C6EC1BF639783 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		18BD42D7B852803D64AE1A29 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
+		1C19F68A182B0A9FEAE5495F /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
 		1E9AA01D943B0093FF4E8043 /* PaperweightWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		236D3E1A7F54C81B6219E82A /* PaperweightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */; };
 		343373EAD62D693C32ADF916 /* PaperweightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264A71AAA48B827E09F01182 /* PaperweightTests.swift */; };
 		3561F8097DD9F96CD4CE0255 /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
+		5D3A5E0B30D512F498412888 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
+		5EC0D88794BAA83D5A2E1336 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
 		5FB4A31E86CBF59A93F84E8B /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
 		650E12E7894E8260902B4AB5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		66609E28E7C5F449FAD0D3CE /* PaperweightWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */; };
+		68A04CA76B3553BC9590FD78 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
 		8BD8EA08C0DF578A025D69B0 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		8E0D86BC891DB8660253F9BF /* PaperweightMonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9D43ED8403454EB38E4B7ED5 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
+		A1CFC8B8F51C8EE1A2D04D84 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
+		A348E46CC02DA56F28126EAE /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		A53DA99915F59AA209AC5529 /* PaperweightConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61140B5FB638BF2A018B6B9 /* PaperweightConfigTests.swift */; };
+		A7D129795779FC6DB2893F51 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
+		AC2A289D780D35CAA93E81BE /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
+		B42620646E967A28A80E0588 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
 		BDEBCA32A049E3FA07DC0C3B /* PaperweightMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */; };
 		C52C44661DB163A6A674CD94 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
+		C6523CE66E1247875864A35D /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
 		D77BA22D048D5BC84FAD3A61 /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
 		E55D32A33640531235C912C0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
+		FC015DB3B839A98F3647235A /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,13 +44,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = BAC30A900654386918FD9C87;
 			remoteInfo = PaperweightMonitor;
-		};
-		E275C35268146F5682BB94A2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3E6ACD68C01D066401A4AD6B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B31792123AFFB03E53C3177F;
-			remoteInfo = Paperweight;
 		};
 		EA9FE098286CC13BA125FB44 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -76,6 +81,7 @@
 
 /* Begin PBXFileReference section */
 		14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = PaperweightMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		15E0A914AA260D4008747A4F /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = SDKROOT; };
 		264A71AAA48B827E09F01182 /* PaperweightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightTests.swift; sourceTree = "<group>"; };
 		33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightConfig.swift; sourceTree = "<group>"; };
 		49A7C4DD89DB4B7220D987F3 /* PaperweightMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PaperweightMonitor.entitlements; sourceTree = "<group>"; };
@@ -91,9 +97,44 @@
 		B61140B5FB638BF2A018B6B9 /* PaperweightConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightConfigTests.swift; sourceTree = "<group>"; };
 		B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppScheduleOverride.swift; sourceTree = "<group>"; };
 		BDAAADECFF58B99FC5491C06 /* Paperweight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Paperweight.entitlements; sourceTree = "<group>"; };
+		CD13470A08F204624DA65F74 /* FamilyControls.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = SDKROOT; };
 		DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightApp.swift; sourceTree = "<group>"; };
+		E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		F5F14F5172FEB39E2DACC7C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		01874114DF0B099A303D4221 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC015DB3B839A98F3647235A /* FamilyControls.framework in Frameworks */,
+				1C19F68A182B0A9FEAE5495F /* ManagedSettings.framework in Frameworks */,
+				B42620646E967A28A80E0588 /* DeviceActivity.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A432A40CFFD49F9D027786C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D3A5E0B30D512F498412888 /* FamilyControls.framework in Frameworks */,
+				C6523CE66E1247875864A35D /* ManagedSettings.framework in Frameworks */,
+				9D43ED8403454EB38E4B7ED5 /* DeviceActivity.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B4DC66D20E948D8564C5D0B3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1CFC8B8F51C8EE1A2D04D84 /* FamilyControls.framework in Frameworks */,
+				5EC0D88794BAA83D5A2E1336 /* ManagedSettings.framework in Frameworks */,
+				68A04CA76B3553BC9590FD78 /* DeviceActivity.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		040D720044C7F8ED4C62B38D = {
@@ -104,8 +145,19 @@
 				C5BFA2ECD9018099B0F47A2D /* PaperweightTests */,
 				F12F3519BF9E2F37F3946225 /* PaperweightWatch */,
 				E7AF17536E1B9128C2C977E9 /* Shared */,
+				80BD27DCFA49CCF604CE4441 /* Frameworks */,
 				E9E126D579897321F3F23B63 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		80BD27DCFA49CCF604CE4441 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */,
+				CD13470A08F204624DA65F74 /* FamilyControls.framework */,
+				15E0A914AA260D4008747A4F /* ManagedSettings.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		ADBE16A08DF4F7DBE0A88803 /* PaperweightMonitor */ = {
@@ -209,6 +261,7 @@
 			buildConfigurationList = 13988AA8C3DF887923264289 /* Build configuration list for PBXNativeTarget "Paperweight" */;
 			buildPhases = (
 				C2D5C27273CB6625D7FB36A9 /* Sources */,
+				9A432A40CFFD49F9D027786C /* Frameworks */,
 				BF07C0CEE76710A1813B47A8 /* Embed Foundation Extensions */,
 				64F06184EB1DD364B900F6F8 /* Embed Watch Content */,
 			);
@@ -230,11 +283,11 @@
 			buildConfigurationList = 626BCE36291D04BF74D6240D /* Build configuration list for PBXNativeTarget "PaperweightTests" */;
 			buildPhases = (
 				CE45D616D489C4D1F955BC9D /* Sources */,
+				01874114DF0B099A303D4221 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				AC2B65F6F957152E5F8C5095 /* PBXTargetDependency */,
 			);
 			name = PaperweightTests;
 			packageProductDependencies = (
@@ -248,6 +301,7 @@
 			buildConfigurationList = BC1CC2DD98A9CFF0D9040221 /* Build configuration list for PBXNativeTarget "PaperweightMonitor" */;
 			buildPhases = (
 				D02ECC2E5D64BD858307E75D /* Sources */,
+				B4DC66D20E948D8564C5D0B3 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -332,6 +386,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A348E46CC02DA56F28126EAE /* AppScheduleOverride.swift in Sources */,
+				A7D129795779FC6DB2893F51 /* Constants.swift in Sources */,
+				AC2A289D780D35CAA93E81BE /* PaperweightConfig.swift in Sources */,
 				A53DA99915F59AA209AC5529 /* PaperweightConfigTests.swift in Sources */,
 				343373EAD62D693C32ADF916 /* PaperweightTests.swift in Sources */,
 			);
@@ -360,11 +417,6 @@
 			isa = PBXTargetDependency;
 			target = BAC30A900654386918FD9C87 /* PaperweightMonitor */;
 			targetProxy = 338520E716FE4034184B620A /* PBXContainerItemProxy */;
-		};
-		AC2B65F6F957152E5F8C5095 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B31792123AFFB03E53C3177F /* Paperweight */;
-			targetProxy = E275C35268146F5682BB94A2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -592,16 +644,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.PaperweightTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app.tests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Paperweight.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Paperweight";
 			};
 			name = Debug;
 		};
@@ -609,16 +661,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.PaperweightTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.paperweight.app.tests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Paperweight.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Paperweight";
 			};
 			name = Release;
 		};

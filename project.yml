@@ -41,6 +41,9 @@ targets:
       - target: PaperweightMonitor
       - target: PaperweightWatch
         embed: true
+      - sdk: FamilyControls.framework
+      - sdk: ManagedSettings.framework
+      - sdk: DeviceActivity.framework
 
   PaperweightMonitor:
     type: app-extension
@@ -59,6 +62,10 @@ targets:
         com.apple.developer.family-controls: true
         com.apple.security.application-groups:
           - group.com.paperweight.app
+    dependencies:
+      - sdk: FamilyControls.framework
+      - sdk: ManagedSettings.framework
+      - sdk: DeviceActivity.framework
 
   PaperweightWatch:
     type: application
@@ -84,9 +91,12 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - path: PaperweightTests
+      - path: Shared
     settings:
       base:
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Paperweight.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Paperweight"
-        BUNDLE_LOADER: "$(TEST_HOST)"
+        PRODUCT_BUNDLE_IDENTIFIER: com.paperweight.app.tests
+        GENERATE_INFOPLIST_FILE: YES
     dependencies:
-      - target: Paperweight
+      - sdk: FamilyControls.framework
+      - sdk: ManagedSettings.framework
+      - sdk: DeviceActivity.framework

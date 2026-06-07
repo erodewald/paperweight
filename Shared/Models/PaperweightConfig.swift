@@ -1,14 +1,18 @@
 import Foundation
+#if os(iOS)
 import FamilyControls
+#endif
 
 struct PaperweightConfig: Codable {
     var isEnabled: Bool = false
     var schedule: AllowSchedule? = nil
-    var selection: FamilyActivitySelection = .init()
-    var appOverrides: [AppScheduleOverride] = []
     var unlockDuration: TimeInterval = Paperweight.defaultUnlockDuration
     var requireWatchConfirmation: Bool = true
     var registeredNFCTagUID: String? = nil
+    #if os(iOS)
+    var selection: FamilyActivitySelection = .init()
+    var appOverrides: [AppScheduleOverride] = []
+    #endif
 }
 
 struct AllowSchedule: Codable {
