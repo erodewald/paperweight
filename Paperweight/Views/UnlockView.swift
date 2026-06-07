@@ -37,7 +37,14 @@ struct UnlockView: View {
                 }
                 Button {
                     Task {
-                        do { try await unlockService.unlock() }
+                        do {
+                            try await unlockService.verifyTag()
+                            if vm.config.requireWatchConfirmation && WatchConnectivityService.shared.watchIsReachable {
+                                let confirmed = await WatchConnectivityService.shared.requestWatchConfirmation()
+                                guard confirmed else { return }
+                            }
+                            unlockService.grantUnlock(duration: vm.config.unlockDuration)
+                        }
                         catch is CancellationError { }
                         catch { self.error = error }
                     }
@@ -62,6 +69,13 @@ struct UnlockView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(error?.localizedDescription ?? "")
+        }
+        .onChange(of: unlockService.isUnlocked) { _, isUnlocked in
+            WatchConnectivityService.shared.sendStatusUpdate(
+                isEnabled: vm.config.isEnabled,
+                isUnlocked: isUnlocked,
+                unlockExpires: unlockService.unlockExpiresAt
+            )
         }
     }
 }

@@ -63,5 +63,12 @@ struct HomeView: View {
         .onChange(of: showingPicker) { _, isPresented in
             if !isPresented { vm.saveSelection() }
         }
+        .onChange(of: vm.config.isEnabled) { _, isEnabled in
+            WatchConnectivityService.shared.sendStatusUpdate(
+                isEnabled: isEnabled,
+                isUnlocked: false,
+                unlockExpires: nil
+            )
+        }
     }
 }

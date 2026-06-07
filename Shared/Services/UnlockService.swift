@@ -40,6 +40,17 @@ final class UnlockService: ObservableObject {
         grantUnlock(duration: config.unlockDuration)
     }
 
+    func verifyTag() async throws {
+        let config = configStore.load()
+        guard let registeredUID = config.registeredNFCTagUID else {
+            throw UnlockError.noTagRegistered
+        }
+        let scannedUID = try await nfcService.readTagUID()
+        guard scannedUID == registeredUID else {
+            throw UnlockError.tagMismatch
+        }
+    }
+
     func grantUnlock(duration: TimeInterval) {
         let config = configStore.load()
         restrictionService.removeAll()
