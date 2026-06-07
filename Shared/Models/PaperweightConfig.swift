@@ -35,4 +35,14 @@ struct AllowSchedule: Codable {
         let e = endHour * 60 + endMinute
         return t >= s && t < e
     }
+
+    func dateComponents() -> (start: DateComponents, end: DateComponents) {
+        var start = DateComponents()
+        start.hour = startHour
+        start.minute = startMinute
+        var end = DateComponents()
+        end.hour = endHour
+        end.minute = endMinute
+        return (start, end)
+    }
 }

@@ -52,4 +52,17 @@ final class PaperweightConfigTests: XCTestCase {
         )
         XCTAssertFalse(schedule.isValid)
     }
+
+    func test_schedule_buildsDatesComponents() {
+        let schedule = AllowSchedule(
+            startHour: 9, startMinute: 0,
+            endHour: 22, endMinute: 0,
+            weekdays: Set(1...7)
+        )
+        let (start, end) = schedule.dateComponents()
+        XCTAssertEqual(start.hour, 9)
+        XCTAssertEqual(start.minute, 0)
+        XCTAssertEqual(end.hour, 22)
+        XCTAssertEqual(end.minute, 0)
+    }
 }
