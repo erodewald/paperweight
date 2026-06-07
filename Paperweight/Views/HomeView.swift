@@ -42,10 +42,10 @@ struct HomeView: View {
                         ScheduleView(vm: vm)
                     }
                     NavigationLink("NFC Unlock Token") {
-                        Text("NFC Setup — coming soon")
+                        NFCSetupView(vm: vm)
                     }
                     NavigationLink("Emergency Unlock") {
-                        Text("Unlock — coming soon")
+                        UnlockView(vm: vm)
                     }
                 }
             }
