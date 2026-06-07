@@ -39,7 +39,7 @@ struct HomeView: View {
 
                 Section {
                     NavigationLink("Schedule") {
-                        Text("Schedule — coming soon")
+                        ScheduleView(vm: vm)
                     }
                     NavigationLink("NFC Unlock Token") {
                         Text("NFC Setup — coming soon")
