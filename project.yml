@@ -4,9 +4,37 @@ options:
   bundleIdPrefix: media.baltar.paperweight
   deploymentTarget:
     iOS: "17.0"
-    watchOS: "10.0"
+    watchOS: "7.0"
   xcodeVersion: "15.0"
   groupSortPosition: top
+
+schemes:
+  Paperweight:
+    build:
+      targets:
+        Paperweight: all
+        PaperweightMonitor: all
+        PaperweightWatch: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - PaperweightTests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+  PaperweightTests:
+    build:
+      targets:
+        PaperweightTests: [test]
+    test:
+      config: Debug
+      targets:
+        - PaperweightTests
 
 settings:
   base:
