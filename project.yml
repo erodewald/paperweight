@@ -30,6 +30,13 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     entitlements:
       path: Paperweight/Paperweight.entitlements
+      properties:
+        com.apple.developer.family-controls: true
+        com.apple.security.application-groups:
+          - group.com.paperweight.app
+        com.apple.developer.nfc.readersession.formats:
+          - NDEF
+          - TAG
     dependencies:
       - target: PaperweightMonitor
       - target: PaperweightWatch
@@ -48,6 +55,10 @@ targets:
         INFOPLIST_FILE: PaperweightMonitor/Info.plist
     entitlements:
       path: PaperweightMonitor/PaperweightMonitor.entitlements
+      properties:
+        com.apple.developer.family-controls: true
+        com.apple.security.application-groups:
+          - group.com.paperweight.app
 
   PaperweightWatch:
     type: application
@@ -63,6 +74,9 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     entitlements:
       path: PaperweightWatch/PaperweightWatch.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.paperweight.app
 
   PaperweightTests:
     type: bundle.unit-test
