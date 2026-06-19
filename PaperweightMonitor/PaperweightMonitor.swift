@@ -9,19 +9,34 @@ class PaperweightMonitor: DeviceActivityMonitor {
 
     override func intervalDidStart(for activity: DeviceActivityName) {
         super.intervalDidStart(for: activity)
-        // Free window started — lift restrictions
-        let service = RestrictionService(store: managedStore)
-        service.removeAll()
+        syncShield()
     }
 
     override func intervalDidEnd(for activity: DeviceActivityName) {
         super.intervalDidEnd(for: activity)
-        // Free window ended — apply restrictions
+        syncShield()
+    }
+
+    /// Sets the shield to match the current moment: free if we're inside a free
+    /// window for today's weekday, restricted otherwise. Because every free
+    /// window registers a daily-repeating schedule, this runs at each boundary;
+    /// the weekday check inside `isFree(at:)` makes days with no free window a
+    /// no-op (shield stays applied).
+    private func syncShield() {
         let config = configStore.load()
-        guard config.isEnabled else { return }
         let service = RestrictionService(store: managedStore)
-        #if os(iOS)
-        service.apply(selection: config.selection, overrides: config.appOverrides)
-        #endif
+
+        guard config.isEnabled else {
+            service.removeAll()
+            return
+        }
+
+        if let schedule = config.schedule, !schedule.isEmpty, schedule.isFree(at: Date()) {
+            service.removeAll()
+        } else {
+            #if os(iOS)
+            service.apply(selection: config.selection, overrides: config.appOverrides)
+            #endif
+        }
     }
 }

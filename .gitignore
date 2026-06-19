@@ -1,7 +1,16 @@
-*.xcuserdata
+# macOS
 .DS_Store
+
+# Xcode build artifacts
 DerivedData/
-*.xcworkspace/xcuserdata
 build/
+*.xcuserdata
+
+# Xcode per-user state (UI layout, breakpoints, scheme management)
+xcuserdata/
+*.xcuserstate
+*.xcuserdatad/
+
+# Workspaces (keep the project's bundled workspace)
 *.xcworkspace
 !*.xcodeproj/*.xcworkspace

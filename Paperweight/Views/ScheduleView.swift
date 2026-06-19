@@ -2,120 +2,180 @@ import SwiftUI
 
 struct ScheduleView: View {
     @ObservedObject var vm: HomeViewModel
-    @State private var scheduleEnabled: Bool
-    @State private var startHour: Int
-    @State private var startMinute: Int
-    @State private var endHour: Int
-    @State private var endMinute: Int
-    @State private var weekdays: Set<Int>
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var freeSlots: Set<Int>
+    /// The value being painted for the current drag (true = mark free). Decided
+    /// by the first cell touched so a single gesture toggles consistently.
+    @State private var dragPaintValue: Bool?
+    /// Last touch point in the current drag, used to fill cells between samples
+    /// so fast swipes don't leave gaps.
+    @State private var lastPaintLocation: CGPoint?
+
+    private let dayLabels = ["S", "M", "T", "W", "T", "F", "S"]
+    private let timeColumnWidth: CGFloat = 28
+    private let rows = PaperweightSchedule.halfHoursPerDay  // 48
 
     init(vm: HomeViewModel) {
         self.vm = vm
-        let s = vm.config.schedule
-        _scheduleEnabled = State(initialValue: s != nil)
-        _startHour = State(initialValue: s?.startHour ?? 9)
-        _startMinute = State(initialValue: s?.startMinute ?? 0)
-        _endHour = State(initialValue: s?.endHour ?? 22)
-        _endMinute = State(initialValue: s?.endMinute ?? 0)
-        _weekdays = State(initialValue: s?.weekdays ?? Set(1...7))
+        _freeSlots = State(initialValue: vm.config.schedule?.freeSlots ?? [])
     }
 
     var body: some View {
-        Form {
-            Section {
-                Toggle("Use a schedule", isOn: $scheduleEnabled)
-            } footer: {
-                Text(scheduleEnabled
-                     ? "Apps are free during the window below. Restricted all other times."
-                     : "No schedule — apps are always restricted while Paperweight is on.")
-            }
+        VStack(spacing: 8) {
+            Text("Drag to toggle when apps are free. Green = free, gray = blocked.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
 
-            if scheduleEnabled {
-                Section("Free Window") {
-                    TimePicker(label: "Start", hour: $startHour, minute: $startMinute)
-                    TimePicker(label: "End", hour: $endHour, minute: $endMinute)
-                }
+            dayHeader
 
-                Section("Days") {
-                    WeekdayPicker(selection: $weekdays)
-                }
+            grid
 
-                if !currentSchedule.isValid {
-                    Section {
-                        Label("End time must be after start time.", systemImage: "exclamationmark.triangle")
-                            .foregroundStyle(.orange)
-                    }
-                }
-            }
+            Text(String(format: "%g free hours/week", PaperweightSchedule(freeSlots: freeSlots).freeHourCount))
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
+        .padding(.vertical, 8)
         .navigationTitle("Schedule")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button("Free: Weekday Evenings") { freeSlots = PaperweightSchedule.weekdayEvenings().freeSlots }
+                    Button("Free: All Week") { freeSlots = PaperweightSchedule.alwaysFree().freeSlots }
+                    Button("Clear (block everything)", role: .destructive) { freeSlots = [] }
+                } label: {
+                    Image(systemName: "wand.and.stars")
+                }
+            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") { save() }
-                    .disabled(scheduleEnabled && !currentSchedule.isValid)
             }
         }
     }
 
-    private var currentSchedule: AllowSchedule {
-        AllowSchedule(startHour: startHour, startMinute: startMinute,
-                      endHour: endHour, endMinute: endMinute, weekdays: weekdays)
+    private var dayHeader: some View {
+        HStack(spacing: 1) {
+            Color.clear.frame(width: timeColumnWidth, height: 1)
+            ForEach(0..<7, id: \.self) { day in
+                Text(dayLabels[day])
+                    .font(.caption2.bold())
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .frame(height: 16)
+        .padding(.horizontal, 8)
+    }
+
+    private var grid: some View {
+        // One GeometryReader drives both the hour-label column and the cells so
+        // their row heights stay identical and the whole grid fills the space
+        // remaining between the header and footer.
+        GeometryReader { geo in
+            let labelSpacing: CGFloat = 1
+            let gridWidth = geo.size.width - timeColumnWidth - labelSpacing
+            let cellW = gridWidth / 7
+            let cellH = geo.size.height / CGFloat(rows)
+
+            HStack(spacing: labelSpacing) {
+                // Hour labels — shown on the top-of-hour row only.
+                VStack(spacing: 1) {
+                    ForEach(0..<rows, id: \.self) { row in
+                        Text(row % 2 == 0 ? PaperweightSchedule.hourLabel(row / 2) : "")
+                            .font(.system(size: 9))
+                            .foregroundStyle(.secondary)
+                            .frame(width: timeColumnWidth, height: cellH, alignment: .topTrailing)
+                    }
+                }
+
+                VStack(spacing: 1) {
+                    ForEach(0..<rows, id: \.self) { row in
+                        HStack(spacing: 1) {
+                            ForEach(0..<7, id: \.self) { day in
+                                Rectangle()
+                                    .fill(freeSlots.contains(PaperweightSchedule.slot(day: day, halfHour: row))
+                                          ? Color.green.opacity(0.75)
+                                          : Color(.systemGray5))
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: cellH)
+                                    // Stronger line at the top of each hour.
+                                    .overlay(alignment: .top) {
+                                        if row % 2 == 0 {
+                                            Rectangle().fill(Color(.systemGray3)).frame(height: 0.5)
+                                        }
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        paint(at: value.location, cellW: cellW, cellH: cellH)
+                    }
+                    .onEnded { _ in
+                        dragPaintValue = nil
+                        lastPaintLocation = nil
+                    }
+            )
+        }
+        .padding(.horizontal, 8)
+        .background(Color(.systemGray4))
+    }
+
+    private func paint(at location: CGPoint, cellW: CGFloat, cellH: CGFloat) {
+        guard cellW > 0, cellH > 0 else { return }
+
+        // First touch of the gesture decides direction: if that cell is currently
+        // free we're erasing (paint blocked), otherwise we're adding free time.
+        if dragPaintValue == nil, let slot = slot(at: location, cellW: cellW, cellH: cellH) {
+            dragPaintValue = !freeSlots.contains(slot)
+        }
+        let value = dragPaintValue ?? true
+
+        // Interpolate from the previous sample so fast swipes paint every cell on
+        // the path rather than just the sampled endpoints.
+        if let last = lastPaintLocation {
+            let dx = location.x - last.x
+            let dy = location.y - last.y
+            let stepSize = max(min(cellW, cellH) / 2, 1)
+            let steps = max(Int(max(abs(dx), abs(dy)) / stepSize), 1)
+            for i in 0...steps {
+                let t = CGFloat(i) / CGFloat(steps)
+                apply(value, at: CGPoint(x: last.x + dx * t, y: last.y + dy * t), cellW: cellW, cellH: cellH)
+            }
+        } else {
+            apply(value, at: location, cellW: cellW, cellH: cellH)
+        }
+        lastPaintLocation = location
+    }
+
+    private func apply(_ free: Bool, at location: CGPoint, cellW: CGFloat, cellH: CGFloat) {
+        guard let slot = slot(at: location, cellW: cellW, cellH: cellH) else { return }
+        if free { freeSlots.insert(slot) } else { freeSlots.remove(slot) }
+    }
+
+    /// Maps a touch point (in the grid's coordinate space, which includes the
+    /// leading hour-label column) to a slot index, or nil if outside the cells.
+    private func slot(at location: CGPoint, cellW: CGFloat, cellH: CGFloat) -> Int? {
+        let xInCells = location.x - timeColumnWidth - 1
+        guard xInCells >= 0 else { return nil }
+        let day = min(max(Int(xInCells / cellW), 0), 6)
+        let row = min(max(Int(location.y / cellH), 0), rows - 1)
+        return PaperweightSchedule.slot(day: day, halfHour: row)
     }
 
     private func save() {
-        vm.config.schedule = scheduleEnabled ? currentSchedule : nil
+        let schedule = freeSlots.isEmpty ? nil : PaperweightSchedule(freeSlots: freeSlots)
+        vm.config.schedule = schedule
         vm.saveSelection()
-        ScheduleService.shared.updateSchedule(vm.config.schedule)
-    }
-}
-
-struct TimePicker: View {
-    let label: String
-    @Binding var hour: Int
-    @Binding var minute: Int
-
-    var body: some View {
-        HStack {
-            Text(label)
-            Spacer()
-            Picker("Hour", selection: $hour) {
-                ForEach(0..<24, id: \.self) { h in
-                    Text(String(format: "%02d", h)).tag(h)
-                }
-            }
-            .pickerStyle(.wheel)
-            .frame(width: 60)
-            Text(":")
-            Picker("Minute", selection: $minute) {
-                ForEach([0, 15, 30, 45], id: \.self) { m in
-                    Text(String(format: "%02d", m)).tag(m)
-                }
-            }
-            .pickerStyle(.wheel)
-            .frame(width: 60)
-        }
-    }
-}
-
-struct WeekdayPicker: View {
-    @Binding var selection: Set<Int>
-    private let days = [(1,"Su"),(2,"Mo"),(3,"Tu"),(4,"We"),(5,"Th"),(6,"Fr"),(7,"Sa")]
-
-    var body: some View {
-        HStack(spacing: 4) {
-            ForEach(days, id: \.0) { (num, label) in
-                let selected = selection.contains(num)
-                Button(label) {
-                    if selected { selection.remove(num) } else { selection.insert(num) }
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 6)
-                .background(selected ? Color.orange : Color(.systemGray5))
-                .foregroundStyle(selected ? .white : .primary)
-                .clipShape(RoundedRectangle(cornerRadius: 6))
-                .font(.caption.bold())
-            }
-        }
+        ScheduleService.shared.updateSchedule(schedule)
+        if vm.config.isEnabled { vm.syncRestrictions() }
+        dismiss()
     }
 }

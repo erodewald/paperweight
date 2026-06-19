@@ -4,26 +4,32 @@ import Foundation
 final class ScheduleService {
     static let shared = ScheduleService()
     private let center = DeviceActivityCenter()
-    private let activityName = DeviceActivityName(Paperweight.activityName)
 
-    static func dateComponents(from schedule: AllowSchedule) -> (start: DateComponents, end: DateComponents) {
-        schedule.dateComponents()
-    }
+    /// DeviceActivity caps the number of simultaneously monitored activities.
+    /// We stay well under it; complex schedules are merged into distinct windows.
+    private let maxActivities = 18
 
-    func updateSchedule(_ schedule: AllowSchedule?) {
-        center.stopMonitoring([activityName])
-        guard let schedule, schedule.isValid else { return }
+    /// Registers a repeating DeviceActivity schedule for each distinct free
+    /// window. Each window repeats *daily*; the monitor re-checks the actual
+    /// weekday via `PaperweightSchedule.isFree(at:)` so weekday filtering is
+    /// handled there. Passing `nil` stops all monitoring.
+    func updateSchedule(_ schedule: PaperweightSchedule?) {
+        center.stopMonitoring(center.activities)
+        guard let schedule, !schedule.isEmpty else { return }
 
-        let (start, end) = schedule.dateComponents()
-        let deviceSchedule = DeviceActivitySchedule(
-            intervalStart: start,
-            intervalEnd: end,
-            repeats: true
-        )
-        do {
-            try center.startMonitoring(activityName, during: deviceSchedule)
-        } catch {
-            print("ScheduleService: startMonitoring failed: \(error)")
+        let windows = schedule.freeWindows().prefix(maxActivities)
+        for (index, window) in windows.enumerated() {
+            let name = DeviceActivityName("\(Paperweight.activityName).\(index)")
+            let deviceSchedule = DeviceActivitySchedule(
+                intervalStart: window.startComponents,
+                intervalEnd: window.endComponents,
+                repeats: true
+            )
+            do {
+                try center.startMonitoring(name, during: deviceSchedule)
+            } catch {
+                print("ScheduleService: startMonitoring failed for \(name): \(error)")
+            }
         }
     }
 }

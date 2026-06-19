@@ -67,11 +67,26 @@ final class UnlockService: ObservableObject {
     }
 
     func relock() {
-        let config = configStore.load()
-        guard config.isEnabled else { return }
-        restrictionService.apply(selection: config.selection, overrides: config.appOverrides)
+        relockTask?.cancel()
+        relockTask = nil
         isUnlocked = false
         unlockExpiresAt = nil
+        syncRestrictions()
+    }
+
+    /// Re-applies the shield to match current state: lifted when Paperweight is
+    /// off or inside a free window, restricted otherwise.
+    private func syncRestrictions() {
+        let config = configStore.load()
+        guard config.isEnabled else {
+            restrictionService.removeAll()
+            return
+        }
+        if let schedule = config.schedule, !schedule.isEmpty, schedule.isFree(at: Date()) {
+            restrictionService.removeAll()
+        } else {
+            restrictionService.apply(selection: config.selection, overrides: config.appOverrides)
+        }
     }
 }
 #endif

@@ -5,44 +5,38 @@ import FamilyControls
 
 struct PaperweightConfig: Codable {
     var isEnabled: Bool = false
-    var schedule: AllowSchedule? = nil
+    var schedule: PaperweightSchedule? = nil
     var unlockDuration: TimeInterval = Paperweight.defaultUnlockDuration
     var requireWatchConfirmation: Bool = true
     var registeredNFCTagUID: String? = nil
+    var recoveryCodes: [RecoveryCode] = []
+    var maxLockedDays: Int? = nil
+    var lockedAt: Date? = nil
     #if os(iOS)
     var selection: FamilyActivitySelection = .init()
     var appOverrides: [AppScheduleOverride] = []
     #endif
-}
 
-struct AllowSchedule: Codable {
-    var startHour: Int
-    var startMinute: Int
-    var endHour: Int
-    var endMinute: Int
-    var weekdays: Set<Int>    // 1 = Sunday … 7 = Saturday (Calendar convention)
+    // Custom decoder for forward/backward compatibility: new keys fall back to defaults
+    // so existing saved configs don't get wiped when we add fields.
+    init() {}
 
-    var isValid: Bool {
-        let startTotal = startHour * 60 + startMinute
-        let endTotal = endHour * 60 + endMinute
-        return endTotal > startTotal && !weekdays.isEmpty
-    }
-
-    func contains(hour: Int, minute: Int) -> Bool {
-        guard isValid else { return false }
-        let t = hour * 60 + minute
-        let s = startHour * 60 + startMinute
-        let e = endHour * 60 + endMinute
-        return t >= s && t < e
-    }
-
-    func dateComponents() -> (start: DateComponents, end: DateComponents) {
-        var start = DateComponents()
-        start.hour = startHour
-        start.minute = startMinute
-        var end = DateComponents()
-        end.hour = endHour
-        end.minute = endMinute
-        return (start, end)
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        isEnabled = try c.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? false
+        // Tolerant of the legacy single-window schedule shape: a failed decode
+        // (old format) simply resets the schedule rather than throwing.
+        schedule = (try? c.decodeIfPresent(PaperweightSchedule.self, forKey: .schedule)) ?? nil
+        unlockDuration = try c.decodeIfPresent(TimeInterval.self, forKey: .unlockDuration) ?? Paperweight.defaultUnlockDuration
+        requireWatchConfirmation = try c.decodeIfPresent(Bool.self, forKey: .requireWatchConfirmation) ?? true
+        registeredNFCTagUID = try c.decodeIfPresent(String.self, forKey: .registeredNFCTagUID)
+        recoveryCodes = try c.decodeIfPresent([RecoveryCode].self, forKey: .recoveryCodes) ?? []
+        maxLockedDays = try c.decodeIfPresent(Int.self, forKey: .maxLockedDays)
+        lockedAt = try c.decodeIfPresent(Date.self, forKey: .lockedAt)
+        #if os(iOS)
+        selection = try c.decodeIfPresent(FamilyActivitySelection.self, forKey: .selection) ?? .init()
+        appOverrides = try c.decodeIfPresent([AppScheduleOverride].self, forKey: .appOverrides) ?? []
+        #endif
     }
 }
+

@@ -7,6 +7,7 @@ struct UnlockView: View {
         restrictionService: RestrictionService()
     )
     @State private var error: Error?
+    @State private var showingRecoveryEntry = false
 
     var body: some View {
         VStack(spacing: 32) {
@@ -56,6 +57,14 @@ struct UnlockView: View {
                 .buttonStyle(.borderedProminent)
                 .tint(.orange)
                 .disabled(vm.config.registeredNFCTagUID == nil)
+
+                if !vm.config.recoveryCodes.filter({ !$0.isUsed }).isEmpty {
+                    Button("Lost your token? Use a recovery code") {
+                        showingRecoveryEntry = true
+                    }
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                }
             }
 
             Spacer()
@@ -69,6 +78,9 @@ struct UnlockView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(error?.localizedDescription ?? "")
+        }
+        .sheet(isPresented: $showingRecoveryEntry) {
+            RecoveryCodeEntryView(vm: vm, onSuccess: {})
         }
         .onChange(of: unlockService.isUnlocked) { _, isUnlocked in
             WatchConnectivityService.shared.sendStatusUpdate(
