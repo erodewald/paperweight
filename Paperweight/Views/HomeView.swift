@@ -15,6 +15,9 @@ struct HomeView: View {
     /// Whether the full-screen Quiet orb is presented over the settings root.
     @State private var showQuiet = false
     @State private var footerLine = Phrases.homeFooter.randomElement() ?? ""
+    /// Selection captured when the picker opens, to detect (and gate) removals.
+    @State private var selectionSnapshot: FamilyActivitySelection?
+    @State private var selectionRevertMessage: String?
 
     /// Quiet: armed and restricting right now (a scheduled blocked period, or
     /// always-blocked when no schedule is set).
@@ -53,7 +56,11 @@ struct HomeView: View {
             isPresented: $showingPicker,
             selection: $vm.config.selection)
         .onChange(of: showingPicker) { _, isPresented in
-            if !isPresented { vm.saveSelection() }
+            if isPresented {
+                selectionSnapshot = vm.config.selection
+            } else {
+                commitSelectionChange()
+            }
         }
         .onChange(of: vm.config.isEnabled) { _, isEnabled in
             WatchConnectivityService.shared.sendStatusUpdate(
@@ -80,6 +87,43 @@ struct HomeView: View {
         .alert("Error", isPresented: Binding(
             get: { vm.error != nil }, set: { if !$0 { vm.error = nil } }
         )) { Button("OK", role: .cancel) {} } message: { Text(vm.error?.localizedDescription ?? "") }
+        .alert("Change reverted", isPresented: Binding(
+            get: { selectionRevertMessage != nil }, set: { if !$0 { selectionRevertMessage = nil } }
+        )) { Button("OK", role: .cancel) {} } message: { Text(selectionRevertMessage ?? "") }
+    }
+
+    /// Applies a picker change. While Paperweight is active, *removing* any app
+    /// or category requires an NFC token scan first (adding is always allowed);
+    /// an unverified removal is reverted.
+    private func commitSelectionChange() {
+        let old = selectionSnapshot ?? FamilyActivitySelection()
+        let new = vm.config.selection
+        let removedSomething =
+            !old.applicationTokens.isSubset(of: new.applicationTokens) ||
+            !old.categoryTokens.isSubset(of: new.categoryTokens) ||
+            !old.webDomainTokens.isSubset(of: new.webDomainTokens)
+
+        guard vm.config.isEnabled, removedSomething else {
+            vm.saveSelection()
+            return
+        }
+
+        // Don't persist/apply the reduced set until the token is verified — the
+        // old shield stays in force during the scan.
+        Task { @MainActor in
+            let unlock = UnlockService(nfcService: NFCService.shared)
+            do {
+                try await unlock.verifyTag()
+                vm.saveSelection()   // verified — keep the change
+            } catch is CancellationError {
+                vm.config.selection = old
+                vm.saveSelection()
+            } catch {
+                vm.config.selection = old
+                vm.saveSelection()
+                selectionRevertMessage = "Removing a blocked app needs your NFC token. Your list is unchanged."
+            }
+        }
     }
 
     // MARK: - Settings list
