@@ -8,7 +8,6 @@ struct DisablePaperweightSheet: View {
         restrictionService: RestrictionService()
     )
     @State private var showingRecoveryEntry = false
-    @State private var confirming = false
     @State private var requestingCoolOff = false
     @State private var error: Error?
 
@@ -30,7 +29,7 @@ struct DisablePaperweightSheet: View {
 
                 AccentButton(title: "Scan NFC token", systemImage: "wave.3.right",
                              enabled: vm.config.registeredNFCTagUID != nil) {
-                    Task { await scanAndConfirm() }
+                    Task { await scanAndDisable() }
                 }
                 .padding(.bottom, 12)
 
@@ -51,18 +50,6 @@ struct DisablePaperweightSheet: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }.foregroundStyle(PW.textMuted)
                 }
-            }
-            .confirmationDialog("Turn off Paperweight?", isPresented: $confirming, titleVisibility: .visible) {
-                Button("Turn Off", role: .destructive) {
-                    Task {
-                        try? await vm.disablePaperweight()
-                        ScheduleService.shared.updateSchedule(nil, enabled: false)
-                        dismiss()
-                    }
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("This will remove all app restrictions. You can re-arm Paperweight anytime by saving a schedule.")
             }
             .confirmationDialog("Start timed unlock?", isPresented: $requestingCoolOff, titleVisibility: .visible) {
                 Button("Start \(vm.config.coolOffDays)-day Cool-off") { vm.requestCoolOffUnlock() }
@@ -110,10 +97,14 @@ struct DisablePaperweightSheet: View {
         }
     }
 
-    private func scanAndConfirm() async {
+    private func scanAndDisable() async {
         do {
+            // Tapping the registered token is itself the confirmation — no
+            // second "are you sure" prompt.
             try await unlockService.verifyTag()
-            confirming = true
+            try? await vm.disablePaperweight()
+            ScheduleService.shared.updateSchedule(nil, enabled: false)
+            dismiss()
         } catch is CancellationError {
         } catch { self.error = error }
     }
