@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0419FAEDB15C6EC1BF639783 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
+		0585E03413FFDF9EFCA29162 /* RemoteConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172C80265C690A1CBA1AB513 /* RemoteConfigService.swift */; };
 		0BF7C0BA9F3338BA1CE6B82C /* UnlockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497698F50F8F5D38D66B556C /* UnlockService.swift */; };
 		0FD70B4533B20650D7424324 /* WatchSessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AABAC42EB3F5CFB37449E /* WatchSessionService.swift */; };
 		16C4692BF8F6FB78A0AF8396 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DBB650985CEBB74ADD653D /* Theme.swift */; };
@@ -164,6 +165,7 @@
 		1013F9C16F8E8EC69938A8FF /* RecoveryCodesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryCodesView.swift; sourceTree = "<group>"; };
 		14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = PaperweightMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		15E0A914AA260D4008747A4F /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = SDKROOT; };
+		172C80265C690A1CBA1AB513 /* RemoteConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfigService.swift; sourceTree = "<group>"; };
 		1B54307C7A7519A4B3438B18 /* PaperweightSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightSchedule.swift; sourceTree = "<group>"; };
 		1F146F4B009BC0C785B756F9 /* RestrictionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestrictionServiceTests.swift; sourceTree = "<group>"; };
 		210EF05BC79AAABF75F3BD4A /* SchibstedGrotesk.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SchibstedGrotesk.ttf; sourceTree = "<group>"; };
@@ -345,6 +347,7 @@
 				3559557FC1A539F56DBF5628 /* FamilyControlsService.swift */,
 				6B5F811117BA243EEA446573 /* NFCService.swift */,
 				67C0A6F2ECCBB5247566970C /* RecoveryCodeService.swift */,
+				172C80265C690A1CBA1AB513 /* RemoteConfigService.swift */,
 				D87CF16D7FC3A797014E83CF /* ScheduleService.swift */,
 				F9EB3CD52DBC2A49F6823617 /* WatchConnectivityService.swift */,
 			);
@@ -708,6 +711,7 @@
 				7582E00B005ACF79D4FAF826 /* RecoveryCode.swift in Sources */,
 				510CE49FE5D5AD1BA17AE0B4 /* RecoveryCodeService.swift in Sources */,
 				488665AECFFF3EBB720368F9 /* RecoveryCodesView.swift in Sources */,
+				0585E03413FFDF9EFCA29162 /* RemoteConfigService.swift in Sources */,
 				2CD399E9A43A551F6AD5AA08 /* RestrictionService.swift in Sources */,
 				C871CD3DFEC37637DA7E4D27 /* RestrictionServiceProtocols.swift in Sources */,
 				79EE2079919843270EA8647F /* ScheduleService.swift in Sources */,

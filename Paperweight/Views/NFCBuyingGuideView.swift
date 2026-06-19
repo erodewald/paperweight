@@ -1,11 +1,7 @@
 import SwiftUI
 
 struct NFCBuyingGuideView: View {
-    // ─────────────────────────────────────────────────────────────────────
-    // Set your Amazon Associates tag here to monetize the buy links, e.g.
-    // "paperweight-20". Leave empty for plain (non-affiliate) links.
-    private let amazonAssociatesTag = ""
-    // ─────────────────────────────────────────────────────────────────────
+    @ObservedObject private var remote = RemoteConfigService.shared
 
     var body: some View {
         ScrollView {
@@ -58,17 +54,13 @@ struct NFCBuyingGuideView: View {
 
                 SectionHeader(text: "Where to Buy").padding(.top, 22).padding(.bottom, 9)
                 GroupedCard {
-                    buyRow(title: "NTAG215 tags & multipacks",
-                           subtitle: "Amazon", url: amazon("ntag215 nfc tags"))
-                    CardDivider()
-                    buyRow(title: "NTAG213 NFC stickers",
-                           subtitle: "Amazon", url: amazon("ntag213 nfc stickers"))
-                    CardDivider()
-                    buyRow(title: "On-metal NFC tags",
-                           subtitle: "Amazon", url: amazon("on metal nfc tag ntag215"))
-                    CardDivider()
-                    buyRow(title: "Specialty & bulk (GoToTags)",
-                           subtitle: "gototags.com", url: URL(string: "https://gototags.com/nfc/tags/")!)
+                    let links = remote.current.buyLinks ?? RemoteConfig.bundled.buyLinks ?? []
+                    ForEach(Array(links.enumerated()), id: \.element.id) { index, link in
+                        if index > 0 { CardDivider() }
+                        if let url = remote.url(for: link) {
+                            buyRow(title: link.title, subtitle: link.subtitle, url: url)
+                        }
+                    }
                 }
                 Text("Buy links may be affiliate links — they cost you nothing extra and help support Paperweight.")
                     .font(.grotesk(11)).foregroundStyle(PW.textFaint)
@@ -87,6 +79,7 @@ struct NFCBuyingGuideView: View {
         .pwScreen()
         .navigationTitle("Buying a Token")
         .navigationBarTitleDisplayMode(.inline)
+        .task { await remote.refresh() }
     }
 
     // MARK: - Rows
@@ -120,17 +113,5 @@ struct NFCBuyingGuideView: View {
             .padding(.horizontal, 16).padding(.vertical, 14)
             .contentShape(Rectangle())
         }
-    }
-
-    // MARK: - Affiliate link builder
-
-    private func amazon(_ query: String) -> URL {
-        var components = URLComponents(string: "https://www.amazon.com/s")!
-        var items = [URLQueryItem(name: "k", value: query)]
-        if !amazonAssociatesTag.isEmpty {
-            items.append(URLQueryItem(name: "tag", value: amazonAssociatesTag))
-        }
-        components.queryItems = items
-        return components.url!
     }
 }
