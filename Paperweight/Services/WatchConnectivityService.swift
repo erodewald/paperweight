@@ -12,7 +12,11 @@ final class WatchConnectivityService: NSObject, ObservableObject {
     }
 
     func sendStatusUpdate(isEnabled: Bool, isUnlocked: Bool, unlockExpires: Date?) {
-        guard WCSession.default.isReachable else { return }
+        let session = WCSession.default
+        // Only send once the session is activated, paired, and reachable —
+        // otherwise WatchConnectivity logs "WCSession has not been activated".
+        guard session.activationState == .activated,
+              session.isPaired, session.isWatchAppInstalled, session.isReachable else { return }
         let message: [String: Any] = [
             "isEnabled": isEnabled,
             "isUnlocked": isUnlocked,

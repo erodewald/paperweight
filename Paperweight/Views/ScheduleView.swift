@@ -51,9 +51,12 @@ struct ScheduleView: View {
             }
 
             GeometryReader { geo in
-                let cellW = (geo.size.width - leftInset - colGap * CGFloat(7)) / 7
+                // Clamp to non-negative: during transient layout passes geo.size
+                // can be ~0, which would make these negative and spam
+                // "Invalid frame dimension".
+                let cellW = max(0, (geo.size.width - leftInset - colGap * CGFloat(7)) / 7)
                 let bodyH = geo.size.height - headerHeight - stackSpacing
-                let cellH = (bodyH - rowGap * CGFloat(hours - 1)) / CGFloat(hours)
+                let cellH = max(0, (bodyH - rowGap * CGFloat(hours - 1)) / CGFloat(hours))
 
                 VStack(spacing: stackSpacing) {
                     dayHeader(cellW: cellW)
