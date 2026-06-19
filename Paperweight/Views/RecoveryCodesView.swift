@@ -1,10 +1,25 @@
 import SwiftUI
+import UniformTypeIdentifiers
+
+/// A plain-text document for exporting the codes to the Files app.
+private struct TextFile: FileDocument {
+    static var readableContentTypes: [UTType] { [.plainText] }
+    var text: String
+    init(text: String) { self.text = text }
+    init(configuration: ReadConfiguration) throws {
+        text = String(decoding: configuration.file.regularFileContents ?? Data(), as: UTF8.self)
+    }
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        FileWrapper(regularFileWithContents: Data(text.utf8))
+    }
+}
 
 struct RecoveryCodesView: View {
     let codes: [String]
     @Environment(\.dismiss) private var dismiss
     @State private var copiedCode: String?
     @State private var copiedAll = false
+    @State private var showingExporter = false
 
     /// Formatted block for the share sheet — 1Password, Notes, etc. receive this
     /// as a saveable secure note.
@@ -69,19 +84,20 @@ struct RecoveryCodesView: View {
                     }
                     .padding(.top, 20)
 
-                    Button { copyAll() } label: {
-                        HStack(spacing: 9) {
-                            Image(systemName: copiedAll ? "checkmark" : "doc.on.doc").font(.system(size: 14))
-                            Text(copiedAll ? "Copied!" : "Copy all codes").font(.grotesk(14))
+                    HStack(spacing: 10) {
+                        Button { copyAll() } label: {
+                            outlineLabel(systemName: copiedAll ? "checkmark" : "doc.on.doc",
+                                         title: copiedAll ? "Copied!" : "Copy all")
                         }
-                        .foregroundStyle(PW.sage)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 13)
-                        .overlay(RoundedRectangle(cornerRadius: 13).stroke(PW.sage.opacity(0.3), lineWidth: 1))
+                        .buttonStyle(.plain)
+                        .animation(.default, value: copiedAll)
+
+                        Button { showingExporter = true } label: {
+                            outlineLabel(systemName: "folder", title: "Save to Files")
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                     .padding(.top, 10)
-                    .animation(.default, value: copiedAll)
 
                     Text("These codes will not be shown again.")
                         .font(.grotesk(12)).foregroundStyle(PW.warn)
@@ -99,7 +115,22 @@ struct RecoveryCodesView: View {
                     Button("Done") { dismiss() }.foregroundStyle(PW.sage)
                 }
             }
+            .fileExporter(isPresented: $showingExporter,
+                          document: TextFile(text: shareText),
+                          contentType: .plainText,
+                          defaultFilename: "Paperweight Recovery Codes") { _ in }
         }
+    }
+
+    private func outlineLabel(systemName: String, title: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: systemName).font(.system(size: 14))
+            Text(title).font(.grotesk(14))
+        }
+        .foregroundStyle(PW.sage)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 13)
+        .overlay(RoundedRectangle(cornerRadius: 13).stroke(PW.sage.opacity(0.3), lineWidth: 1))
     }
 
     private func copy(_ code: String) {
