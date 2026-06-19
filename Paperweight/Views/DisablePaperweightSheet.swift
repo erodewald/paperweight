@@ -160,10 +160,26 @@ struct RecoveryCodeEntryView: View {
                         .foregroundStyle(PW.textPrimary)
                         .tracking(0.14 * 20)
                         .multilineTextAlignment(.center)
+                        .onChange(of: codeInput) { _, newValue in
+                            // Drop anything that can't be in a code (handles paste
+                            // of arbitrary text) and cap the length.
+                            let cleaned = Self.sanitize(newValue)
+                            if cleaned != codeInput { codeInput = cleaned }
+                        }
                         .padding()
                         .background(PW.surface)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(PW.hairline, lineWidth: 1))
+                        .overlay(alignment: .trailing) {
+                            if !codeInput.isEmpty {
+                                Button { codeInput = "" } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(PW.textFaint)
+                                }
+                                .buttonStyle(.plain)
+                                .padding(.trailing, 14)
+                            }
+                        }
                         .padding(.horizontal, 24).padding(.top, 28)
 
                     AccentButton(title: "Verify & disable Paperweight",
@@ -193,6 +209,13 @@ struct RecoveryCodeEntryView: View {
             }
         }
         .interactiveDismissDisabled(dissolving)
+    }
+
+    // Valid code alphabet (no ambiguous chars) plus the separator; codes are
+    // 10 chars + one dash, so 11 is the cap.
+    private static let allowed = Set("ABCDEFGHJKLMNPQRSTUVWXYZ23456789-")
+    private static func sanitize(_ s: String) -> String {
+        String(s.uppercased().filter { allowed.contains($0) }.prefix(11))
     }
 
     private func verifyAndDisable() {

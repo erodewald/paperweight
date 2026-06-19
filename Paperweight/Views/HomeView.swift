@@ -108,8 +108,13 @@ struct HomeView: View {
                     }
                     CardDivider()
                     NavigationLink { UnlockView(vm: vm) } label: {
-                        NavRow(title: "Emergency Unlock")
+                        NavRow(title: "Emergency Unlock",
+                               titleColor: vm.config.isEnabled ? PW.textPrimary : PW.textFaint,
+                               value: vm.config.isEnabled ? nil : "Off",
+                               valueColor: PW.textFaint,
+                               showsChevron: vm.config.isEnabled)
                     }
+                    .disabled(!vm.config.isEnabled)
                 }
 
                 Text("Put it down. The world keeps turning.")
