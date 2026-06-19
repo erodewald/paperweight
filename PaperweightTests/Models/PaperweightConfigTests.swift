@@ -21,16 +21,15 @@ final class PaperweightConfigTests: XCTestCase {
         var config = PaperweightConfig()
         config.isEnabled = true
         config.unlockDuration = 600
-        config.requireWatchConfirmation = true
+        config.coolOffDays = 2
         // Don't encode selection in unit tests — requires device authorization
 
-        // Test just the non-FamilyControls fields round-trip via a simplified struct
         let data = try JSONEncoder().encode(config)
         let decoded = try JSONDecoder().decode(PaperweightConfig.self, from: data)
 
         XCTAssertEqual(decoded.isEnabled, true)
         XCTAssertEqual(decoded.unlockDuration, 600)
-        XCTAssertEqual(decoded.requireWatchConfirmation, true)
+        XCTAssertEqual(decoded.coolOffDays, 2)
     }
 
     func test_schedule_isFreeSlot_roundtrips() {

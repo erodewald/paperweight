@@ -63,8 +63,6 @@ struct HomeView: View {
             }
         }
         .onChange(of: vm.config.isEnabled) { _, isEnabled in
-            WatchConnectivityService.shared.sendStatusUpdate(
-                isEnabled: isEnabled, isUnlocked: false, unlockExpires: nil)
             updateShortcutItems(isEnabled: isEnabled)
         }
         .onChange(of: isQuiet) { _, quiet in showQuiet = quiet }

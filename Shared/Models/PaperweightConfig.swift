@@ -7,7 +7,6 @@ struct PaperweightConfig: Codable {
     var isEnabled: Bool = false
     var schedule: PaperweightSchedule? = nil
     var unlockDuration: TimeInterval = Paperweight.defaultUnlockDuration
-    var requireWatchConfirmation: Bool = true
     var registeredNFCTagUID: String? = nil
     var recoveryCodes: [RecoveryCode] = []
     // Cool-off unlock: if the token is lost, the user can request a timed unlock
@@ -38,7 +37,6 @@ struct PaperweightConfig: Codable {
         // (old format) simply resets the schedule rather than throwing.
         schedule = (try? c.decodeIfPresent(PaperweightSchedule.self, forKey: .schedule)) ?? nil
         unlockDuration = try c.decodeIfPresent(TimeInterval.self, forKey: .unlockDuration) ?? Paperweight.defaultUnlockDuration
-        requireWatchConfirmation = try c.decodeIfPresent(Bool.self, forKey: .requireWatchConfirmation) ?? true
         registeredNFCTagUID = try c.decodeIfPresent(String.self, forKey: .registeredNFCTagUID)
         recoveryCodes = try c.decodeIfPresent([RecoveryCode].self, forKey: .recoveryCodes) ?? []
         coolOffDays = try c.decodeIfPresent(Int.self, forKey: .coolOffDays) ?? 1

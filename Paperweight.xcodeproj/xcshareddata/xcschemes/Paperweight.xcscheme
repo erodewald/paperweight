@@ -35,20 +35,6 @@
                ReferencedContainer = "container:Paperweight.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8F0EC1157078CEBB370267E5"
-               BuildableName = "PaperweightWatch.app"
-               BlueprintName = "PaperweightWatch"
-               ReferencedContainer = "container:Paperweight.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

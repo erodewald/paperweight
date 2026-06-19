@@ -79,12 +79,6 @@ struct UnlockView: View {
             // to Home once it's done.
             RecoveryCodeEntryView(vm: vm, onSuccess: { dismiss() })
         }
-        .onChange(of: unlockService.isUnlocked) { _, isUnlocked in
-            WatchConnectivityService.shared.sendStatusUpdate(
-                isEnabled: vm.config.isEnabled,
-                isUnlocked: isUnlocked,
-                unlockExpires: unlockService.unlockExpiresAt)
-        }
     }
 
     private var unlockMinutes: Int { Int(vm.config.unlockDuration / 60) }

@@ -7,48 +7,37 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0419FAEDB15C6EC1BF639783 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		0585E03413FFDF9EFCA29162 /* RemoteConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172C80265C690A1CBA1AB513 /* RemoteConfigService.swift */; };
-		0BF7C0BA9F3338BA1CE6B82C /* UnlockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497698F50F8F5D38D66B556C /* UnlockService.swift */; };
-		0FD70B4533B20650D7424324 /* WatchSessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AABAC42EB3F5CFB37449E /* WatchSessionService.swift */; };
 		16C4692BF8F6FB78A0AF8396 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DBB650985CEBB74ADD653D /* Theme.swift */; };
-		17DCEE5B4E8546ACE60993A1 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
 		18BD42D7B852803D64AE1A29 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		1C19F68A182B0A9FEAE5495F /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
 		1D8836FD8B7D24D197F5D4AC /* UnlockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497698F50F8F5D38D66B556C /* UnlockService.swift */; };
-		1E9AA01D943B0093FF4E8043 /* PaperweightWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		20B484AA1B047782345594AC /* QuietGlassControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D58AD709E5CB710F3B4DC0 /* QuietGlassControls.swift */; };
 		231C780B7D6E28FAD793E4BB /* MockFamilyControlsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2684C065EBF920C9D38FBD2E /* MockFamilyControlsService.swift */; };
 		236D3E1A7F54C81B6219E82A /* PaperweightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */; };
 		278FFD23A1D63FECCF6D55BF /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */; };
 		2CD399E9A43A551F6AD5AA08 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
-		2D7EBE16171798DAE57F47E7 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */; };
 		2D9AA9D10A2B06AC21BD531A /* NFCServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */; };
 		32A91960EBE2A9869D2BC527 /* Phrases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35411EF9BA9E870DFC350E5B /* Phrases.swift */; };
 		32E61BBDBB546858D9D37A59 /* FamilyControlsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */; };
 		343373EAD62D693C32ADF916 /* PaperweightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264A71AAA48B827E09F01182 /* PaperweightTests.swift */; };
 		35246FB65A87F3CE6BA6F9C7 /* PaperweightSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B54307C7A7519A4B3438B18 /* PaperweightSchedule.swift */; };
-		3561F8097DD9F96CD4CE0255 /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
 		3DE7B615FF189E1D7BF27B40 /* NFCSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54086F0817AEB7475A36F78 /* NFCSetupView.swift */; };
 		4656D694A0BC116B5C3C310D /* RestrictionServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */; };
 		4665B03758F0126826B2AC47 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16052C368FABF3E1EF3AF80 /* HomeView.swift */; };
 		488665AECFFF3EBB720368F9 /* RecoveryCodesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1013F9C16F8E8EC69938A8FF /* RecoveryCodesView.swift */; };
 		4F58CACFF6415F405CE76572 /* HomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34DAC18D1685AAB35D06CA2 /* HomeViewModelTests.swift */; };
 		510CE49FE5D5AD1BA17AE0B4 /* RecoveryCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67C0A6F2ECCBB5247566970C /* RecoveryCodeService.swift */; };
-		51274230D6754D3396BCC5E3 /* RestrictionServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */; };
 		5356D37A9C4CCDE78AA00F68 /* FamilyControlsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */; };
 		546FD52159CD41A43610D0CE /* UnlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F5D8553F9CE8E640D7F9853 /* UnlockView.swift */; };
 		564C9D3B84D6180C6FE549CB /* UnlockError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A3B6F147C20B902A2DC11F /* UnlockError.swift */; };
 		56A632507F2C3965376DCEB1 /* RestrictionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F146F4B009BC0C785B756F9 /* RestrictionServiceTests.swift */; };
-		5951D0436F8ECEC27DC09DB7 /* PaperweightSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B54307C7A7519A4B3438B18 /* PaperweightSchedule.swift */; };
 		5D3A5E0B30D512F498412888 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
 		5EC0D88794BAA83D5A2E1336 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
 		5FB4A31E86CBF59A93F84E8B /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
 		63494D2979924E643F1212B6 /* NFCBuyingGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63469D0E8F92F2C207D15434 /* NFCBuyingGuideView.swift */; };
 		635F665B2460E2705D1035EF /* MockNFCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547419179AFC16EBCAE9BE6A /* MockNFCService.swift */; };
 		650E12E7894E8260902B4AB5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
-		6514A59845272D81E15ABEFF /* NFCError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D9688BE57BB64F825FADF /* NFCError.swift */; };
-		66609E28E7C5F449FAD0D3CE /* PaperweightWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */; };
 		68A04CA76B3553BC9590FD78 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
 		6D5F7540E174A627BABDE9B3 /* NFCServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */; };
 		7033EAF2C0ABBF499384B243 /* NFCServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */; };
@@ -60,13 +49,11 @@
 		81E670B9862CFB149B8BA647 /* MockManagedSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EAABD1B8EF17ADDF63430A /* MockManagedSettingsStore.swift */; };
 		82BB5D4E7DF0F181BE1DDD56 /* PaperweightSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B54307C7A7519A4B3438B18 /* PaperweightSchedule.swift */; };
 		83EC4D3E7E5AC0D75F3CF27C /* DisablePaperweightSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B07495D8CF9F6B55D21578 /* DisablePaperweightSheet.swift */; };
-		894C5AE19CDAC84A19EEE54C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F11553AFFDDF07E4E7F7595 /* Assets.xcassets */; };
 		89A5E3CB6E85F46BFA2444D8 /* ConfigStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA5321F30E75F5E4C18054 /* ConfigStoreTests.swift */; };
 		8BD8EA08C0DF578A025D69B0 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		8E0D86BC891DB8660253F9BF /* PaperweightMonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8FA4807D8F3098534BFD82FF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DBB650985CEBB74ADD653D /* Theme.swift */; };
 		91738619322FD967319A090B /* Spectral-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EDC912C852DEE8B08F6D2C83 /* Spectral-Light.ttf */; };
-		92C1A5EE122647AC9A8E104D /* FamilyControlsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */; };
 		92D65888149ADC4999112910 /* RecoveryCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D3454799163DB263AAA357 /* RecoveryCode.swift */; };
 		985994F02E9178DA3E96ACC6 /* Spectral-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7AC3901EB6BEE3A3D4AD897 /* Spectral-LightItalic.ttf */; };
 		9D43ED8403454EB38E4B7ED5 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
@@ -75,14 +62,12 @@
 		A302E708456D7170EED1527A /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */; };
 		A348E46CC02DA56F28126EAE /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		A53DA99915F59AA209AC5529 /* PaperweightConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61140B5FB638BF2A018B6B9 /* PaperweightConfigTests.swift */; };
-		A7852B16F1AA0C2585FB16DB /* RecoveryCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D3454799163DB263AAA357 /* RecoveryCode.swift */; };
 		A7D129795779FC6DB2893F51 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		AAA31E1B007C9E8E59B5918A /* FamilyActivitySelection+Summary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5246118BE8B6DCB165645370 /* FamilyActivitySelection+Summary.swift */; };
 		AB33A18842DBE7B2E5FE13EF /* RestrictionServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */; };
 		AC2A289D780D35CAA93E81BE /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
 		ADD1522D64DC58D31B162343 /* PaperweightSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B54307C7A7519A4B3438B18 /* PaperweightSchedule.swift */; };
 		AFD4876C736B06CA0FA4D105 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
-		B127D810CBA35E6A2C0562DF /* SchibstedGrotesk.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 210EF05BC79AAABF75F3BD4A /* SchibstedGrotesk.ttf */; };
 		B19AAC31F05CE108F2B19A1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2DCE96A22EF690AA116DAB93 /* Assets.xcassets */; };
 		B3B16CBBAF9C7007E03A1C2D /* NFCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5F811117BA243EEA446573 /* NFCService.swift */; };
 		B42620646E967A28A80E0588 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
@@ -90,7 +75,6 @@
 		BA8884DEF16AC136977095A0 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		BBE028A9F17A27DA612374EE /* SchibstedGrotesk.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 210EF05BC79AAABF75F3BD4A /* SchibstedGrotesk.ttf */; };
 		BDEBCA32A049E3FA07DC0C3B /* PaperweightMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */; };
-		BFF1BE028BB52C71E72F7AFB /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		C216DB6EE0BF7910C50A2ED4 /* UnlockServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE80E7DAADF971A042189DE /* UnlockServiceTests.swift */; };
 		C52C44661DB163A6A674CD94 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		C6523CE66E1247875864A35D /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
@@ -101,22 +85,16 @@
 		CFF71B13D0936160DF62DF25 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		D31857E0FDE54BDC9194C2F7 /* CoreNFC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9718F6AD0F49D6618322A25C /* CoreNFC.framework */; };
 		D77BA22D048D5BC84FAD3A61 /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
-		DB329E67B7F3A442C8FF76FE /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DBB650985CEBB74ADD653D /* Theme.swift */; };
 		DB8C14210D8D7D49B3B80C92 /* NFCError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D9688BE57BB64F825FADF /* NFCError.swift */; };
-		DCA57A3C7582D159FA71683E /* WatchConnectivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9EB3CD52DBC2A49F6823617 /* WatchConnectivityService.swift */; };
 		DE14CE3876EB0B465A38D391 /* UnlockError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A3B6F147C20B902A2DC11F /* UnlockError.swift */; };
 		DFECF6080B935CA87530DE30 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
-		E00E508CC05A4079C6A99AD4 /* NFCServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */; };
-		E55D32A33640531235C912C0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		E59D5A2C7ACFE311F51E25AB /* FamilyControlsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3559557FC1A539F56DBF5628 /* FamilyControlsService.swift */; };
 		E7389ADA39ACF946603D5564 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		EF65ED71C4FF21E93D27E722 /* ScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A67E90D190AAFCA2C024FF7 /* ScheduleView.swift */; };
 		F1F9010363988A4AC15640F4 /* UnlockError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A3B6F147C20B902A2DC11F /* UnlockError.swift */; };
 		F226E770514F86CD56A48425 /* NFCError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D9688BE57BB64F825FADF /* NFCError.swift */; };
-		F485D39ECAB798E93AFC8B0F /* UnlockError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A3B6F147C20B902A2DC11F /* UnlockError.swift */; };
 		F5F68C74DA31D2A3967CDADC /* UnlockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497698F50F8F5D38D66B556C /* UnlockService.swift */; };
 		FC015DB3B839A98F3647235A /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
-		FD0EA9F8EFDE14856E793040 /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9FB998664C51496BE2C1811 /* StatusView.swift */; };
 		FDB136D8C8B149F52135D5BC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DBB650985CEBB74ADD653D /* Theme.swift */; };
 /* End PBXBuildFile section */
 
@@ -128,27 +106,9 @@
 			remoteGlobalIDString = BAC30A900654386918FD9C87;
 			remoteInfo = PaperweightMonitor;
 		};
-		EA9FE098286CC13BA125FB44 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3E6ACD68C01D066401A4AD6B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8F0EC1157078CEBB370267E5;
-			remoteInfo = PaperweightWatch;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		64F06184EB1DD364B900F6F8 /* Embed Watch Content */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
-			dstSubfolderSpec = 16;
-			files = (
-				1E9AA01D943B0093FF4E8043 /* PaperweightWatch.app in Embed Watch Content */,
-			);
-			name = "Embed Watch Content";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BF07C0CEE76710A1813B47A8 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -163,7 +123,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0F11553AFFDDF07E4E7F7595 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0F5D8553F9CE8E640D7F9853 /* UnlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockView.swift; sourceTree = "<group>"; };
 		1013F9C16F8E8EC69938A8FF /* RecoveryCodesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryCodesView.swift; sourceTree = "<group>"; };
 		14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = PaperweightMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -189,14 +148,11 @@
 		67C0A6F2ECCBB5247566970C /* RecoveryCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryCodeService.swift; sourceTree = "<group>"; };
 		6B5F811117BA243EEA446573 /* NFCService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCService.swift; sourceTree = "<group>"; };
 		6C7930F0F3E94F416D019E71 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightWatchApp.swift; sourceTree = "<group>"; };
 		72DBB650985CEBB74ADD653D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
-		831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaperweightWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E24AC0D3BBE607941DBA376 /* Paperweight.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Paperweight.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightMonitor.swift; sourceTree = "<group>"; };
 		92A3B6F147C20B902A2DC11F /* UnlockError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockError.swift; sourceTree = "<group>"; };
 		9718F6AD0F49D6618322A25C /* CoreNFC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreNFC.framework; path = System/Library/Frameworks/CoreNFC.framework; sourceTree = SDKROOT; };
-		9C1B25209D67A66461DCA107 /* PaperweightWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PaperweightWatch.entitlements; sourceTree = "<group>"; };
 		A2D5EC807AF58E21436D3AC4 /* PaperweightTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PaperweightTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8EAABD1B8EF17ADDF63430A /* MockManagedSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockManagedSettingsStore.swift; sourceTree = "<group>"; };
 		A9A7DCD7D164C6FCF489982A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -219,15 +175,11 @@
 		D7AC3901EB6BEE3A3D4AD897 /* Spectral-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-LightItalic.ttf"; sourceTree = "<group>"; };
 		D7D3454799163DB263AAA357 /* RecoveryCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryCode.swift; sourceTree = "<group>"; };
 		D87CF16D7FC3A797014E83CF /* ScheduleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleService.swift; sourceTree = "<group>"; };
-		DA4AABAC42EB3F5CFB37449E /* WatchSessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionService.swift; sourceTree = "<group>"; };
 		DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightApp.swift; sourceTree = "<group>"; };
 		E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		E73E8039E73078EDAFA8A63A /* ConfigStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigStore.swift; sourceTree = "<group>"; };
 		EDC912C852DEE8B08F6D2C83 /* Spectral-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Light.ttf"; sourceTree = "<group>"; };
 		F18D9688BE57BB64F825FADF /* NFCError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCError.swift; sourceTree = "<group>"; };
-		F5F14F5172FEB39E2DACC7C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		F9EB3CD52DBC2A49F6823617 /* WatchConnectivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityService.swift; sourceTree = "<group>"; };
-		F9FB998664C51496BE2C1811 /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
 		FD69FAE80E790B2DD7CC28D2 /* DissolveText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DissolveText.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -283,7 +235,6 @@
 				F511CFA2C41D8B37D7A58687 /* Paperweight */,
 				ADBE16A08DF4F7DBE0A88803 /* PaperweightMonitor */,
 				C5BFA2ECD9018099B0F47A2D /* PaperweightTests */,
-				F12F3519BF9E2F37F3946225 /* PaperweightWatch */,
 				E7AF17536E1B9128C2C977E9 /* Shared */,
 				80BD27DCFA49CCF604CE4441 /* Frameworks */,
 				E9E126D579897321F3F23B63 /* Products */,
@@ -298,14 +249,6 @@
 				547419179AFC16EBCAE9BE6A /* MockNFCService.swift */,
 			);
 			path = Mocks;
-			sourceTree = "<group>";
-		};
-		2935375120C61AF459EBB433 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				F9FB998664C51496BE2C1811 /* StatusView.swift */,
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 		30BC727102A0D14E22CB3BEE /* Fonts */ = {
@@ -335,14 +278,6 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		4DAC84F32907B75849031072 /* Services */ = {
-			isa = PBXGroup;
-			children = (
-				DA4AABAC42EB3F5CFB37449E /* WatchSessionService.swift */,
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
 		4F9A3E42B645E59D0E5FE246 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -351,7 +286,6 @@
 				67C0A6F2ECCBB5247566970C /* RecoveryCodeService.swift */,
 				172C80265C690A1CBA1AB513 /* RemoteConfigService.swift */,
 				D87CF16D7FC3A797014E83CF /* ScheduleService.swift */,
-				F9EB3CD52DBC2A49F6823617 /* WatchConnectivityService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -465,7 +399,6 @@
 				8E24AC0D3BBE607941DBA376 /* Paperweight.app */,
 				14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */,
 				A2D5EC807AF58E21436D3AC4 /* PaperweightTests.xctest */,
-				831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -476,19 +409,6 @@
 				D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */,
 			);
 			path = ViewModels;
-			sourceTree = "<group>";
-		};
-		F12F3519BF9E2F37F3946225 /* PaperweightWatch */ = {
-			isa = PBXGroup;
-			children = (
-				4DAC84F32907B75849031072 /* Services */,
-				2935375120C61AF459EBB433 /* Views */,
-				0F11553AFFDDF07E4E7F7595 /* Assets.xcassets */,
-				F5F14F5172FEB39E2DACC7C7 /* Info.plist */,
-				9C1B25209D67A66461DCA107 /* PaperweightWatch.entitlements */,
-				712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */,
-			);
-			path = PaperweightWatch;
 			sourceTree = "<group>";
 		};
 		F511CFA2C41D8B37D7A58687 /* Paperweight */ = {
@@ -526,24 +446,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8F0EC1157078CEBB370267E5 /* PaperweightWatch */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 438CF65160C618CCC905ABF1 /* Build configuration list for PBXNativeTarget "PaperweightWatch" */;
-			buildPhases = (
-				6F69ECF3DB024BF81D5B467F /* Sources */,
-				220896481F95A56A20FBE9B7 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = PaperweightWatch;
-			packageProductDependencies = (
-			);
-			productName = PaperweightWatch;
-			productReference = 831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */;
-			productType = "com.apple.product-type.application";
-		};
 		B31792123AFFB03E53C3177F /* Paperweight */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13988AA8C3DF887923264289 /* Build configuration list for PBXNativeTarget "Paperweight" */;
@@ -552,13 +454,11 @@
 				0C22A1339B89CD02C8ED102C /* Resources */,
 				9A432A40CFFD49F9D027786C /* Frameworks */,
 				BF07C0CEE76710A1813B47A8 /* Embed Foundation Extensions */,
-				64F06184EB1DD364B900F6F8 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				A3BD179639079AC178CF6B2C /* PBXTargetDependency */,
-				519BC03059C454C4C8C03790 /* PBXTargetDependency */,
 			);
 			name = Paperweight;
 			packageProductDependencies = (
@@ -612,9 +512,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
-					8F0EC1157078CEBB370267E5 = {
-						DevelopmentTeam = 6X54AWP53W;
-					};
 					B31792123AFFB03E53C3177F = {
 						DevelopmentTeam = 6X54AWP53W;
 					};
@@ -643,7 +540,6 @@
 				B31792123AFFB03E53C3177F /* Paperweight */,
 				BAC30A900654386918FD9C87 /* PaperweightMonitor */,
 				B8DCF9B93F82CB05909096C3 /* PaperweightTests */,
-				8F0EC1157078CEBB370267E5 /* PaperweightWatch */,
 			);
 		};
 /* End PBXProject section */
@@ -660,43 +556,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		220896481F95A56A20FBE9B7 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				894C5AE19CDAC84A19EEE54C /* Assets.xcassets in Resources */,
-				B127D810CBA35E6A2C0562DF /* SchibstedGrotesk.ttf in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		6F69ECF3DB024BF81D5B467F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0419FAEDB15C6EC1BF639783 /* AppScheduleOverride.swift in Sources */,
-				BFF1BE028BB52C71E72F7AFB /* ConfigStore.swift in Sources */,
-				E55D32A33640531235C912C0 /* Constants.swift in Sources */,
-				92C1A5EE122647AC9A8E104D /* FamilyControlsServiceProtocol.swift in Sources */,
-				2D7EBE16171798DAE57F47E7 /* HomeViewModel.swift in Sources */,
-				6514A59845272D81E15ABEFF /* NFCError.swift in Sources */,
-				E00E508CC05A4079C6A99AD4 /* NFCServiceProtocol.swift in Sources */,
-				3561F8097DD9F96CD4CE0255 /* PaperweightConfig.swift in Sources */,
-				5951D0436F8ECEC27DC09DB7 /* PaperweightSchedule.swift in Sources */,
-				66609E28E7C5F449FAD0D3CE /* PaperweightWatchApp.swift in Sources */,
-				A7852B16F1AA0C2585FB16DB /* RecoveryCode.swift in Sources */,
-				17DCEE5B4E8546ACE60993A1 /* RestrictionService.swift in Sources */,
-				51274230D6754D3396BCC5E3 /* RestrictionServiceProtocols.swift in Sources */,
-				FD0EA9F8EFDE14856E793040 /* StatusView.swift in Sources */,
-				DB329E67B7F3A442C8FF76FE /* Theme.swift in Sources */,
-				F485D39ECAB798E93AFC8B0F /* UnlockError.swift in Sources */,
-				0BF7C0BA9F3338BA1CE6B82C /* UnlockService.swift in Sources */,
-				0FD70B4533B20650D7424324 /* WatchSessionService.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C2D5C27273CB6625D7FB36A9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -734,7 +596,6 @@
 				F1F9010363988A4AC15640F4 /* UnlockError.swift in Sources */,
 				F5F68C74DA31D2A3967CDADC /* UnlockService.swift in Sources */,
 				546FD52159CD41A43610D0CE /* UnlockView.swift in Sources */,
-				DCA57A3C7582D159FA71683E /* WatchConnectivityService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -795,11 +656,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		519BC03059C454C4C8C03790 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8F0EC1157078CEBB370267E5 /* PaperweightWatch */;
-			targetProxy = EA9FE098286CC13BA125FB44 /* PBXContainerItemProxy */;
-		};
 		A3BD179639079AC178CF6B2C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BAC30A900654386918FD9C87 /* PaperweightMonitor */;
@@ -808,20 +664,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		124928CBE5A4662D89743C3D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = PaperweightWatch/PaperweightWatch.entitlements;
-				INFOPLIST_FILE = PaperweightWatch/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = media.baltar.paperweight.watchapp;
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 10.0;
-			};
-			name = Debug;
-		};
 		14C24AC43273B29E22456739 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -907,10 +749,10 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.9;
-				WATCHOS_DEPLOYMENT_TARGET = 7.0;
 			};
 			name = Release;
 		};
@@ -930,20 +772,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
-		};
-		B043B4169FD5E864900897D6 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = PaperweightWatch/PaperweightWatch.entitlements;
-				INFOPLIST_FILE = PaperweightWatch/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = media.baltar.paperweight.watchapp;
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 10.0;
-			};
-			name = Release;
 		};
 		D7317B99EC25D8C3EA041629 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1002,10 +830,10 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.9;
-				WATCHOS_DEPLOYMENT_TARGET = 7.0;
 			};
 			name = Debug;
 		};
@@ -1069,15 +897,6 @@
 			buildConfigurations = (
 				14C24AC43273B29E22456739 /* Debug */,
 				D8A1444893787DB40B43E76E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		438CF65160C618CCC905ABF1 /* Build configuration list for PBXNativeTarget "PaperweightWatch" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				124928CBE5A4662D89743C3D /* Debug */,
-				B043B4169FD5E864900897D6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
