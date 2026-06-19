@@ -22,5 +22,9 @@
     <string>media.baltar.paperweight</string>
     <key>WKWatchOnly</key>
     <false/>
+    <key>UIAppFonts</key>
+    <array>
+        <string>SchibstedGrotesk.ttf</string>
+    </array>
 </dict>
 </plist>

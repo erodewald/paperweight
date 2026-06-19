@@ -60,6 +60,7 @@
 		81E670B9862CFB149B8BA647 /* MockManagedSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EAABD1B8EF17ADDF63430A /* MockManagedSettingsStore.swift */; };
 		82BB5D4E7DF0F181BE1DDD56 /* PaperweightSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B54307C7A7519A4B3438B18 /* PaperweightSchedule.swift */; };
 		83EC4D3E7E5AC0D75F3CF27C /* DisablePaperweightSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B07495D8CF9F6B55D21578 /* DisablePaperweightSheet.swift */; };
+		894C5AE19CDAC84A19EEE54C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F11553AFFDDF07E4E7F7595 /* Assets.xcassets */; };
 		89A5E3CB6E85F46BFA2444D8 /* ConfigStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA5321F30E75F5E4C18054 /* ConfigStoreTests.swift */; };
 		8BD8EA08C0DF578A025D69B0 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		8E0D86BC891DB8660253F9BF /* PaperweightMonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -81,6 +82,7 @@
 		AC2A289D780D35CAA93E81BE /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
 		ADD1522D64DC58D31B162343 /* PaperweightSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B54307C7A7519A4B3438B18 /* PaperweightSchedule.swift */; };
 		AFD4876C736B06CA0FA4D105 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
+		B127D810CBA35E6A2C0562DF /* SchibstedGrotesk.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 210EF05BC79AAABF75F3BD4A /* SchibstedGrotesk.ttf */; };
 		B19AAC31F05CE108F2B19A1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2DCE96A22EF690AA116DAB93 /* Assets.xcassets */; };
 		B3B16CBBAF9C7007E03A1C2D /* NFCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5F811117BA243EEA446573 /* NFCService.swift */; };
 		B42620646E967A28A80E0588 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
@@ -161,6 +163,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0F11553AFFDDF07E4E7F7595 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0F5D8553F9CE8E640D7F9853 /* UnlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockView.swift; sourceTree = "<group>"; };
 		1013F9C16F8E8EC69938A8FF /* RecoveryCodesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryCodesView.swift; sourceTree = "<group>"; };
 		14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = PaperweightMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -480,6 +483,7 @@
 			children = (
 				4DAC84F32907B75849031072 /* Services */,
 				2935375120C61AF459EBB433 /* Views */,
+				0F11553AFFDDF07E4E7F7595 /* Assets.xcassets */,
 				F5F14F5172FEB39E2DACC7C7 /* Info.plist */,
 				9C1B25209D67A66461DCA107 /* PaperweightWatch.entitlements */,
 				712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */,
@@ -527,6 +531,7 @@
 			buildConfigurationList = 438CF65160C618CCC905ABF1 /* Build configuration list for PBXNativeTarget "PaperweightWatch" */;
 			buildPhases = (
 				6F69ECF3DB024BF81D5B467F /* Sources */,
+				220896481F95A56A20FBE9B7 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -652,6 +657,15 @@
 				BBE028A9F17A27DA612374EE /* SchibstedGrotesk.ttf in Resources */,
 				91738619322FD967319A090B /* Spectral-Light.ttf in Resources */,
 				985994F02E9178DA3E96ACC6 /* Spectral-LightItalic.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		220896481F95A56A20FBE9B7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				894C5AE19CDAC84A19EEE54C /* Assets.xcassets in Resources */,
+				B127D810CBA35E6A2C0562DF /* SchibstedGrotesk.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

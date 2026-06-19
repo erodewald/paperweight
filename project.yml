@@ -109,6 +109,7 @@ targets:
     sources:
       - path: PaperweightWatch
       - path: Shared
+      - path: Paperweight/Resources/Fonts/SchibstedGrotesk.ttf
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: media.baltar.paperweight.watchapp
