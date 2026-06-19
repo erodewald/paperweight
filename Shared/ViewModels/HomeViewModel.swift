@@ -45,6 +45,18 @@ final class HomeViewModel: ObservableObject {
         restrictionService.removeAll()
     }
 
+    /// Redeems a one-time recovery code: marks it permanently used and disables
+    /// Paperweight, persisting both together so the code can never be reused.
+    func disableWithRecoveryCode(_ codeID: UUID) {
+        if let idx = config.recoveryCodes.firstIndex(where: { $0.id == codeID }) {
+            config.recoveryCodes[idx].isUsed = true
+        }
+        config.isEnabled = false
+        config.unlockRequestedAt = nil
+        try? configStore.save(config)
+        restrictionService.removeAll()
+    }
+
     func saveSelection() {
         try? configStore.save(config)
         syncRestrictions()

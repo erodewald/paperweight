@@ -93,6 +93,7 @@
 		C871CD3DFEC37637DA7E4D27 /* RestrictionServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */; };
 		C9721FF3565FB9142E9D0A3B /* CoreNFC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9718F6AD0F49D6618322A25C /* CoreNFC.framework */; };
 		CD08568061993B59263ADD73 /* RecoveryCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D3454799163DB263AAA357 /* RecoveryCode.swift */; };
+		CE8076341C31A3D1062D6B64 /* DissolveText.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD69FAE80E790B2DD7CC28D2 /* DissolveText.swift */; };
 		CFF71B13D0936160DF62DF25 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		D31857E0FDE54BDC9194C2F7 /* CoreNFC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9718F6AD0F49D6618322A25C /* CoreNFC.framework */; };
 		D77BA22D048D5BC84FAD3A61 /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
@@ -220,6 +221,7 @@
 		F5F14F5172FEB39E2DACC7C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F9EB3CD52DBC2A49F6823617 /* WatchConnectivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityService.swift; sourceTree = "<group>"; };
 		F9FB998664C51496BE2C1811 /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
+		FD69FAE80E790B2DD7CC28D2 /* DissolveText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DissolveText.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -364,6 +366,7 @@
 		5C37387709B78025025AF4B0 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				FD69FAE80E790B2DD7CC28D2 /* DissolveText.swift */,
 				B7D58AD709E5CB710F3B4DC0 /* QuietGlassControls.swift */,
 				CFE34EBC31B40416E68E9A9C /* QuietGlassMotifs.swift */,
 			);
@@ -683,6 +686,7 @@
 				BA8884DEF16AC136977095A0 /* ConfigStore.swift in Sources */,
 				650E12E7894E8260902B4AB5 /* Constants.swift in Sources */,
 				83EC4D3E7E5AC0D75F3CF27C /* DisablePaperweightSheet.swift in Sources */,
+				CE8076341C31A3D1062D6B64 /* DissolveText.swift in Sources */,
 				AAA31E1B007C9E8E59B5918A /* FamilyActivitySelection+Summary.swift in Sources */,
 				E59D5A2C7ACFE311F51E25AB /* FamilyControlsService.swift in Sources */,
 				73E676B9CFAB3F345FE496C5 /* FamilyControlsServiceProtocol.swift in Sources */,

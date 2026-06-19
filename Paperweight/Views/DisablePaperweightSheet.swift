@@ -129,6 +129,7 @@ struct RecoveryCodeEntryView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var codeInput = ""
     @State private var showingInvalidAlert = false
+    @State private var dissolving = false
 
     var body: some View {
         NavigationStack {
@@ -137,31 +138,40 @@ struct RecoveryCodeEntryView: View {
 
                 GlyphOrb(size: 72, systemName: "key.fill", tint: PW.dawnGlow)
                     .padding(.bottom, 20)
-                Text("Recovery code")
+                Text(dissolving ? "Unlocked" : "Recovery code")
                     .font(.spectral(24)).foregroundStyle(PW.textPrimary)
-                Text("Enter one of the single-use codes you saved. This will permanently disable Paperweight.")
+                    .animation(.easeInOut, value: dissolving)
+                Text(dissolving
+                     ? "That code is spent. Paperweight is off."
+                     : "Enter one of the single-use codes you saved. This will permanently disable Paperweight.")
                     .font(.grotesk(13)).foregroundStyle(PW.textMuted)
                     .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 10).padding(.horizontal, 20)
 
-                TextField("", text: $codeInput, prompt: Text("XXXXX-XXXXX").foregroundColor(PW.textFaint))
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.characters)
-                    .font(.grotesk(20, weight: .semibold))
-                    .foregroundStyle(PW.textPrimary)
-                    .tracking(0.14 * 20)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                    .background(PW.surface)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(PW.hairline, lineWidth: 1))
-                    .padding(.horizontal, 24).padding(.top, 28)
+                if dissolving {
+                    DissolveText(text: codeInput, dissolve: true)
+                        .frame(height: 56)
+                        .padding(.horizontal, 24).padding(.top, 28)
+                } else {
+                    TextField("", text: $codeInput, prompt: Text("XXXXX-XXXXX").foregroundColor(PW.textFaint))
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.characters)
+                        .font(.grotesk(20, weight: .semibold))
+                        .foregroundStyle(PW.textPrimary)
+                        .tracking(0.14 * 20)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                        .background(PW.surface)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(PW.hairline, lineWidth: 1))
+                        .padding(.horizontal, 24).padding(.top, 28)
 
-                AccentButton(title: "Verify & disable Paperweight",
-                             enabled: !codeInput.trimmingCharacters(in: .whitespaces).isEmpty) {
-                    verifyAndDisable()
+                    AccentButton(title: "Verify & disable Paperweight",
+                                 enabled: !codeInput.trimmingCharacters(in: .whitespaces).isEmpty) {
+                        verifyAndDisable()
+                    }
+                    .padding(.horizontal, 24).padding(.top, 18)
                 }
-                .padding(.horizontal, 24).padding(.top, 18)
 
                 Spacer()
             }
@@ -170,8 +180,10 @@ struct RecoveryCodeEntryView: View {
             .navigationTitle("Recovery Code")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }.foregroundStyle(PW.textMuted)
+                if !dissolving {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { dismiss() }.foregroundStyle(PW.textMuted)
+                    }
                 }
             }
             .alert("Invalid Code", isPresented: $showingInvalidAlert) {
@@ -180,6 +192,7 @@ struct RecoveryCodeEntryView: View {
                 Text("That code is incorrect or has already been used.")
             }
         }
+        .interactiveDismissDisabled(dissolving)
     }
 
     private func verifyAndDisable() {
@@ -187,12 +200,14 @@ struct RecoveryCodeEntryView: View {
             showingInvalidAlert = true
             return
         }
-        if let idx = vm.config.recoveryCodes.firstIndex(where: { $0.id == codeID }) {
-            vm.config.recoveryCodes[idx].isUsed = true
-        }
-        Task {
-            try? await vm.disablePaperweight()
-            ScheduleService.shared.updateSchedule(nil, enabled: false)
+        // Invalidate + disable immediately so the code is spent even if the app
+        // is killed mid-animation, then play the dissolve and exit.
+        vm.disableWithRecoveryCode(codeID)
+        ScheduleService.shared.updateSchedule(nil, enabled: false)
+        Task { @MainActor in
+            withAnimation { dissolving = true }
+            try? await Task.sleep(for: .seconds(1.3))
+            dismiss()
             onSuccess()
         }
     }

@@ -8,6 +8,7 @@ struct UnlockView: View {
     )
     @State private var error: Error?
     @State private var showingRecoveryEntry = false
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         VStack(spacing: 0) {
@@ -74,7 +75,9 @@ struct UnlockView: View {
             get: { error != nil }, set: { if !$0 { error = nil } }
         )) { Button("OK", role: .cancel) {} } message: { Text(error?.localizedDescription ?? "") }
         .sheet(isPresented: $showingRecoveryEntry) {
-            RecoveryCodeEntryView(vm: vm, onSuccess: {})
+            // Redeeming a recovery code disables Paperweight entirely — pop back
+            // to Home once it's done.
+            RecoveryCodeEntryView(vm: vm, onSuccess: { dismiss() })
         }
         .onChange(of: unlockService.isUnlocked) { _, isUnlocked in
             WatchConnectivityService.shared.sendStatusUpdate(
