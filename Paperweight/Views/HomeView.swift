@@ -379,13 +379,23 @@ private struct QuietScreen: View {
 
 // MARK: - Hold to unlock
 
-/// A press-and-hold control: the fill sweeps across as you hold, and only a
-/// completed hold fires `onComplete` (opens the NFC turn-off flow). Deliberate
-/// by design — a moment of intention rather than a tap.
+/// A press-and-hold control: the fill accelerates (ease-in, slow → fast) as you
+/// hold, with haptic pulses that quicken and intensify to match, then a success
+/// thunk on completion (opens the NFC turn-off flow). Deliberate by design — a
+/// moment of intention rather than a tap.
 private struct HoldToUnlockButton: View {
     var onComplete: () -> Void
-    private let duration = 1.1
+
+    private let duration: Double = 1.3
+    private let easeExponent: Double = 2.2    // >1 = slow start, fast finish
+    private let hapticStep: CGFloat = 0.06    // pulse every 6% of (eased) progress
+
     @State private var progress: CGFloat = 0
+    @State private var holdStart: Date?
+    @State private var lastHapticStep = 0
+    @State private var timer: Timer?
+    @State private var completed = false
+    @State private var impact = UIImpactFeedbackGenerator(style: .medium)
 
     var body: some View {
         ZStack {
@@ -405,12 +415,56 @@ private struct HoldToUnlockButton: View {
         .frame(height: 50)
         .overlay(Capsule().stroke(PW.sage.opacity(0.4), lineWidth: 1))
         .contentShape(Capsule())
-        .onLongPressGesture(minimumDuration: duration, maximumDistance: 50) {
-            onComplete()
-        } onPressingChanged: { pressing in
-            withAnimation(.linear(duration: pressing ? duration : 0.25)) {
-                progress = pressing ? 1 : 0
-            }
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in start() }
+                .onEnded { _ in cancel() }
+        )
+    }
+
+    private func start() {
+        guard timer == nil, !completed else { return }
+        completed = false
+        lastHapticStep = 0
+        holdStart = Date()
+        impact.prepare()
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { _ in tick() }
+    }
+
+    private func tick() {
+        guard let holdStart else { return }
+        let frac = min(Date().timeIntervalSince(holdStart) / duration, 1)
+        let eased = CGFloat(pow(frac, easeExponent))
+        progress = eased
+
+        // Pulses are spaced evenly in eased progress; since progress
+        // accelerates, the real-time gaps shrink — slow → fast.
+        let step = Int(eased / hapticStep)
+        if step > lastHapticStep {
+            lastHapticStep = step
+            impact.impactOccurred(intensity: 0.3 + 0.7 * eased)
+            impact.prepare()
         }
+        if frac >= 1 { complete() }
+    }
+
+    private func complete() {
+        guard !completed else { return }
+        completed = true
+        invalidate()
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        onComplete()
+    }
+
+    private func cancel() {
+        guard !completed else { invalidate(); return }
+        invalidate()
+        withAnimation(.easeOut(duration: 0.25)) { progress = 0 }
+    }
+
+    private func invalidate() {
+        timer?.invalidate()
+        timer = nil
+        holdStart = nil
     }
 }
