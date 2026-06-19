@@ -1,14 +1,23 @@
 import CoreNFC
 
 final class NFCService: NSObject, NFCServiceProtocol {
+    /// Single instance — there's one NFC radio, so one session manager avoids
+    /// "resource unavailable" collisions between screens.
+    static let shared = NFCService()
+
     private var continuation: CheckedContinuation<String, Error>?
     private var session: NFCTagReaderSession?
 
     func readTagUID() async throws -> String {
         guard NFCTagReaderSession.readingAvailable else { throw NFCError.notSupported }
-        // Never start a second session on top of an in-flight one — doing so
-        // would overwrite (and leak) the pending continuation.
-        guard continuation == nil else { throw NFCError.busy }
+        // Tear down anything stale first. A prior session can fail to begin
+        // ("resource unavailable") without ever calling the delegate, leaving a
+        // pending continuation; clearing it here lets a retry proceed instead of
+        // getting stuck.
+        finish(.failure(CancellationError()))
+        session?.invalidate()
+        session = nil
+
         return try await withCheckedThrowingContinuation { continuation in
             self.continuation = continuation
             let session = NFCTagReaderSession(pollingOption: [.iso14443, .iso15693], delegate: self, queue: .main)
@@ -19,7 +28,7 @@ final class NFCService: NSObject, NFCServiceProtocol {
     }
 
     /// Resumes the pending continuation exactly once and clears session state.
-    /// Safe to call from any delegate path; later calls are no-ops.
+    /// No-op if nothing is pending; safe to call from any path.
     private func finish(_ result: Result<String, Error>) {
         guard let continuation else { return }
         self.continuation = nil

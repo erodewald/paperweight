@@ -4,7 +4,7 @@ struct DisablePaperweightSheet: View {
     @ObservedObject var vm: HomeViewModel
     @Environment(\.dismiss) private var dismiss
     @StateObject private var unlockService = UnlockService(
-        nfcService: NFCService(),
+        nfcService: NFCService.shared,
         restrictionService: RestrictionService()
     )
     @State private var showingRecoveryEntry = false

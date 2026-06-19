@@ -3,7 +3,7 @@ import SwiftUI
 struct UnlockView: View {
     @ObservedObject var vm: HomeViewModel
     @StateObject private var unlockService = UnlockService(
-        nfcService: NFCService(),
+        nfcService: NFCService.shared,
         restrictionService: RestrictionService()
     )
     @State private var error: Error?
