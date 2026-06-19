@@ -6,13 +6,8 @@ struct StatusView: View {
     var body: some View {
         ZStack {
             PW.black.ignoresSafeArea()
-            if session.unlockConfirmationPending {
-                ConfirmUnlockView(session: session)
-            } else {
-                mainStatus
-            }
+            mainStatus
         }
-        .animation(.easeInOut, value: session.unlockConfirmationPending)
     }
 
     @ViewBuilder

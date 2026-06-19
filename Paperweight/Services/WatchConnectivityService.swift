@@ -20,18 +20,6 @@ final class WatchConnectivityService: NSObject, ObservableObject {
         ]
         WCSession.default.sendMessage(message, replyHandler: nil, errorHandler: nil)
     }
-
-    func requestWatchConfirmation() async -> Bool {
-        guard WCSession.default.isReachable else { return true }
-        return await withCheckedContinuation { continuation in
-            WCSession.default.sendMessage(["action": "confirmUnlock"], replyHandler: { reply in
-                let confirmed = reply["confirmed"] as? Bool ?? false
-                continuation.resume(returning: confirmed)
-            }, errorHandler: { _ in
-                continuation.resume(returning: false)
-            })
-        }
-    }
 }
 
 extension WatchConnectivityService: WCSessionDelegate {

@@ -43,7 +43,6 @@
 		5D3A5E0B30D512F498412888 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
 		5EC0D88794BAA83D5A2E1336 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
 		5FB4A31E86CBF59A93F84E8B /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
-		607E11DB3417A76739DF2E19 /* ConfirmUnlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9926973113F59267BAFE8FEE /* ConfirmUnlockView.swift */; };
 		63494D2979924E643F1212B6 /* NFCBuyingGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63469D0E8F92F2C207D15434 /* NFCBuyingGuideView.swift */; };
 		635F665B2460E2705D1035EF /* MockNFCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547419179AFC16EBCAE9BE6A /* MockNFCService.swift */; };
 		650E12E7894E8260902B4AB5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
@@ -192,7 +191,6 @@
 		90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightMonitor.swift; sourceTree = "<group>"; };
 		92A3B6F147C20B902A2DC11F /* UnlockError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockError.swift; sourceTree = "<group>"; };
 		9718F6AD0F49D6618322A25C /* CoreNFC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreNFC.framework; path = System/Library/Frameworks/CoreNFC.framework; sourceTree = SDKROOT; };
-		9926973113F59267BAFE8FEE /* ConfirmUnlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmUnlockView.swift; sourceTree = "<group>"; };
 		9C1B25209D67A66461DCA107 /* PaperweightWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PaperweightWatch.entitlements; sourceTree = "<group>"; };
 		A2D5EC807AF58E21436D3AC4 /* PaperweightTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PaperweightTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8EAABD1B8EF17ADDF63430A /* MockManagedSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockManagedSettingsStore.swift; sourceTree = "<group>"; };
@@ -300,7 +298,6 @@
 		2935375120C61AF459EBB433 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				9926973113F59267BAFE8FEE /* ConfirmUnlockView.swift */,
 				F9FB998664C51496BE2C1811 /* StatusView.swift */,
 			);
 			path = Views;
@@ -664,7 +661,6 @@
 			files = (
 				0419FAEDB15C6EC1BF639783 /* AppScheduleOverride.swift in Sources */,
 				BFF1BE028BB52C71E72F7AFB /* ConfigStore.swift in Sources */,
-				607E11DB3417A76739DF2E19 /* ConfirmUnlockView.swift in Sources */,
 				E55D32A33640531235C912C0 /* Constants.swift in Sources */,
 				92C1A5EE122647AC9A8E104D /* FamilyControlsServiceProtocol.swift in Sources */,
 				2D7EBE16171798DAE57F47E7 /* HomeViewModel.swift in Sources */,
