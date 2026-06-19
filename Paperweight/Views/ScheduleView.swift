@@ -9,8 +9,12 @@ struct ScheduleView: View {
     @State private var lastPaintLocation: CGPoint?
 
     private let dayLabels = ["S", "M", "T", "W", "T", "F", "S"]
-    private let timeColumnWidth: CGFloat = 26
-    private let rows = PaperweightSchedule.halfHoursPerDay  // 48
+    private let hours = 24
+    private let leftInset: CGFloat = 30
+    private let colGap: CGFloat = 3
+    private let rowGap: CGFloat = 3
+    private let headerHeight: CGFloat = 18
+    private let stackSpacing: CGFloat = 8
 
     init(vm: HomeViewModel) {
         self.vm = vm
@@ -29,22 +33,29 @@ struct ScheduleView: View {
                 Text("Green = free · dark = quiet.")
                     .font(.grotesk(12)).foregroundStyle(PW.textFaint)
             }
-            .padding(.top, 4)
-            .padding(.horizontal, 18)
+            .padding(.top, 4).padding(.horizontal, 18)
 
             if blockedRightNow { lockWarning }
 
-            dayHeader
-            grid
+            GeometryReader { geo in
+                let cellW = (geo.size.width - leftInset - colGap * CGFloat(7)) / 7
+                let bodyH = geo.size.height - headerHeight - stackSpacing
+                let cellH = (bodyH - rowGap * CGFloat(hours - 1)) / CGFloat(hours)
+
+                VStack(spacing: stackSpacing) {
+                    dayHeader(cellW: cellW)
+                    gridBody(cellW: cellW, cellH: cellH)
+                }
+            }
+            .padding(.horizontal, 18)
+
             Text(String(format: "%g free hours / week",
                         PaperweightSchedule(freeSlots: freeSlots).freeHourCount))
                 .font(.grotesk(12)).foregroundStyle(PW.textMuted)
-                .padding(.top, 4)
+                .padding(.top, 2)
 
             AccentButton(title: "Save schedule") { Task { await save() } }
-                .padding(.horizontal, 24)
-                .padding(.top, 6)
-                .padding(.bottom, 8)
+                .padding(.horizontal, 24).padding(.top, 4).padding(.bottom, 8)
         }
         .padding(.vertical, 8)
         .pwScreen()
@@ -68,8 +79,7 @@ struct ScheduleView: View {
             Image(systemName: "exclamationmark.triangle.fill")
             Text("Now is a quiet period — saving locks restricted apps immediately.")
         }
-        .font(.grotesk(11))
-        .foregroundStyle(PW.clay)
+        .font(.grotesk(11)).foregroundStyle(PW.clay)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 10).padding(.vertical, 6)
         .background(PW.clay.opacity(0.12))
@@ -77,78 +87,81 @@ struct ScheduleView: View {
         .padding(.horizontal, 18)
     }
 
-    private var dayHeader: some View {
-        HStack(spacing: 0) {
-            Color.clear.frame(width: timeColumnWidth, height: 1)
+    private func dayHeader(cellW: CGFloat) -> some View {
+        HStack(spacing: colGap) {
+            Color.clear.frame(width: leftInset, height: 1)
             ForEach(0..<7, id: \.self) { day in
                 Text(dayLabels[day])
                     .font(.grotesk(11, weight: .semibold))
                     .foregroundStyle(PW.textFaint)
-                    .frame(maxWidth: .infinity)
+                    .frame(width: cellW)
             }
         }
-        .frame(height: 16)
-        .padding(.horizontal, 18)
+        .frame(height: headerHeight)
     }
 
-    private var grid: some View {
-        GeometryReader { geo in
-            let cellW = (geo.size.width - timeColumnWidth) / 7
-            let cellH = geo.size.height / CGFloat(rows)
-
-            HStack(spacing: 0) {
-                VStack(spacing: 0) {
-                    ForEach(0..<rows, id: \.self) { row in
-                        Text(row % 2 == 0 ? PaperweightSchedule.hourLabel(row / 2) : "")
-                            .font(.system(size: 8.5))
-                            .foregroundStyle(PW.textFaintest)
-                            .frame(width: timeColumnWidth, height: cellH, alignment: .topTrailing)
-                    }
+    private func gridBody(cellW: CGFloat, cellH: CGFloat) -> some View {
+        HStack(spacing: colGap) {
+            VStack(spacing: rowGap) {
+                ForEach(0..<hours, id: \.self) { hour in
+                    Text(PaperweightSchedule.hourLabel(hour))
+                        .font(.system(size: 9, weight: hour % 6 == 0 ? .semibold : .regular))
+                        .foregroundStyle(hour % 6 == 0 ? PW.textFaint : PW.textFaintest)
+                        .frame(width: leftInset, height: cellH, alignment: .trailing)
                 }
-
-                VStack(spacing: 0) {
-                    ForEach(0..<rows, id: \.self) { row in
-                        HStack(spacing: 0) {
-                            ForEach(0..<7, id: \.self) { day in
-                                cell(day: day, row: row, height: cellH)
-                            }
+            }
+            VStack(spacing: rowGap) {
+                ForEach(0..<hours, id: \.self) { hour in
+                    HStack(spacing: colGap) {
+                        ForEach(0..<7, id: \.self) { day in
+                            cell(day: day, hour: hour, w: cellW, h: cellH)
                         }
                     }
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 6))
             }
-            .contentShape(Rectangle())
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { paint(at: $0.location, cellW: cellW, cellH: cellH) }
-                    .onEnded { _ in dragPaintValue = nil; lastPaintLocation = nil }
-            )
         }
-        .padding(.horizontal, 18)
+        .contentShape(Rectangle())
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { paint(at: $0.location, cellW: cellW, cellH: cellH) }
+                .onEnded { _ in dragPaintValue = nil; lastPaintLocation = nil }
+        )
     }
 
-    private func cell(day: Int, row: Int, height: CGFloat) -> some View {
-        Rectangle()
-            .fill(freeSlots.contains(PaperweightSchedule.slot(day: day, halfHour: row))
-                  ? PW.moss : PW.deepForest)
-            .frame(maxWidth: .infinity)
-            .frame(height: height)
-            .overlay(alignment: .top) {
-                Rectangle()
-                    .fill(Color.black.opacity(row % 2 == 0 ? 0.28 : 0.12))
-                    .frame(height: 0.5)
-            }
-            .overlay(alignment: .leading) {
-                if day > 0 { Rectangle().fill(Color.black.opacity(0.22)).frame(width: 0.5) }
-            }
+    private func cell(day: Int, hour: Int, w: CGFloat, h: CGFloat) -> some View {
+        let free = isHourFree(day: day, hour: hour)
+        return RoundedRectangle(cornerRadius: 4)
+            .fill(free ? PW.moss : PW.deepForest)
+            .overlay(
+                RoundedRectangle(cornerRadius: 4)
+                    .strokeBorder(free ? PW.mossLight.opacity(0.6) : Color.white.opacity(0.05),
+                                  lineWidth: 1)
+            )
+            .frame(width: w, height: h)
     }
+
+    // MARK: - Hour <-> slot helpers (model stays at 30-min; we paint whole hours)
+
+    private func isHourFree(day: Int, hour: Int) -> Bool {
+        freeSlots.contains(PaperweightSchedule.slot(day: day, halfHour: hour * 2))
+    }
+
+    private func setHour(day: Int, hour: Int, free: Bool) {
+        for half in [hour * 2, hour * 2 + 1] {
+            let s = PaperweightSchedule.slot(day: day, halfHour: half)
+            if free { freeSlots.insert(s) } else { freeSlots.remove(s) }
+        }
+    }
+
+    // MARK: - Painting
 
     private func paint(at location: CGPoint, cellW: CGFloat, cellH: CGFloat) {
         guard cellW > 0, cellH > 0 else { return }
-        if dragPaintValue == nil, let slot = slot(at: location, cellW: cellW, cellH: cellH) {
-            dragPaintValue = !freeSlots.contains(slot)
+        if dragPaintValue == nil, let c = cellAt(location, cellW: cellW, cellH: cellH) {
+            dragPaintValue = !isHourFree(day: c.day, hour: c.hour)
         }
         let value = dragPaintValue ?? true
+
         if let last = lastPaintLocation {
             let dx = location.x - last.x, dy = location.y - last.y
             let stepSize = max(min(cellW, cellH) / 2, 1)
@@ -163,17 +176,17 @@ struct ScheduleView: View {
         lastPaintLocation = location
     }
 
-    private func apply(_ free: Bool, at location: CGPoint, cellW: CGFloat, cellH: CGFloat) {
-        guard let slot = slot(at: location, cellW: cellW, cellH: cellH) else { return }
-        if free { freeSlots.insert(slot) } else { freeSlots.remove(slot) }
+    private func apply(_ value: Bool, at location: CGPoint, cellW: CGFloat, cellH: CGFloat) {
+        guard let c = cellAt(location, cellW: cellW, cellH: cellH) else { return }
+        setHour(day: c.day, hour: c.hour, free: value)
     }
 
-    private func slot(at location: CGPoint, cellW: CGFloat, cellH: CGFloat) -> Int? {
-        let xInCells = location.x - timeColumnWidth
+    private func cellAt(_ location: CGPoint, cellW: CGFloat, cellH: CGFloat) -> (day: Int, hour: Int)? {
+        let xInCells = location.x - leftInset - colGap
         guard xInCells >= 0 else { return nil }
-        let day = min(max(Int(xInCells / cellW), 0), 6)
-        let row = min(max(Int(location.y / cellH), 0), rows - 1)
-        return PaperweightSchedule.slot(day: day, halfHour: row)
+        let day = min(max(Int(xInCells / (cellW + colGap)), 0), 6)
+        let hour = min(max(Int(location.y / (cellH + rowGap)), 0), hours - 1)
+        return (day, hour)
     }
 
     private func save() async {
