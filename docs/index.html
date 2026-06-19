@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paperweight — Support</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;1,300&family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#000; --surface:#0B0F0B; --line:rgba(255,255,255,.07); --sage:#9DC47B; --text:#ECF1E6; --muted:#8E9A86; --faint:#5A6356; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:'Schibsted Grotesk',system-ui,sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:680px; margin:0 auto; padding:64px 24px 96px; }
+  .orb{ width:64px; height:64px; border-radius:50%; margin-bottom:28px;
+        background:radial-gradient(circle at 38% 32%, #ECF8D4 0%, #9DC47B 32%, #2E4A30 66%, #0A140C 100%);
+        box-shadow:0 0 40px rgba(157,196,123,.35); }
+  h1{ font-family:'Spectral',serif; font-weight:300; font-size:44px; letter-spacing:-.02em; margin:0 0 6px; }
+  .eyebrow{ text-transform:uppercase; letter-spacing:.28em; font-size:12px; color:var(--faint); margin:0 0 24px; }
+  h2{ font-family:'Spectral',serif; font-weight:300; font-size:24px; margin:44px 0 10px; }
+  p{ color:var(--muted); margin:0 0 14px; }
+  a{ color:var(--sage); text-decoration:none; }
+  a:hover{ text-decoration:underline; }
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:22px 24px; margin:18px 0; }
+  .q{ color:var(--text); font-weight:600; margin:18px 0 4px; }
+  .q:first-child{ margin-top:0; }
+  footer{ margin-top:56px; padding-top:24px; border-top:1px solid var(--line); font-size:14px; color:var(--faint); }
+  em{ font-family:'Spectral',serif; font-style:italic; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="orb"></div>
+  <p class="eyebrow">Paperweight · Brick Mode</p>
+  <h1>Support</h1>
+  <p>Paperweight turns your iPhone into a quiet object on a schedule you set. Tap a physical NFC token to surface when you genuinely need to.</p>
+
+  <div class="card">
+    <p class="q" style="margin-top:0">Need help?</p>
+    <p>Email <a href="mailto:eric.rode@gmail.com">eric.rode@gmail.com</a> and I'll get back to you.</p>
+  </div>
+
+  <h2>Common questions</h2>
+  <div class="card">
+    <p class="q">How do I unlock early?</p>
+    <p>Tap your registered NFC token on the back of your iPhone (Emergency Unlock, or "Hold to unlock" on the brick screen). It lifts restrictions for a short, timed window.</p>
+
+    <p class="q">I lost my token.</p>
+    <p>Use one of the single-use recovery codes you saved during setup ("Use a recovery code" on the disable screen). If you don't have one, start a timed unlock — it releases on its own after a one-day cool-off.</p>
+
+    <p class="q">How do I remove all restrictions completely?</p>
+    <p>Turn Paperweight off with your token or a recovery code. As a last resort, deleting the app always clears every restriction immediately.</p>
+
+    <p class="q">What kind of NFC tag do I need?</p>
+    <p>Any inexpensive NFC tag works — an NTAG213/215/216 sticker, disc, or keyfob. It doesn't need to be programmed; the app reads the tag's built-in ID. Avoid 125&nbsp;kHz "RFID" tags, which aren't NFC.</p>
+
+    <p class="q">Is my data private?</p>
+    <p>Yes. Everything stays on your device. No account, no tracking, nothing leaves your phone. See the <a href="privacy.html">privacy policy</a>.</p>
+  </div>
+
+  <footer>
+    <p><em>Less screen. More of everything else.</em></p>
+    <p><a href="privacy.html">Privacy Policy</a> · © 2026 Eric J. Rodewald</p>
+  </footer>
+</div>
+</body>
+</html>
