@@ -1,16 +1,45 @@
 # macOS
 .DS_Store
 
-# Xcode build artifacts
+# Xcode
+#
+# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+
+## Build artifacts
 DerivedData/
 build/
-*.xcuserdata
+.build/
 
-# Xcode per-user state (UI layout, breakpoints, scheme management)
+## User settings (UI layout, breakpoints, scheme management)
 xcuserdata/
 *.xcuserstate
 *.xcuserdatad/
+*.xcuserdata
 
-# Workspaces (keep the project's bundled workspace)
+## Obj-C/Swift specific
+*.hmap
+
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+## Workspaces (keep the project's bundled workspace)
 *.xcworkspace
 !*.xcodeproj/*.xcworkspace
+
+# CocoaPods
+# Pods/
+
+# Carthage
+Carthage/Build/
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
