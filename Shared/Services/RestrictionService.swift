@@ -2,6 +2,14 @@
 import ManagedSettings
 import FamilyControls
 
+// SAFETY INVARIANT — do not break:
+// We ONLY ever set `shield.applications`, `shield.applicationCategories`, and
+// `shield.webDomains`. We must NEVER set `application.denyAppRemoval` (or any
+// other ManagedSettings restriction). That guarantees the user can always
+// delete Paperweight from the Home screen, which revokes our Family Controls
+// authorization and makes iOS clear every shield we applied. Deleting the app
+// is therefore an unconditional recovery path — the phone can't be bricked.
+
 extension ManagedSettingsStore: ManagedSettingsStoreProtocol {
     func setShield(applications: Set<ApplicationToken>?) {
         shield.applications = applications
