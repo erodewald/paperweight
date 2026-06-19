@@ -25,17 +25,30 @@ struct ScheduleView: View {
         !PaperweightSchedule(freeSlots: freeSlots).isFree(at: Date())
     }
 
+    /// While Paperweight is active the schedule is read-only — otherwise you
+    /// could repaint "now" as free and slip the lock without the token.
+    private var locked: Bool { vm.config.isEnabled }
+
+    private var now: (day: Int, hour: Int) {
+        let c = Calendar.current.dateComponents([.weekday, .hour], from: Date())
+        return ((c.weekday ?? 1) - 1, c.hour ?? 0)
+    }
+
     var body: some View {
         VStack(spacing: 8) {
-            VStack(spacing: 2) {
-                Text("Drag to paint when apps are free.")
-                    .font(.grotesk(12)).foregroundStyle(PW.textMuted)
-                Text("Green = free · dark = quiet.")
-                    .font(.grotesk(12)).foregroundStyle(PW.textFaint)
-            }
-            .padding(.top, 4).padding(.horizontal, 18)
+            if locked {
+                lockedBanner
+            } else {
+                VStack(spacing: 2) {
+                    Text("Drag to paint when apps are free.")
+                        .font(.grotesk(12)).foregroundStyle(PW.textMuted)
+                    Text("Green = free · dark = quiet.")
+                        .font(.grotesk(12)).foregroundStyle(PW.textFaint)
+                }
+                .padding(.top, 4).padding(.horizontal, 18)
 
-            if blockedRightNow { lockWarning }
+                if blockedRightNow { lockWarning }
+            }
 
             GeometryReader { geo in
                 let cellW = (geo.size.width - leftInset - colGap * CGFloat(7)) / 7
@@ -54,24 +67,46 @@ struct ScheduleView: View {
                 .font(.grotesk(12)).foregroundStyle(PW.textMuted)
                 .padding(.top, 2)
 
-            AccentButton(title: "Save schedule") { Task { await save() } }
-                .padding(.horizontal, 24).padding(.top, 4).padding(.bottom, 8)
+            if locked {
+                Text("Turn Paperweight off to change your schedule.")
+                    .font(.grotesk(12)).foregroundStyle(PW.textFaint)
+                    .padding(.horizontal, 24).padding(.top, 4).padding(.bottom, 8)
+            } else {
+                AccentButton(title: "Save schedule") { Task { await save() } }
+                    .padding(.horizontal, 24).padding(.top, 4).padding(.bottom, 8)
+            }
         }
         .padding(.vertical, 8)
         .pwScreen()
         .navigationTitle("Schedule")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
-                    Button("Free: Weekday Evenings") { freeSlots = PaperweightSchedule.weekdayEvenings().freeSlots }
-                    Button("Free: All Week") { freeSlots = PaperweightSchedule.alwaysFree().freeSlots }
-                    Button("Clear (block everything)", role: .destructive) { freeSlots = [] }
-                } label: {
-                    Image(systemName: "wand.and.stars").foregroundStyle(PW.sage)
+            if !locked {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Button("Free: Weekday Evenings") { freeSlots = PaperweightSchedule.weekdayEvenings().freeSlots }
+                        Button("Free: All Week") { freeSlots = PaperweightSchedule.alwaysFree().freeSlots }
+                        Button("Clear (block everything)", role: .destructive) { freeSlots = [] }
+                    } label: {
+                        Image(systemName: "wand.and.stars").foregroundStyle(PW.sage)
+                    }
                 }
             }
         }
+    }
+
+    private var lockedBanner: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "lock.fill")
+            Text("Locked while Paperweight is active. This is your schedule right now.")
+        }
+        .font(.grotesk(11))
+        .foregroundStyle(PW.sage)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 10).padding(.vertical, 6)
+        .background(PW.sage.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .padding(.horizontal, 18)
     }
 
     private var lockWarning: some View {
@@ -111,10 +146,12 @@ struct ScheduleView: View {
                 }
             }
             VStack(spacing: rowGap) {
+                let nowCell = now
                 ForEach(0..<hours, id: \.self) { hour in
                     HStack(spacing: colGap) {
                         ForEach(0..<7, id: \.self) { day in
-                            cell(day: day, hour: hour, w: cellW, h: cellH)
+                            cell(day: day, hour: hour, w: cellW, h: cellH,
+                                 isNow: day == nowCell.day && hour == nowCell.hour)
                         }
                     }
                 }
@@ -128,15 +165,17 @@ struct ScheduleView: View {
         )
     }
 
-    private func cell(day: Int, hour: Int, w: CGFloat, h: CGFloat) -> some View {
+    private func cell(day: Int, hour: Int, w: CGFloat, h: CGFloat, isNow: Bool) -> some View {
         let free = isHourFree(day: day, hour: hour)
         return RoundedRectangle(cornerRadius: 4)
             .fill(free ? PW.moss : PW.deepForest)
             .overlay(
                 RoundedRectangle(cornerRadius: 4)
-                    .strokeBorder(free ? PW.mossLight.opacity(0.6) : Color.white.opacity(0.05),
-                                  lineWidth: 1)
+                    .strokeBorder(isNow ? PW.dawnGlow
+                                        : (free ? PW.mossLight.opacity(0.6) : Color.white.opacity(0.05)),
+                                  lineWidth: isNow ? 2 : 1)
             )
+            .shadow(color: isNow ? PW.sage.opacity(0.5) : .clear, radius: isNow ? 3 : 0)
             .frame(width: w, height: h)
     }
 
@@ -156,7 +195,7 @@ struct ScheduleView: View {
     // MARK: - Painting
 
     private func paint(at location: CGPoint, cellW: CGFloat, cellH: CGFloat) {
-        guard cellW > 0, cellH > 0 else { return }
+        guard !locked, cellW > 0, cellH > 0 else { return }
         if dragPaintValue == nil, let c = cellAt(location, cellW: cellW, cellH: cellH) {
             dragPaintValue = !isHourFree(day: c.day, hour: c.hour)
         }

@@ -12,7 +12,8 @@ struct HomeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var showingPicker = false
     @State private var showingDisableSheet = false
-    @State private var showingSettings = false
+    /// Whether the full-screen Quiet orb is presented over the settings root.
+    @State private var showQuiet = false
 
     /// Quiet: armed and restricting right now (a scheduled blocked period, or
     /// always-blocked when no schedule is set).
@@ -24,23 +25,16 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                PW.black.ignoresSafeArea()
-                if isQuiet {
-                    QuietScreen(vm: vm, onSettings: { showingSettings = true })
-                } else {
-                    settingsList
-                }
-            }
-            .navigationBarHidden(true)
-            .navigationDestination(isPresented: $showingSettings) {
-                // Pushed from the Quiet screen — keep a bar so there's a back button.
-                settingsList
-                    .navigationTitle("")
-                    .navigationBarTitleDisplayMode(.inline)
-            }
+            settingsList
+                .navigationBarHidden(true)
         }
         .tint(PW.sage)
+        // Quiet orb sits ABOVE a stable settings root, so pushing/popping the
+        // schedule never swaps the root out from under a pushed view.
+        .fullScreenCover(isPresented: $showQuiet) {
+            QuietScreen(vm: vm, onSettings: { showQuiet = false })
+                .background(PW.black.ignoresSafeArea())
+        }
         .familyActivityPicker(
             headerText: "Choose apps and categories to restrict.",
             footerText: "Do not select Paperweight itself — blocking it could lock you out of these controls.",
@@ -54,12 +48,18 @@ struct HomeView: View {
                 isEnabled: isEnabled, isUnlocked: false, unlockExpires: nil)
             updateShortcutItems(isEnabled: isEnabled)
         }
-        .onAppear { handlePendingShortcut(); updateShortcutItems(isEnabled: vm.config.isEnabled) }
+        .onChange(of: isQuiet) { _, quiet in showQuiet = quiet }
+        .onAppear {
+            showQuiet = isQuiet
+            handlePendingShortcut()
+            updateShortcutItems(isEnabled: vm.config.isEnabled)
+        }
         .onChange(of: shortcutManager.pendingShortcutType) { _, _ in handlePendingShortcut() }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 vm.syncRestrictions()
                 ScheduleService.shared.updateSchedule(vm.config.schedule, enabled: vm.config.isEnabled)
+                showQuiet = isQuiet
             }
         }
         .sheet(isPresented: $showingDisableSheet) {
@@ -193,7 +193,10 @@ struct HomeView: View {
         DispatchQueue.main.async {
             switch type {
             case "enable-paperweight": Task { await enable() }
-            case "disable-paperweight": showingDisableSheet = true
+            case "disable-paperweight":
+                // Drop the Quiet cover first so the sheet isn't hidden beneath it.
+                showQuiet = false
+                showingDisableSheet = true
             default: break
             }
         }
