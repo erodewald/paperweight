@@ -37,7 +37,7 @@ schemes:
 settings:
   base:
     SWIFT_VERSION: "5.9"
-    DEVELOPMENT_TEAM: "6X54AWP53W"
+    DEVELOPMENT_TEAM: ""
 
 targets:
 

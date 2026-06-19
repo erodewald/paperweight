@@ -49,3 +49,6 @@ Paperweight design system.zip
 
 # Claude Code local settings (machine-specific)
 .claude/
+
+# Internal design handoff (kept locally, not published)
+design_handoff_paperweight/
