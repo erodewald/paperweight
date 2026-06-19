@@ -3,7 +3,20 @@ import SwiftUI
 struct RecoveryCodesView: View {
     let codes: [String]
     @Environment(\.dismiss) private var dismiss
-    @State private var copied = false
+    @State private var copiedCode: String?
+    @State private var copiedAll = false
+
+    /// Formatted block for the share sheet — 1Password, Notes, etc. receive this
+    /// as a saveable secure note.
+    private var shareText: String {
+        let body = codes.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n")
+        return """
+        Paperweight recovery codes
+        Each works once. Use one to turn off Paperweight if you lose your NFC token.
+
+        \(body)
+        """
+    }
 
     var body: some View {
         NavigationStack {
@@ -14,32 +27,52 @@ struct RecoveryCodesView: View {
 
                     Text("Save your codes")
                         .font(.spectral(24)).foregroundStyle(PW.textPrimary)
-                    Text("Each works once. Keep them somewhere you can reach without your phone.")
+                    Text("Each works once. Tap a code to copy it, or save them all to your password manager.")
                         .font(.grotesk(12.5)).foregroundStyle(PW.textMuted)
                         .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
                         .padding(.top, 8).padding(.horizontal, 20).padding(.bottom, 20)
 
                     VStack(spacing: 8) {
                         ForEach(codes, id: \.self) { code in
-                            Text(code)
-                                .font(.grotesk(15, weight: .semibold))
-                                .tracking(0.14 * 15)
-                                .foregroundStyle(PW.textPrimary)
-                                .padding(.vertical, 12)
-                                .frame(maxWidth: .infinity)
-                                .background(PW.surface)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .overlay(RoundedRectangle(cornerRadius: 10).stroke(PW.hairline, lineWidth: 1))
+                            Button { copy(code) } label: {
+                                Text(code)
+                                    .font(.grotesk(15, weight: .semibold))
+                                    .tracking(0.14 * 15)
+                                    .foregroundStyle(PW.textPrimary)
+                                    .padding(.vertical, 12)
+                                    .frame(maxWidth: .infinity)
+                                    .background(PW.surface)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(PW.hairline, lineWidth: 1))
+                                    .overlay(alignment: .trailing) {
+                                        Image(systemName: copiedCode == code ? "checkmark" : "doc.on.doc")
+                                            .font(.system(size: 13))
+                                            .foregroundStyle(copiedCode == code ? PW.sage : PW.textFaint)
+                                            .padding(.trailing, 14)
+                                    }
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
 
-                    Button {
-                        UIPasteboard.general.string = codes.joined(separator: "\n")
-                        copied = true
-                    } label: {
+                    ShareLink(item: shareText) {
                         HStack(spacing: 9) {
-                            Image(systemName: copied ? "checkmark" : "doc.on.doc").font(.system(size: 14))
-                            Text(copied ? "Copied!" : "Copy all codes").font(.grotesk(14))
+                            Image(systemName: "square.and.arrow.up").font(.system(size: 14))
+                            Text("Save to a password manager").font(.grotesk(14))
+                        }
+                        .foregroundStyle(PW.onAccent)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(PW.sage)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .shadow(color: PW.sage.opacity(0.28), radius: 14)
+                    }
+                    .padding(.top, 20)
+
+                    Button { copyAll() } label: {
+                        HStack(spacing: 9) {
+                            Image(systemName: copiedAll ? "checkmark" : "doc.on.doc").font(.system(size: 14))
+                            Text(copiedAll ? "Copied!" : "Copy all codes").font(.grotesk(14))
                         }
                         .foregroundStyle(PW.sage)
                         .frame(maxWidth: .infinity)
@@ -47,8 +80,8 @@ struct RecoveryCodesView: View {
                         .overlay(RoundedRectangle(cornerRadius: 13).stroke(PW.sage.opacity(0.3), lineWidth: 1))
                     }
                     .buttonStyle(.plain)
-                    .padding(.top, 16)
-                    .animation(.default, value: copied)
+                    .padding(.top, 10)
+                    .animation(.default, value: copiedAll)
 
                     Text("These codes will not be shown again.")
                         .font(.grotesk(12)).foregroundStyle(PW.warn)
@@ -67,5 +100,19 @@ struct RecoveryCodesView: View {
                 }
             }
         }
+    }
+
+    private func copy(_ code: String) {
+        UIPasteboard.general.string = code
+        withAnimation { copiedCode = code }
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(1.5))
+            if copiedCode == code { withAnimation { copiedCode = nil } }
+        }
+    }
+
+    private func copyAll() {
+        UIPasteboard.general.string = codes.joined(separator: "\n")
+        copiedAll = true
     }
 }
