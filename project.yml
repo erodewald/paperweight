@@ -27,6 +27,12 @@ schemes:
       config: Debug
     archive:
       config: Release
+  PaperweightWatch:
+    build:
+      targets:
+        PaperweightWatch: all
+    run:
+      config: Debug
   PaperweightTests:
     build:
       targets:

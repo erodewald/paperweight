@@ -91,15 +91,9 @@ struct HomeView: View {
                                systemImage: "app.badge.checkmark", showsChevron: true)
                     }
                     .buttonStyle(.plain)
-                    let summary = vm.config.selection.summary
-                    if !summary.isEmpty {
+                    if !vm.config.selection.isEmpty {
                         CardDivider()
-                        Text(summary)
-                            .font(.grotesk(12.5))
-                            .foregroundStyle(PW.textMuted)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 11)
+                        RestrictedTokensList(selection: vm.config.selection)
                     }
                 }
 
@@ -213,6 +207,53 @@ struct HomeView: View {
     }
 }
 
+// MARK: - Restricted tokens list
+
+/// Enumerates the actual restricted apps/categories using FamilyControls' own
+/// `Label(token)` views (real names + icons). App names are privacy-gated and
+/// can't be read as strings, so we render the system labels directly.
+private struct RestrictedTokensList: View {
+    let selection: FamilyActivitySelection
+    private let limit = 6
+
+    var body: some View {
+        let apps = Array(selection.applicationTokens)
+        let cats = Array(selection.categoryTokens)
+        let webs = Array(selection.webDomainTokens)
+        let total = apps.count + cats.count + webs.count
+
+        return VStack(spacing: 0) {
+            ForEach(apps.prefix(limit), id: \.self) { token in
+                tokenRow { Label(token) }
+            }
+            ForEach(cats.prefix(max(0, limit - apps.count)), id: \.self) { token in
+                tokenRow { Label(token) }
+            }
+            ForEach(webs.prefix(max(0, limit - apps.count - cats.count)), id: \.self) { token in
+                tokenRow { Label(token) }
+            }
+            if total > limit {
+                tokenRow {
+                    Text("+\(total - limit) more")
+                        .font(.grotesk(12.5)).foregroundStyle(PW.textMuted)
+                }
+            }
+        }
+    }
+
+    private func tokenRow<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+        content()
+            .font(.grotesk(14))
+            .foregroundStyle(PW.textPrimary)
+            .labelStyle(.titleAndIcon)
+            .imageScale(.small)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 9)
+            .overlay(alignment: .top) { CardDivider() }
+    }
+}
+
 // MARK: - Quiet screen
 
 private struct QuietScreen: View {
@@ -292,8 +333,11 @@ private struct QuietScreen: View {
     }
 
     private var appsQuietLabel: String {
-        let n = vm.config.selection.applicationTokens.count
-        return n > 0 ? "\(n) app\(n == 1 ? "" : "s") quiet" : "Apps quiet"
+        let apps = vm.config.selection.applicationTokens.count
+        let cats = vm.config.selection.categoryTokens.count
+        if apps > 0 { return "\(apps) app\(apps == 1 ? "" : "s") quiet" }
+        if cats > 0 { return "\(cats) categor\(cats == 1 ? "y" : "ies") quiet" }
+        return "Apps quiet"
     }
 
     private var encouragementIndex: Int {

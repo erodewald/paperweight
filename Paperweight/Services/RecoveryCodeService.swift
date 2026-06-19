@@ -7,18 +7,24 @@ enum RecoveryCodeService {
     static func generateCodes() -> [(plain: String, model: RecoveryCode)] {
         (0..<codeCount).map { _ in
             let plain = makePlainCode()
-            return (plain, RecoveryCode(id: UUID(), codeHash: sha256(plain)))
+            // Hash the normalized form so entry (which strips the dash) matches.
+            return (plain, RecoveryCode(id: UUID(), codeHash: sha256(normalize(plain))))
         }
     }
 
     // Returns the ID of the matching unused code, or nil if invalid.
     static func verify(_ input: String, against codes: [RecoveryCode]) -> UUID? {
-        let normalized = input
-            .trimmingCharacters(in: .whitespaces)
-            .uppercased()
-            .replacingOccurrences(of: "-", with: "")
-        let h = sha256(normalized)
+        let h = sha256(normalize(input))
         return codes.first { !$0.isUsed && $0.codeHash == h }?.id
+    }
+
+    /// Canonical form used for hashing on both generation and entry: uppercase,
+    /// no whitespace, no separators.
+    private static func normalize(_ s: String) -> String {
+        s.uppercased()
+            .replacingOccurrences(of: "-", with: "")
+            .replacingOccurrences(of: " ", with: "")
+            .replacingOccurrences(of: "·", with: "")
     }
 
     private static func makePlainCode() -> String {

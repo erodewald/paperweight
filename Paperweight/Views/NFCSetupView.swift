@@ -92,8 +92,12 @@ struct NFCSetupView: View {
                         HStack {
                             Text("Cool-off if token lost").font(.grotesk(13.5)).foregroundStyle(PW.textFaint)
                             Spacer()
+                            // While armed, the cool-off can only be lengthened —
+                            // shortening it mid-lock would be a way to cheat out.
+                            let canShorten = !vm.config.isEnabled
+                            let available = canShorten ? coolOffs : coolOffs.filter { $0.value >= vm.config.coolOffDays }
                             Menu {
-                                ForEach(coolOffs, id: \.value) { o in
+                                ForEach(available, id: \.value) { o in
                                     Button(o.label) { vm.config.coolOffDays = o.value; vm.saveSelection() }
                                 }
                             } label: {
@@ -103,6 +107,7 @@ struct NFCSetupView: View {
                                         .font(.system(size: 10)).foregroundStyle(PW.textFaint)
                                 }
                             }
+                            .disabled(available.count <= 1)
                         }
                         .padding(.horizontal, 16).padding(.vertical, 13)
                         CardDivider()
