@@ -82,6 +82,38 @@ struct PaperweightSchedule: Codable, Equatable {
         }
     }
 
+    /// While currently in a blocked ("quiet") period, returns how long until the
+    /// next free window, the fraction of *remaining* time in this quiet window
+    /// (for a depleting progress ring), and when it ends. Returns nil when free,
+    /// when no schedule is set, or when always-blocked (no end in the week).
+    func quietStatus(at date: Date, calendar: Calendar = .current)
+        -> (remaining: TimeInterval, remainingFraction: Double, ends: Date)? {
+        guard !isEmpty, !isFree(at: date, calendar: calendar) else { return nil }
+        let comps = calendar.dateComponents([.weekday, .hour, .minute], from: date)
+        guard let weekday = comps.weekday, let hour = comps.hour else { return nil }
+        let minute = comps.minute ?? 0
+        let current = (weekday - 1) * Self.halfHoursPerDay + Self.halfHour(hour: hour, minute: minute)
+        let slotMinute = minute >= 30 ? 30 : 0
+        guard let slotStart = calendar.date(bySettingHour: hour, minute: slotMinute, second: 0, of: date)
+        else { return nil }
+
+        func freeAt(_ i: Int) -> Bool { freeSlots.contains(((i % Self.slotCount) + Self.slotCount) % Self.slotCount) }
+
+        var ahead = 0
+        while ahead < Self.slotCount && !freeAt(current + ahead) { ahead += 1 }
+        if ahead >= Self.slotCount { return nil }   // always blocked
+
+        var behind = 0
+        while behind < Self.slotCount && !freeAt(current - 1 - behind) { behind += 1 }
+
+        let ends = slotStart.addingTimeInterval(Double(ahead) * 1800)
+        let starts = slotStart.addingTimeInterval(-Double(behind) * 1800)
+        let remaining = ends.timeIntervalSince(date)
+        let total = ends.timeIntervalSince(starts)
+        let fraction = total > 0 ? remaining / total : 0
+        return (remaining, max(0, min(1, fraction)), ends)
+    }
+
     /// A human-readable summary of free windows for a given day index (0 = Sun).
     func summary(forDay day: Int) -> String {
         var parts: [String] = []

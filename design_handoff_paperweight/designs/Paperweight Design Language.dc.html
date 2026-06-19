@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Schibsted+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#000000; }
+  ::selection{ background:rgba(188,232,144,0.25); color:#ECF1E6; }
+  @keyframes pwGlow{ 0%,100%{ opacity:.55; transform:scale(1); } 50%{ opacity:.9; transform:scale(1.04); } }
+  @keyframes pwFloat{ 0%,100%{ transform:translateY(0); opacity:.5; } 50%{ transform:translateY(-9px); opacity:1; } }
+  @keyframes pwDrift{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-5px); } }
+  @keyframes pwRing{ to{ stroke-dashoffset:0; } }
+</style>
+</helmet>
+
+<div style="background:#000000; color:#ECF1E6; font-family:'Hanken Grotesk',system-ui,sans-serif; -webkit-font-smoothing:antialiased; overflow-x:hidden; min-height:100vh;">
+
+  <!-- ============ COVER ============ -->
+  <section style="position:relative; max-width:1120px; margin:0 auto; padding:120px 40px 96px;">
+    <div style="position:absolute; top:-120px; left:50%; transform:translateX(-50%); width:680px; height:680px; border-radius:50%; background:radial-gradient(circle, rgba(124,168,95,0.20) 0%, rgba(94,140,79,0.07) 38%, rgba(0,0,0,0) 70%); filter:blur(8px); pointer-events:none; animation:pwGlow 9s ease-in-out infinite;"></div>
+    <div style="position:relative;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:64px;">
+        <div style="width:26px; height:26px; border-radius:50%; background:radial-gradient(circle at 38% 32%, #BCE890 0%, #7BA85F 42%, #2E4A30 100%); box-shadow:0 0 22px rgba(157,196,123,0.55);"></div>
+        <span style="font-family:'Schibsted Grotesk',sans-serif; font-weight:600; letter-spacing:0.02em; font-size:15px;">Paperweight</span>
+        <span style="margin-left:auto; font-size:12px; letter-spacing:0.26em; text-transform:uppercase; color:#5A6356;">Design Language · v1</span>
+      </div>
+      <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; letter-spacing:0.3em; text-transform:uppercase; color:#7BA85F; margin:0 0 28px;">Brick Mode</p>
+      <h1 style="font-family:'Spectral',serif; font-weight:300; font-size:clamp(52px,9vw,116px); line-height:0.96; letter-spacing:-0.02em; margin:0 0 32px; max-width:14ch;">Put it down.</h1>
+      <p style="font-family:'Spectral',serif; font-weight:300; font-style:italic; font-size:clamp(20px,2.4vw,27px); line-height:1.5; color:#A9B5A1; max-width:46ch; margin:0;">An app that turns your phone into a paperweight — so the quiet, the forest, and your own attention can come back.</p>
+    </div>
+  </section>
+
+  <!-- ============ ESSENCE / PRINCIPLES ============ -->
+  <section style="max-width:1120px; margin:0 auto; padding:56px 40px 96px; border-top:1px solid rgba(255,255,255,0.07);">
+    <div style="display:grid; grid-template-columns:0.8fr 1.2fr; gap:64px;">
+      <div>
+        <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:12px; letter-spacing:0.26em; text-transform:uppercase; color:#5A6356; margin:0 0 18px;">The feeling</p>
+        <h2 style="font-family:'Spectral',serif; font-weight:300; font-size:34px; line-height:1.18; letter-spacing:-0.01em; margin:0; color:#ECF1E6;">A heavy, calm object on a still desk.</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.07);">
+          <div style="background:#000; padding:28px 26px;">
+            <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; color:#9DC47B; margin:0 0 10px; font-weight:600;">01 — Stillness</p>
+            <p style="font-size:14.5px; line-height:1.55; color:#8E9A86; margin:0;">Nothing pulses for attention. No badges, no streaks shouting. The app is quiet on purpose.</p>
+          </div>
+          <div style="background:#000; padding:28px 26px;">
+            <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; color:#9DC47B; margin:0 0 10px; font-weight:600;">02 — Weight</p>
+            <p style="font-size:14.5px; line-height:1.55; color:#8E9A86; margin:0;">Choosing to disconnect should feel solid and intentional — like setting something down, not flicking a switch.</p>
+          </div>
+          <div style="background:#000; padding:28px 26px;">
+            <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; color:#9DC47B; margin:0 0 10px; font-weight:600;">03 — Living</p>
+            <p style="font-size:14.5px; line-height:1.55; color:#8E9A86; margin:0;">The reward for absence is something growing — a forest that fills in while you're away.</p>
+          </div>
+          <div style="background:#000; padding:28px 26px;">
+            <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; color:#9DC47B; margin:0 0 10px; font-weight:600;">04 — Black</p>
+            <p style="font-size:14.5px; line-height:1.55; color:#8E9A86; margin:0;">True OLED black is the canvas. Pixels that aren't lit are pixels at rest.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COLOR ============ -->
+  <section style="max-width:1120px; margin:0 auto; padding:56px 40px 96px; border-top:1px solid rgba(255,255,255,0.07);">
+    <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:12px; letter-spacing:0.26em; text-transform:uppercase; color:#5A6356; margin:0 0 14px;">Color</p>
+    <h2 style="font-family:'Spectral',serif; font-weight:300; font-size:34px; margin:0 0 8px;">True black, warm green.</h2>
+    <p style="font-size:15px; color:#8E9A86; max-width:52ch; margin:0 0 44px; line-height:1.6;">The greens lean warm — moss, olive, dawn-light on leaves — never clinical teal. They glow against the black like the only lit thing in a dark room.</p>
+
+    <div style="display:flex; gap:18px; flex-wrap:wrap; margin-bottom:40px;">
+      <div style="flex:1; min-width:160px;">
+        <div style="height:124px; border-radius:14px; background:#000000; border:1px solid rgba(255,255,255,0.1);"></div>
+        <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; margin:14px 0 2px; font-weight:600;">OLED Black</p>
+        <p style="font-size:12px; color:#5A6356; margin:0; font-family:'Hanken Grotesk';">#000000 · canvas</p>
+      </div>
+      <div style="flex:1; min-width:160px;">
+        <div style="height:124px; border-radius:14px; background:#0B0F0B; border:1px solid rgba(255,255,255,0.07);"></div>
+        <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; margin:14px 0 2px; font-weight:600;">Surface</p>
+        <p style="font-size:12px; color:#5A6356; margin:0;">#0B0F0B · cards</p>
+      </div>
+      <div style="flex:1; min-width:160px;">
+        <div style="height:124px; border-radius:14px; background:#16251A;"></div>
+        <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; margin:14px 0 2px; font-weight:600;">Deep Forest</p>
+        <p style="font-size:12px; color:#5A6356; margin:0;">#16251A</p>
+      </div>
+      <div style="flex:1; min-width:160px;">
+        <div style="height:124px; border-radius:14px; background:#5E8C4F;"></div>
+        <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; margin:14px 0 2px; font-weight:600;">Moss</p>
+        <p style="font-size:12px; color:#5A6356; margin:0;">#5E8C4F</p>
+      </div>
+      <div style="flex:1; min-width:160px;">
+        <div style="height:124px; border-radius:14px; background:#9DC47B; box-shadow:0 0 28px rgba(157,196,123,0.32);"></div>
+        <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; margin:14px 0 2px; font-weight:600;">Sage · primary</p>
+        <p style="font-size:12px; color:#5A6356; margin:0;">#9DC47B</p>
+      </div>
+      <div style="flex:1; min-width:160px;">
+        <div style="height:124px; border-radius:14px; background:#BCE890; box-shadow:0 0 34px rgba(188,232,144,0.4);"></div>
+        <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; margin:14px 0 2px; font-weight:600;">Dawn Glow</p>
+        <p style="font-size:12px; color:#5A6356; margin:0;">#BCE890 · accent</p>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:14px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:11px; padding:10px 16px 10px 12px; border:1px solid rgba(255,255,255,0.08); border-radius:999px;">
+        <span style="width:18px;height:18px;border-radius:50%;background:#ECF1E6;"></span><span style="font-size:13px; color:#8E9A86;">Text · #ECF1E6</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:11px; padding:10px 16px 10px 12px; border:1px solid rgba(255,255,255,0.08); border-radius:999px;">
+        <span style="width:18px;height:18px;border-radius:50%;background:#8E9A86;"></span><span style="font-size:13px; color:#8E9A86;">Muted · #8E9A86</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:11px; padding:10px 16px 10px 12px; border:1px solid rgba(255,255,255,0.08); border-radius:999px;">
+        <span style="width:18px;height:18px;border-radius:50%;background:#5A6356;"></span><span style="font-size:13px; color:#8E9A86;">Faint · #5A6356</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TYPOGRAPHY ============ -->
+  <section style="max-width:1120px; margin:0 auto; padding:56px 40px 96px; border-top:1px solid rgba(255,255,255,0.07);">
+    <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:12px; letter-spacing:0.26em; text-transform:uppercase; color:#5A6356; margin:0 0 14px;">Typography</p>
+    <h2 style="font-family:'Spectral',serif; font-weight:300; font-size:34px; margin:0 0 44px;">A poetic voice and a quiet one.</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:48px;">
+      <div style="border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:36px 34px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:24px;">
+          <span style="font-family:'Schibsted Grotesk',sans-serif; font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#7BA85F;">Display</span>
+          <span style="font-size:12px; color:#5A6356;">Spectral · Light / Italic</span>
+        </div>
+        <p style="font-family:'Spectral',serif; font-weight:300; font-size:46px; line-height:1.05; margin:0 0 16px; letter-spacing:-0.01em;">The quiet returns.</p>
+        <p style="font-family:'Spectral',serif; font-weight:300; font-style:italic; font-size:21px; color:#A9B5A1; margin:0; line-height:1.5;">For headlines, encouragements, and anything the app says gently.</p>
+        <p style="font-family:'Spectral',serif; font-weight:300; font-size:13px; letter-spacing:0.06em; color:#5A6356; margin:22px 0 0;">Aa Bb Cc · 1234567890</p>
+      </div>
+      <div style="border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:36px 34px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:24px;">
+          <span style="font-family:'Schibsted Grotesk',sans-serif; font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#7BA85F;">Interface</span>
+          <span style="font-size:12px; color:#5A6356;">Schibsted Grotesk · 400–700</span>
+        </div>
+        <p style="font-family:'Schibsted Grotesk',sans-serif; font-weight:700; font-size:34px; line-height:1.1; margin:0 0 14px;">2h 14m of quiet</p>
+        <p style="font-family:'Schibsted Grotesk',sans-serif; font-weight:400; font-size:15.5px; color:#8E9A86; margin:0; line-height:1.6;">Labels, timers, buttons, and numbers. Clear, grounded, never decorative.</p>
+        <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; letter-spacing:0.04em; color:#5A6356; margin:22px 0 0;">Aa Bb Cc · 1234567890</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE FOREST ============ -->
+  <section style="max-width:1120px; margin:0 auto; padding:56px 40px 96px; border-top:1px solid rgba(255,255,255,0.07);">
+    <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:12px; letter-spacing:0.26em; text-transform:uppercase; color:#5A6356; margin:0 0 14px;">Illustration</p>
+    <h2 style="font-family:'Spectral',serif; font-weight:300; font-size:34px; margin:0 0 8px;">The forest fills in while you're gone.</h2>
+    <p style="font-size:15px; color:#8E9A86; max-width:54ch; margin:0 0 36px; line-height:1.6;">Flat, geometric, layered — a calm Kurzgesagt-style world. Simple shapes, warm-green gradients, a single glowing light, and a few fireflies for life. It grows denser the longer a session runs.</p>
+
+    <div style="border-radius:22px; overflow:hidden; border:1px solid rgba(255,255,255,0.07);">
+      <svg viewBox="0 0 1120 470" width="100%" style="display:block;">
+        <defs>
+          <linearGradient id="pwSky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#0A130C"/><stop offset="0.55" stop-color="#0C1A10"/><stop offset="1" stop-color="#0F1F13"/>
+          </linearGradient>
+          <radialGradient id="pwMoon" cx="50%" cy="50%" r="50%">
+            <stop offset="0" stop-color="#E8F6CE"/><stop offset="0.5" stop-color="#BCE890"/><stop offset="1" stop-color="#7BA85F"/>
+          </radialGradient>
+          <radialGradient id="pwHalo" cx="50%" cy="50%" r="50%">
+            <stop offset="0" stop-color="rgba(188,232,144,0.5)"/><stop offset="0.5" stop-color="rgba(157,196,123,0.16)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/>
+          </radialGradient>
+          <linearGradient id="pwH1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#223A24"/><stop offset="1" stop-color="#1B3020"/></linearGradient>
+          <linearGradient id="pwH2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E4A30"/><stop offset="1" stop-color="#24401F"/></linearGradient>
+          <linearGradient id="pwH3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3C5E33"/><stop offset="1" stop-color="#345426"/></linearGradient>
+        </defs>
+        <rect width="1120" height="470" fill="url(#pwSky)"/>
+        <!-- stars -->
+        <g fill="#BCE890" opacity="0.5">
+          <circle cx="140" cy="60" r="1.4"/><circle cx="320" cy="40" r="1"/><circle cx="520" cy="78" r="1.2"/><circle cx="690" cy="46" r="1"/><circle cx="980" cy="92" r="1.4"/><circle cx="1050" cy="40" r="1"/><circle cx="240" cy="110" r="1"/>
+        </g>
+        <!-- moon halo + moon -->
+        <circle cx="858" cy="138" r="150" fill="url(#pwHalo)" style="animation:pwGlow 8s ease-in-out infinite; transform-origin:858px 138px;"/>
+        <circle cx="858" cy="138" r="48" fill="url(#pwMoon)"/>
+        <!-- hill layer 1 (far) -->
+        <path d="M0 300 C 200 250, 360 290, 560 268 C 760 246, 940 296, 1120 264 L1120 470 L0 470 Z" fill="url(#pwH1)"/>
+        <!-- distant tree row -->
+        <g fill="#1B3020">
+          <path d="M120 300 l16 -40 16 40 z"/><path d="M160 302 l13 -32 13 32 z"/><path d="M760 288 l16 -42 16 42 z"/><path d="M800 290 l12 -30 12 30 z"/><path d="M980 296 l15 -38 15 38 z"/>
+        </g>
+        <!-- hill layer 2 -->
+        <path d="M0 350 C 180 312, 380 356, 600 332 C 820 308, 980 360, 1120 330 L1120 470 L0 470 Z" fill="url(#pwH2)"/>
+        <!-- mid tree row -->
+        <g fill="#24401F">
+          <path d="M90 352 l22 -58 22 58 z"/><path d="M140 354 l17 -44 17 44 z"/><path d="M300 348 l20 -54 20 54 z"/><path d="M520 344 l18 -48 18 48 z"/><path d="M880 350 l22 -56 22 56 z"/><path d="M940 352 l16 -42 16 42 z"/><path d="M1040 348 l20 -52 20 52 z"/>
+        </g>
+        <!-- hill layer 3 (near, mossy) -->
+        <path d="M0 408 C 220 372, 420 414, 640 392 C 860 370, 1000 416, 1120 392 L1120 470 L0 470 Z" fill="url(#pwH3)"/>
+        <!-- foreground big pines -->
+        <g fill="#16251A">
+          <path d="M180 470 L180 360 L150 408 L172 408 L138 452 L222 452 L188 408 L210 408 Z"/>
+          <path d="M470 470 L470 372 L444 414 L463 414 L434 452 L506 452 L477 414 L496 414 Z"/>
+          <path d="M930 470 L930 356 L900 408 L922 408 L886 454 L974 454 L938 408 L960 408 Z"/>
+        </g>
+        <!-- fireflies -->
+        <g fill="#BCE890">
+          <circle cx="360" cy="380" r="2.4" style="animation:pwFloat 5s ease-in-out infinite;"/>
+          <circle cx="620" cy="360" r="2" style="animation:pwFloat 6.5s ease-in-out infinite; animation-delay:1s;"/>
+          <circle cx="720" cy="400" r="2.6" style="animation:pwFloat 5.8s ease-in-out infinite; animation-delay:2s;"/>
+          <circle cx="260" cy="412" r="1.8" style="animation:pwFloat 7s ease-in-out infinite; animation-delay:.6s;"/>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============ TWO DIRECTIONS HEADER ============ -->
+  <section style="max-width:1120px; margin:0 auto; padding:72px 40px 16px; border-top:1px solid rgba(255,255,255,0.07);">
+    <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:12px; letter-spacing:0.26em; text-transform:uppercase; color:#7BA85F; margin:0 0 16px;">Two Directions</p>
+    <h2 style="font-family:'Spectral',serif; font-weight:300; font-size:clamp(34px,5vw,56px); line-height:1.05; margin:0 0 18px; max-width:18ch;">Same soul, two ways to hold it.</h2>
+    <p style="font-size:16px; color:#8E9A86; max-width:56ch; margin:0; line-height:1.6;">Both share the OLED-black canvas, the warm greens, and the poetic voice. They differ in form: one is glass and air, the other is moss and ground.</p>
+  </section>
+
+  <!-- ============ DIRECTION A ============ -->
+  <section style="max-width:1120px; margin:0 auto; padding:48px 40px 64px;">
+    <div style="display:flex; align-items:baseline; gap:18px; margin-bottom:8px;">
+      <span style="font-family:'Spectral',serif; font-style:italic; font-weight:300; font-size:30px; color:#BCE890;">A</span>
+      <h3 style="font-family:'Schibsted Grotesk',sans-serif; font-weight:600; font-size:24px; margin:0; letter-spacing:-0.01em;">Quiet Glass</h3>
+      <span style="font-size:13px; color:#5A6356;">translucent · serif · airy</span>
+    </div>
+    <p style="font-size:15px; color:#8E9A86; max-width:60ch; margin:0 0 44px; line-height:1.6;">A literal paperweight: a glass dome with a single leaf suspended inside. The UI is hushed and spacious, built from hairlines and soft green light.</p>
+
+    <div style="display:grid; grid-template-columns:300px 1fr; gap:56px; align-items:start;">
+      <!-- icon A -->
+      <div>
+        <div style="width:232px; height:232px; border-radius:52px; background:radial-gradient(130% 130% at 30% 22%, #0E1A10 0%, #000 62%); border:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; box-shadow:0 24px 60px rgba(0,0,0,0.6); overflow:hidden; position:relative;">
+          <div style="position:absolute; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle at 50% 60%, rgba(124,168,95,0.4) 0%, rgba(0,0,0,0) 68%); filter:blur(4px);"></div>
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <defs>
+              <radialGradient id="gA" cx="38%" cy="32%" r="75%">
+                <stop offset="0" stop-color="rgba(232,246,206,0.95)"/><stop offset="0.32" stop-color="rgba(157,196,123,0.45)"/><stop offset="0.7" stop-color="rgba(46,74,48,0.5)"/><stop offset="1" stop-color="rgba(10,20,12,0.6)"/>
+              </radialGradient>
+            </defs>
+            <ellipse cx="75" cy="128" rx="46" ry="9" fill="#16251A"/>
+            <circle cx="75" cy="74" r="52" fill="url(#gA)" stroke="rgba(188,232,144,0.35)" stroke-width="1"/>
+            <!-- suspended leaf -->
+            <path d="M75 50 C 90 60, 90 86, 75 100 C 60 86, 60 60, 75 50 Z" fill="#7BA85F"/>
+            <path d="M75 54 L75 96" stroke="#3C5E33" stroke-width="1.6"/>
+            <!-- highlight -->
+            <ellipse cx="58" cy="54" rx="13" ry="8" fill="rgba(255,255,255,0.5)" transform="rotate(-28 58 54)"/>
+          </svg>
+        </div>
+        <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; color:#8E9A86; margin:18px 0 0;">Glass dome · suspended leaf · soft top-light</p>
+      </div>
+
+      <!-- phone A -->
+      <div style="display:flex; gap:48px; flex-wrap:wrap; align-items:flex-start;">
+        <div style="width:288px; height:610px; border-radius:46px; background:#080A08; border:1px solid rgba(255,255,255,0.09); padding:11px; box-shadow:0 30px 70px rgba(0,0,0,0.6); flex:none;">
+          <div style="position:relative; width:100%; height:100%; border-radius:36px; background:#000; overflow:hidden; display:flex; flex-direction:column;">
+            <div style="position:absolute; top:11px; left:50%; transform:translateX(-50%); width:84px; height:26px; background:#000; border-radius:14px; z-index:5;"></div>
+            <!-- status -->
+            <div style="display:flex; justify-content:space-between; padding:15px 26px 0; font-family:'Schibsted Grotesk'; font-size:12px; color:#6A7466;"><span>9:41</span><span>Brick mode</span></div>
+            <!-- content -->
+            <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 26px; position:relative;">
+              <div style="position:absolute; top:38%; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle, rgba(124,168,95,0.22) 0%, rgba(0,0,0,0) 68%); filter:blur(6px);"></div>
+              <svg width="172" height="172" viewBox="0 0 172 172" style="position:relative;">
+                <circle cx="86" cy="86" r="74" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+                <circle cx="86" cy="86" r="74" fill="none" stroke="#9DC47B" stroke-width="2" stroke-linecap="round" stroke-dasharray="465" stroke-dashoffset="150" transform="rotate(-90 86 86)" style="filter:drop-shadow(0 0 5px rgba(157,196,123,0.6));"/>
+                <circle cx="86" cy="86" r="34" fill="url(#gA)"/>
+                <path d="M86 70 C 95 76, 95 94, 86 104 C 77 94, 77 76, 86 70 Z" fill="#7BA85F"/>
+              </svg>
+              <p style="font-family:'Schibsted Grotesk'; font-weight:700; font-size:30px; margin:26px 0 4px; letter-spacing:-0.01em; position:relative;">2h 14m</p>
+              <p style="font-family:'Spectral',serif; font-style:italic; font-weight:300; font-size:16px; color:#A9B5A1; margin:0; text-align:center; position:relative;">of quiet remaining</p>
+            </div>
+            <!-- footer -->
+            <div style="padding:0 26px 30px; text-align:center;">
+              <p style="font-family:'Spectral',serif; font-style:italic; font-weight:300; font-size:15.5px; line-height:1.5; color:#8E9A86; margin:0 0 22px;">“The most precious thing you have is your undivided attention.”</p>
+              <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:18px; display:flex; justify-content:center;">
+                <span style="font-family:'Schibsted Grotesk'; font-size:13px; color:#5A6356;">9 apps locked · hold to end</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1; min-width:200px; padding-top:8px;">
+          <p style="font-family:'Schibsted Grotesk'; font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#7BA85F; margin:0 0 14px;">Session in progress</p>
+          <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:16px;">
+            <li style="font-size:14.5px; color:#8E9A86; line-height:1.55; padding-left:18px; position:relative;"><span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:#9DC47B;"></span>A thin progress ring wraps the glass orb — the only motion on screen.</li>
+            <li style="font-size:14.5px; color:#8E9A86; line-height:1.55; padding-left:18px; position:relative;"><span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:#9DC47B;"></span>Encouragement in italic serif, rotating quietly each session.</li>
+            <li style="font-size:14.5px; color:#8E9A86; line-height:1.55; padding-left:18px; position:relative;"><span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:#9DC47B;"></span>Ending requires a deliberate hold — weight, not a tap.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DIRECTION B ============ -->
+  <section style="max-width:1120px; margin:0 auto; padding:48px 40px 96px; border-top:1px solid rgba(255,255,255,0.07);">
+    <div style="display:flex; align-items:baseline; gap:18px; margin-bottom:8px;">
+      <span style="font-family:'Spectral',serif; font-style:italic; font-weight:300; font-size:30px; color:#BCE890;">B</span>
+      <h3 style="font-family:'Schibsted Grotesk',sans-serif; font-weight:600; font-size:24px; margin:0; letter-spacing:-0.01em;">Wild Calm</h3>
+      <span style="font-size:13px; color:#5A6356;">grounded · grotesk · illustrated</span>
+    </div>
+    <p style="font-size:15px; color:#8E9A86; max-width:60ch; margin:0 0 44px; line-height:1.6;">The orb becomes a small living world — a moss sphere holding a tiny forest. The session screen is illustration-forward: you watch the world grow as you stay away.</p>
+
+    <div style="display:grid; grid-template-columns:300px 1fr; gap:56px; align-items:start;">
+      <!-- icon B -->
+      <div>
+        <div style="width:232px; height:232px; border-radius:52px; background:radial-gradient(130% 130% at 50% 18%, #12200F 0%, #000 64%); border:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; box-shadow:0 24px 60px rgba(0,0,0,0.6); overflow:hidden; position:relative;">
+          <svg width="160" height="160" viewBox="0 0 160 160">
+            <defs>
+              <radialGradient id="gBsky" cx="50%" cy="36%" r="62%">
+                <stop offset="0" stop-color="#1C3318"/><stop offset="1" stop-color="#0C1A0E"/>
+              </radialGradient>
+              <clipPath id="gBclip"><circle cx="80" cy="78" r="54"/></clipPath>
+            </defs>
+            <ellipse cx="80" cy="138" rx="44" ry="8" fill="#16251A"/>
+            <circle cx="80" cy="78" r="54" fill="url(#gBsky)" stroke="rgba(188,232,144,0.3)" stroke-width="1"/>
+            <g clip-path="url(#gBclip)">
+              <circle cx="104" cy="52" r="13" fill="#BCE890"/>
+              <path d="M26 108 C 50 92, 70 104, 96 96 C 118 90, 134 100, 134 100 L134 132 L26 132 Z" fill="#3C5E33"/>
+              <path d="M26 120 C 54 108, 80 118, 110 112 C 124 109, 134 114, 134 114 L134 132 L26 132 Z" fill="#2E4A30"/>
+              <path d="M60 116 L60 88 L48 104 L56 104 L44 118 L76 118 L64 104 L72 104 Z" fill="#16251A"/>
+              <path d="M98 118 L98 94 L88 108 L95 108 L84 120 L112 120 L101 108 L108 108 Z" fill="#16251A"/>
+            </g>
+            <ellipse cx="60" cy="50" rx="12" ry="7" fill="rgba(255,255,255,0.28)" transform="rotate(-26 60 50)"/>
+          </svg>
+        </div>
+        <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:13px; color:#8E9A86; margin:18px 0 0;">Moss sphere · a tiny forest world inside</p>
+      </div>
+
+      <!-- phone B -->
+      <div style="display:flex; gap:48px; flex-wrap:wrap; align-items:flex-start;">
+        <div style="width:288px; height:610px; border-radius:46px; background:#080A08; border:1px solid rgba(255,255,255,0.09); padding:11px; box-shadow:0 30px 70px rgba(0,0,0,0.6); flex:none;">
+          <div style="position:relative; width:100%; height:100%; border-radius:36px; background:#000; overflow:hidden; display:flex; flex-direction:column;">
+            <div style="position:absolute; top:11px; left:50%; transform:translateX(-50%); width:84px; height:26px; background:#000; border-radius:14px; z-index:5;"></div>
+            <div style="display:flex; justify-content:space-between; padding:15px 26px 0; font-family:'Schibsted Grotesk'; font-size:12px; color:#6A7466; z-index:6; position:relative;"><span>9:41</span><span>Brick mode</span></div>
+            <div style="flex:1; display:flex; flex-direction:column; align-items:center; padding:46px 26px 0; position:relative;">
+              <p style="font-family:'Schibsted Grotesk'; font-weight:700; font-size:40px; margin:0; letter-spacing:-0.02em;">2h 14m</p>
+              <p style="font-family:'Schibsted Grotesk'; font-size:13px; color:#7BA85F; letter-spacing:0.16em; text-transform:uppercase; margin:8px 0 0;">still away</p>
+              <p style="font-family:'Spectral',serif; font-style:italic; font-weight:300; font-size:17px; color:#A9B5A1; margin:30px 0 0; text-align:center; line-height:1.5; max-width:24ch;">You're growing something the feed never could.</p>
+            </div>
+            <!-- forest grows from bottom -->
+            <svg viewBox="0 0 266 240" width="100%" style="display:block; margin-top:auto;">
+              <defs>
+                <radialGradient id="pbHalo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="rgba(188,232,144,0.4)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/></radialGradient>
+              </defs>
+              <circle cx="200" cy="60" r="60" fill="url(#pbHalo)"/>
+              <circle cx="200" cy="60" r="20" fill="url(#pwMoon)"/>
+              <path d="M0 150 C 60 128, 130 152, 200 138 C 240 130, 266 146, 266 146 L266 240 L0 240 Z" fill="#223A24"/>
+              <path d="M0 180 C 70 158, 150 184, 220 170 C 244 165, 266 176, 266 176 L266 240 L0 240 Z" fill="#2E4A30"/>
+              <g fill="#16251A">
+                <path d="M48 200 L48 150 L35 172 L45 172 L30 196 L66 196 L51 172 L61 172 Z"/>
+                <path d="M150 200 L150 156 L138 176 L147 176 L133 198 L167 198 L153 176 L162 176 Z"/>
+              </g>
+              <path d="M0 206 C 80 188, 170 210, 266 198 L266 240 L0 240 Z" fill="#3C5E33"/>
+              <g fill="#BCE890"><circle cx="110" cy="150" r="2.2" style="animation:pwFloat 5s ease-in-out infinite;"/><circle cx="180" cy="135" r="1.8" style="animation:pwFloat 6.4s ease-in-out infinite; animation-delay:1.2s;"/></g>
+            </svg>
+          </div>
+        </div>
+        <div style="flex:1; min-width:200px; padding-top:8px;">
+          <p style="font-family:'Schibsted Grotesk'; font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#7BA85F; margin:0 0 14px;">Session in progress</p>
+          <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:16px;">
+            <li style="font-size:14.5px; color:#8E9A86; line-height:1.55; padding-left:18px; position:relative;"><span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:#9DC47B;"></span>The forest scene grows denser the longer you stay — trees and fireflies appear over time.</li>
+            <li style="font-size:14.5px; color:#8E9A86; line-height:1.55; padding-left:18px; position:relative;"><span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:#9DC47B;"></span>Big confident numerals carry the time; the poetry sits below.</li>
+            <li style="font-size:14.5px; color:#8E9A86; line-height:1.55; padding-left:18px; position:relative;"><span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:#9DC47B;"></span>Warmer and more alive — for people who want a reward they can watch.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VOICE & TONE ============ -->
+  <section style="max-width:1120px; margin:0 auto; padding:56px 40px 96px; border-top:1px solid rgba(255,255,255,0.07);">
+    <p style="font-family:'Schibsted Grotesk',sans-serif; font-size:12px; letter-spacing:0.26em; text-transform:uppercase; color:#5A6356; margin:0 0 14px;">Voice &amp; Tone</p>
+    <h2 style="font-family:'Spectral',serif; font-weight:300; font-size:34px; margin:0 0 36px;">Calm. Poetic. Never preachy.</h2>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:18px;">
+      <div style="background:#0B0F0B; border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:34px;"><p style="font-family:'Spectral',serif; font-style:italic; font-weight:300; font-size:23px; line-height:1.35; margin:0; color:#ECF1E6;">“Put it down. The world keeps turning without your thumb.”</p></div>
+      <div style="background:#0B0F0B; border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:34px;"><p style="font-family:'Spectral',serif; font-style:italic; font-weight:300; font-size:23px; line-height:1.35; margin:0; color:#ECF1E6;">“Nothing here needs you right now. That's the gift.”</p></div>
+      <div style="background:#0B0F0B; border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:34px;"><p style="font-family:'Spectral',serif; font-style:italic; font-weight:300; font-size:23px; line-height:1.35; margin:0; color:#ECF1E6;">“Two hours of quiet. The forest noticed.”</p></div>
+      <div style="background:#0B0F0B; border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:34px;"><p style="font-family:'Spectral',serif; font-style:italic; font-weight:300; font-size:23px; line-height:1.35; margin:0; color:#ECF1E6;">“Heavy, still, and yours. Welcome back to slow.”</p></div>
+    </div>
+    <div style="display:flex; gap:40px; margin-top:40px; flex-wrap:wrap;">
+      <div style="flex:1; min-width:240px;"><p style="font-family:'Schibsted Grotesk'; font-size:13px; color:#9DC47B; margin:0 0 10px; font-weight:600;">We do</p><p style="font-size:14.5px; color:#8E9A86; line-height:1.6; margin:0;">Speak softly. Use nature. Reward absence. Trust the user already knows why they're here.</p></div>
+      <div style="flex:1; min-width:240px;"><p style="font-family:'Schibsted Grotesk'; font-size:13px; color:#8E6A6A; margin:0 0 10px; font-weight:600;">We don't</p><p style="font-size:14.5px; color:#8E9A86; line-height:1.6; margin:0;">Shame, nag, gamify with streaks-as-pressure, or shout in notifications. No fear, no FOMO inverted.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <section style="max-width:1120px; margin:0 auto; padding:48px 40px 100px; border-top:1px solid rgba(255,255,255,0.07);">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div style="width:22px; height:22px; border-radius:50%; background:radial-gradient(circle at 38% 32%, #BCE890 0%, #7BA85F 42%, #2E4A30 100%); box-shadow:0 0 18px rgba(157,196,123,0.5);"></div>
+      <span style="font-family:'Schibsted Grotesk'; font-weight:600; font-size:14px;">Paperweight</span>
+      <span style="margin-left:auto; font-family:'Spectral',serif; font-style:italic; font-weight:300; font-size:15px; color:#5A6356;">Put it down.</span>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+</body>
+</html>

@@ -10,11 +10,13 @@
 		0419FAEDB15C6EC1BF639783 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		0BF7C0BA9F3338BA1CE6B82C /* UnlockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497698F50F8F5D38D66B556C /* UnlockService.swift */; };
 		0FD70B4533B20650D7424324 /* WatchSessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AABAC42EB3F5CFB37449E /* WatchSessionService.swift */; };
+		16C4692BF8F6FB78A0AF8396 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DBB650985CEBB74ADD653D /* Theme.swift */; };
 		17DCEE5B4E8546ACE60993A1 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
 		18BD42D7B852803D64AE1A29 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		1C19F68A182B0A9FEAE5495F /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
 		1D8836FD8B7D24D197F5D4AC /* UnlockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497698F50F8F5D38D66B556C /* UnlockService.swift */; };
 		1E9AA01D943B0093FF4E8043 /* PaperweightWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		20B484AA1B047782345594AC /* QuietGlassControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D58AD709E5CB710F3B4DC0 /* QuietGlassControls.swift */; };
 		231C780B7D6E28FAD793E4BB /* MockFamilyControlsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2684C065EBF920C9D38FBD2E /* MockFamilyControlsService.swift */; };
 		236D3E1A7F54C81B6219E82A /* PaperweightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */; };
 		278FFD23A1D63FECCF6D55BF /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */; };
@@ -48,6 +50,7 @@
 		68A04CA76B3553BC9590FD78 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
 		6D5F7540E174A627BABDE9B3 /* NFCServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */; };
 		7033EAF2C0ABBF499384B243 /* NFCServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */; };
+		72DB3538D76A9807E61A817C /* QuietGlassMotifs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE34EBC31B40416E68E9A9C /* QuietGlassMotifs.swift */; };
 		73E676B9CFAB3F345FE496C5 /* FamilyControlsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */; };
 		7582E00B005ACF79D4FAF826 /* RecoveryCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D3454799163DB263AAA357 /* RecoveryCode.swift */; };
 		795CD1B8B7A12F99291CC116 /* UnlockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497698F50F8F5D38D66B556C /* UnlockService.swift */; };
@@ -58,8 +61,11 @@
 		89A5E3CB6E85F46BFA2444D8 /* ConfigStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA5321F30E75F5E4C18054 /* ConfigStoreTests.swift */; };
 		8BD8EA08C0DF578A025D69B0 /* AppScheduleOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */; };
 		8E0D86BC891DB8660253F9BF /* PaperweightMonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 14BF93E70A98619836CE6456 /* PaperweightMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8FA4807D8F3098534BFD82FF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DBB650985CEBB74ADD653D /* Theme.swift */; };
+		91738619322FD967319A090B /* Spectral-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EDC912C852DEE8B08F6D2C83 /* Spectral-Light.ttf */; };
 		92C1A5EE122647AC9A8E104D /* FamilyControlsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */; };
 		92D65888149ADC4999112910 /* RecoveryCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D3454799163DB263AAA357 /* RecoveryCode.swift */; };
+		985994F02E9178DA3E96ACC6 /* Spectral-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7AC3901EB6BEE3A3D4AD897 /* Spectral-LightItalic.ttf */; };
 		9D43ED8403454EB38E4B7ED5 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
 		A1CFC8B8F51C8EE1A2D04D84 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
 		A26ACC8ECB32908F3EB398A4 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */; };
@@ -73,10 +79,12 @@
 		AC2A289D780D35CAA93E81BE /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
 		ADD1522D64DC58D31B162343 /* PaperweightSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B54307C7A7519A4B3438B18 /* PaperweightSchedule.swift */; };
 		AFD4876C736B06CA0FA4D105 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
+		B19AAC31F05CE108F2B19A1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2DCE96A22EF690AA116DAB93 /* Assets.xcassets */; };
 		B3B16CBBAF9C7007E03A1C2D /* NFCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5F811117BA243EEA446573 /* NFCService.swift */; };
 		B42620646E967A28A80E0588 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */; };
 		B8D200F1968016B8D3A39B1C /* NFCError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D9688BE57BB64F825FADF /* NFCError.swift */; };
 		BA8884DEF16AC136977095A0 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
+		BBE028A9F17A27DA612374EE /* SchibstedGrotesk.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 210EF05BC79AAABF75F3BD4A /* SchibstedGrotesk.ttf */; };
 		BDEBCA32A049E3FA07DC0C3B /* PaperweightMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */; };
 		BFF1BE028BB52C71E72F7AFB /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		C216DB6EE0BF7910C50A2ED4 /* UnlockServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE80E7DAADF971A042189DE /* UnlockServiceTests.swift */; };
@@ -88,6 +96,7 @@
 		CFF71B13D0936160DF62DF25 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73E8039E73078EDAFA8A63A /* ConfigStore.swift */; };
 		D31857E0FDE54BDC9194C2F7 /* CoreNFC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9718F6AD0F49D6618322A25C /* CoreNFC.framework */; };
 		D77BA22D048D5BC84FAD3A61 /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
+		DB329E67B7F3A442C8FF76FE /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DBB650985CEBB74ADD653D /* Theme.swift */; };
 		DB8C14210D8D7D49B3B80C92 /* NFCError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D9688BE57BB64F825FADF /* NFCError.swift */; };
 		DCA57A3C7582D159FA71683E /* WatchConnectivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9EB3CD52DBC2A49F6823617 /* WatchConnectivityService.swift */; };
 		DE14CE3876EB0B465A38D391 /* UnlockError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A3B6F147C20B902A2DC11F /* UnlockError.swift */; };
@@ -103,6 +112,7 @@
 		F5F68C74DA31D2A3967CDADC /* UnlockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497698F50F8F5D38D66B556C /* UnlockService.swift */; };
 		FC015DB3B839A98F3647235A /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD13470A08F204624DA65F74 /* FamilyControls.framework */; };
 		FD0EA9F8EFDE14856E793040 /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9FB998664C51496BE2C1811 /* StatusView.swift */; };
+		FDB136D8C8B149F52135D5BC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DBB650985CEBB74ADD653D /* Theme.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -154,8 +164,10 @@
 		15E0A914AA260D4008747A4F /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = SDKROOT; };
 		1B54307C7A7519A4B3438B18 /* PaperweightSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightSchedule.swift; sourceTree = "<group>"; };
 		1F146F4B009BC0C785B756F9 /* RestrictionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestrictionServiceTests.swift; sourceTree = "<group>"; };
+		210EF05BC79AAABF75F3BD4A /* SchibstedGrotesk.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SchibstedGrotesk.ttf; sourceTree = "<group>"; };
 		264A71AAA48B827E09F01182 /* PaperweightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightTests.swift; sourceTree = "<group>"; };
 		2684C065EBF920C9D38FBD2E /* MockFamilyControlsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFamilyControlsService.swift; sourceTree = "<group>"; };
+		2DCE96A22EF690AA116DAB93 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestrictionServiceProtocols.swift; sourceTree = "<group>"; };
 		33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightConfig.swift; sourceTree = "<group>"; };
 		3559557FC1A539F56DBF5628 /* FamilyControlsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyControlsService.swift; sourceTree = "<group>"; };
@@ -169,6 +181,7 @@
 		6B5F811117BA243EEA446573 /* NFCService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCService.swift; sourceTree = "<group>"; };
 		6C7930F0F3E94F416D019E71 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		712FE81CE0698810B2EC199C /* PaperweightWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightWatchApp.swift; sourceTree = "<group>"; };
+		72DBB650985CEBB74ADD653D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		831FEA2BA6D7C92B44166C6E /* PaperweightWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaperweightWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E24AC0D3BBE607941DBA376 /* Paperweight.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Paperweight.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90C367BBFE7CC04350ABADDB /* PaperweightMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightMonitor.swift; sourceTree = "<group>"; };
@@ -183,22 +196,26 @@
 		B2C4F583245D32301B7B51FA /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B54086F0817AEB7475A36F78 /* NFCSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCSetupView.swift; sourceTree = "<group>"; };
 		B61140B5FB638BF2A018B6B9 /* PaperweightConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightConfigTests.swift; sourceTree = "<group>"; };
+		B7D58AD709E5CB710F3B4DC0 /* QuietGlassControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuietGlassControls.swift; sourceTree = "<group>"; };
 		B80D66E1F5A6A368B92FC9A2 /* AppScheduleOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppScheduleOverride.swift; sourceTree = "<group>"; };
 		BDAAADECFF58B99FC5491C06 /* Paperweight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Paperweight.entitlements; sourceTree = "<group>"; };
 		C6B07495D8CF9F6B55D21578 /* DisablePaperweightSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisablePaperweightSheet.swift; sourceTree = "<group>"; };
 		C9EA5321F30E75F5E4C18054 /* ConfigStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigStoreTests.swift; sourceTree = "<group>"; };
 		CBE80E7DAADF971A042189DE /* UnlockServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockServiceTests.swift; sourceTree = "<group>"; };
 		CD13470A08F204624DA65F74 /* FamilyControls.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = SDKROOT; };
+		CFE34EBC31B40416E68E9A9C /* QuietGlassMotifs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuietGlassMotifs.swift; sourceTree = "<group>"; };
 		D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCServiceProtocol.swift; sourceTree = "<group>"; };
 		D16052C368FABF3E1EF3AF80 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		D34DAC18D1685AAB35D06CA2 /* HomeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModelTests.swift; sourceTree = "<group>"; };
+		D7AC3901EB6BEE3A3D4AD897 /* Spectral-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-LightItalic.ttf"; sourceTree = "<group>"; };
 		D7D3454799163DB263AAA357 /* RecoveryCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryCode.swift; sourceTree = "<group>"; };
 		D87CF16D7FC3A797014E83CF /* ScheduleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleService.swift; sourceTree = "<group>"; };
 		DA4AABAC42EB3F5CFB37449E /* WatchSessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionService.swift; sourceTree = "<group>"; };
 		DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightApp.swift; sourceTree = "<group>"; };
 		E5ABF52C51B8CEE1FB112DC7 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		E73E8039E73078EDAFA8A63A /* ConfigStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigStore.swift; sourceTree = "<group>"; };
+		EDC912C852DEE8B08F6D2C83 /* Spectral-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Light.ttf"; sourceTree = "<group>"; };
 		F18D9688BE57BB64F825FADF /* NFCError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCError.swift; sourceTree = "<group>"; };
 		F5F14F5172FEB39E2DACC7C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F9EB3CD52DBC2A49F6823617 /* WatchConnectivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityService.swift; sourceTree = "<group>"; };
@@ -283,6 +300,25 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		30BC727102A0D14E22CB3BEE /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				210EF05BC79AAABF75F3BD4A /* SchibstedGrotesk.ttf */,
+				EDC912C852DEE8B08F6D2C83 /* Spectral-Light.ttf */,
+				D7AC3901EB6BEE3A3D4AD897 /* Spectral-LightItalic.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		311954F4AA71DC35A82C8E21 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				30BC727102A0D14E22CB3BEE /* Fonts */,
+				2DCE96A22EF690AA116DAB93 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		31422B4E9235A05B79508E26 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -314,6 +350,7 @@
 		54CEC16E43EFB8F35C02EBEB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				5C37387709B78025025AF4B0 /* Components */,
 				C6B07495D8CF9F6B55D21578 /* DisablePaperweightSheet.swift */,
 				D16052C368FABF3E1EF3AF80 /* HomeView.swift */,
 				B54086F0817AEB7475A36F78 /* NFCSetupView.swift */,
@@ -322,6 +359,15 @@
 				0F5D8553F9CE8E640D7F9853 /* UnlockView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		5C37387709B78025025AF4B0 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				B7D58AD709E5CB710F3B4DC0 /* QuietGlassControls.swift */,
+				CFE34EBC31B40416E68E9A9C /* QuietGlassMotifs.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		80BD27DCFA49CCF604CE4441 /* Frameworks */ = {
@@ -397,6 +443,7 @@
 				F8DAE340FD057341AD1F7D36 /* Store */,
 				E9FCD26CE4FF570F56CC907A /* ViewModels */,
 				B2C4F583245D32301B7B51FA /* Constants.swift */,
+				72DBB650985CEBB74ADD653D /* Theme.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -436,6 +483,7 @@
 			isa = PBXGroup;
 			children = (
 				31422B4E9235A05B79508E26 /* Extensions */,
+				311954F4AA71DC35A82C8E21 /* Resources */,
 				4F9A3E42B645E59D0E5FE246 /* Services */,
 				54CEC16E43EFB8F35C02EBEB /* Views */,
 				6C7930F0F3E94F416D019E71 /* Info.plist */,
@@ -487,6 +535,7 @@
 			buildConfigurationList = 13988AA8C3DF887923264289 /* Build configuration list for PBXNativeTarget "Paperweight" */;
 			buildPhases = (
 				C2D5C27273CB6625D7FB36A9 /* Sources */,
+				0C22A1339B89CD02C8ED102C /* Resources */,
 				9A432A40CFFD49F9D027786C /* Frameworks */,
 				BF07C0CEE76710A1813B47A8 /* Embed Foundation Extensions */,
 				64F06184EB1DD364B900F6F8 /* Embed Watch Content */,
@@ -585,6 +634,20 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		0C22A1339B89CD02C8ED102C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B19AAC31F05CE108F2B19A1A /* Assets.xcassets in Resources */,
+				BBE028A9F17A27DA612374EE /* SchibstedGrotesk.ttf in Resources */,
+				91738619322FD967319A090B /* Spectral-Light.ttf in Resources */,
+				985994F02E9178DA3E96ACC6 /* Spectral-LightItalic.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		6F69ECF3DB024BF81D5B467F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -605,6 +668,7 @@
 				17DCEE5B4E8546ACE60993A1 /* RestrictionService.swift in Sources */,
 				51274230D6754D3396BCC5E3 /* RestrictionServiceProtocols.swift in Sources */,
 				FD0EA9F8EFDE14856E793040 /* StatusView.swift in Sources */,
+				DB329E67B7F3A442C8FF76FE /* Theme.swift in Sources */,
 				F485D39ECAB798E93AFC8B0F /* UnlockError.swift in Sources */,
 				0BF7C0BA9F3338BA1CE6B82C /* UnlockService.swift in Sources */,
 				0FD70B4533B20650D7424324 /* WatchSessionService.swift in Sources */,
@@ -631,6 +695,8 @@
 				236D3E1A7F54C81B6219E82A /* PaperweightApp.swift in Sources */,
 				D77BA22D048D5BC84FAD3A61 /* PaperweightConfig.swift in Sources */,
 				82BB5D4E7DF0F181BE1DDD56 /* PaperweightSchedule.swift in Sources */,
+				20B484AA1B047782345594AC /* QuietGlassControls.swift in Sources */,
+				72DB3538D76A9807E61A817C /* QuietGlassMotifs.swift in Sources */,
 				7582E00B005ACF79D4FAF826 /* RecoveryCode.swift in Sources */,
 				510CE49FE5D5AD1BA17AE0B4 /* RecoveryCodeService.swift in Sources */,
 				488665AECFFF3EBB720368F9 /* RecoveryCodesView.swift in Sources */,
@@ -638,6 +704,7 @@
 				C871CD3DFEC37637DA7E4D27 /* RestrictionServiceProtocols.swift in Sources */,
 				79EE2079919843270EA8647F /* ScheduleService.swift in Sources */,
 				EF65ED71C4FF21E93D27E722 /* ScheduleView.swift in Sources */,
+				16C4692BF8F6FB78A0AF8396 /* Theme.swift in Sources */,
 				F1F9010363988A4AC15640F4 /* UnlockError.swift in Sources */,
 				F5F68C74DA31D2A3967CDADC /* UnlockService.swift in Sources */,
 				546FD52159CD41A43610D0CE /* UnlockView.swift in Sources */,
@@ -669,6 +736,7 @@
 				DFECF6080B935CA87530DE30 /* RestrictionService.swift in Sources */,
 				AB33A18842DBE7B2E5FE13EF /* RestrictionServiceProtocols.swift in Sources */,
 				56A632507F2C3965376DCEB1 /* RestrictionServiceTests.swift in Sources */,
+				8FA4807D8F3098534BFD82FF /* Theme.swift in Sources */,
 				DE14CE3876EB0B465A38D391 /* UnlockError.swift in Sources */,
 				1D8836FD8B7D24D197F5D4AC /* UnlockService.swift in Sources */,
 				C216DB6EE0BF7910C50A2ED4 /* UnlockServiceTests.swift in Sources */,
@@ -692,6 +760,7 @@
 				CD08568061993B59263ADD73 /* RecoveryCode.swift in Sources */,
 				AFD4876C736B06CA0FA4D105 /* RestrictionService.swift in Sources */,
 				4656D694A0BC116B5C3C310D /* RestrictionServiceProtocols.swift in Sources */,
+				FDB136D8C8B149F52135D5BC /* Theme.swift in Sources */,
 				564C9D3B84D6180C6FE549CB /* UnlockError.swift in Sources */,
 				795CD1B8B7A12F99291CC116 /* UnlockService.swift in Sources */,
 			);

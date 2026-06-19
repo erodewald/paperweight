@@ -43,3 +43,6 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# Redundant design-system archive (extracted into design_handoff_paperweight/)
+Paperweight design system.zip

@@ -5,6 +5,7 @@ struct StatusView: View {
 
     var body: some View {
         ZStack {
+            PW.black.ignoresSafeArea()
             if session.unlockConfirmationPending {
                 ConfirmUnlockView(session: session)
             } else {
@@ -22,13 +23,14 @@ struct StatusView: View {
                 .foregroundStyle(iconColor)
 
             Text(statusText)
-                .font(.headline)
+                .font(.grotesk(16, weight: .semibold))
+                .foregroundStyle(PW.textPrimary)
                 .multilineTextAlignment(.center)
 
             if session.status.isUnlocked, let exp = session.status.unlockExpires {
                 Text("Until \(exp.formatted(date: .omitted, time: .shortened))")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(.grotesk(12))
+                    .foregroundStyle(PW.textMuted)
             }
         }
         .padding()
@@ -41,9 +43,9 @@ struct StatusView: View {
     }
 
     private var iconColor: Color {
-        if session.status.isUnlocked { return .green }
-        if session.status.isEnabled { return .orange }
-        return .gray
+        if session.status.isUnlocked { return PW.dawnGlow }
+        if session.status.isEnabled { return PW.sage }
+        return PW.textFaint
     }
 
     private var statusText: String {

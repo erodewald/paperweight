@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300&family=Schibsted+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+</style>
+</helmet>
+
+<div style="background:#0A0B0A; min-height:100vh; padding:64px 56px 90px; font-family:'Hanken Grotesk',system-ui,sans-serif; -webkit-font-smoothing:antialiased; color:#ECF1E6;">
+
+  <div style="display:flex; align-items:center; gap:11px; margin-bottom:30px;">
+    <div style="width:24px; height:24px; border-radius:50%; background:radial-gradient(circle at 38% 32%, #BCE890 0%, #7BA85F 42%, #2E4A30 100%); box-shadow:0 0 20px rgba(157,196,123,0.5);"></div>
+    <span style="font-family:'Schibsted Grotesk',sans-serif; font-weight:600; font-size:15px;">Paperweight</span>
+    <span style="font-size:12px; letter-spacing:0.24em; text-transform:uppercase; color:#5A6356;">· App Icon</span>
+  </div>
+  <h1 style="font-family:'Spectral',serif; font-weight:300; font-size:50px; line-height:1.0; letter-spacing:-0.02em; margin:0 0 14px;">A leaf, held in glass.</h1>
+  <p style="font-family:'Spectral',serif; font-style:italic; font-weight:300; font-size:19px; color:#A9B5A1; margin:0 0 56px; max-width:52ch;">The literal paperweight — one living thing, suspended and still, glowing against true black.</p>
+
+  <div style="display:flex; gap:64px; align-items:flex-start; flex-wrap:wrap;">
+
+    <!-- hero 1024 -->
+    <div style="flex:none;">
+      <img src="assets/AppIcon-1024.png" alt="Paperweight app icon" width="360" height="360" style="display:block; border-radius:80px; box-shadow:0 30px 80px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.06);">
+      <p style="font-family:'Schibsted Grotesk'; font-size:13px; color:#5A6356; margin:18px 0 0; text-align:center;">1024 × 1024 · App Store</p>
+    </div>
+
+    <!-- specs + size ladder -->
+    <div style="flex:1; min-width:420px; padding-top:6px;">
+      <!-- size ladder -->
+      <p style="font-family:'Schibsted Grotesk'; font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#7BA85F; margin:0 0 20px;">Scales down clean</p>
+      <div style="display:flex; align-items:flex-end; gap:26px; margin-bottom:48px;">
+        <div style="text-align:center;"><img src="assets/AppIcon-180.png" width="120" height="120" style="border-radius:27px; display:block;"><p style="font-size:11px; color:#5A6356; margin:10px 0 0;">120pt</p></div>
+        <div style="text-align:center;"><img src="assets/AppIcon-180.png" width="83" height="83" style="border-radius:19px; display:block;"><p style="font-size:11px; color:#5A6356; margin:10px 0 0;">83pt</p></div>
+        <div style="text-align:center;"><img src="assets/AppIcon-120.png" width="60" height="60" style="border-radius:13px; display:block;"><p style="font-size:11px; color:#5A6356; margin:10px 0 0;">60pt</p></div>
+        <div style="text-align:center;"><img src="assets/AppIcon-120.png" width="40" height="40" style="border-radius:9px; display:block;"><p style="font-size:11px; color:#5A6356; margin:10px 0 0;">40pt</p></div>
+        <div style="text-align:center;"><img src="assets/AppIcon-120.png" width="29" height="29" style="border-radius:7px; display:block;"><p style="font-size:11px; color:#5A6356; margin:10px 0 0;">29pt</p></div>
+      </div>
+
+      <!-- construction notes -->
+      <p style="font-family:'Schibsted Grotesk'; font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#7BA85F; margin:0 0 18px;">Construction</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.07); border-radius:14px; overflow:hidden;">
+        <div style="background:#0B0F0B; padding:20px 22px;"><p style="font-family:'Schibsted Grotesk'; font-size:13px; color:#9DC47B; font-weight:600; margin:0 0 6px;">Canvas</p><p style="font-size:13.5px; color:#8E9A86; margin:0; line-height:1.5;">Radial near-black (#101E12 → #000). Full-bleed; no transparency. iOS applies the corner mask.</p></div>
+        <div style="background:#0B0F0B; padding:20px 22px;"><p style="font-family:'Schibsted Grotesk'; font-size:13px; color:#9DC47B; font-weight:600; margin:0 0 6px;">Orb</p><p style="font-size:13.5px; color:#8E9A86; margin:0; line-height:1.5;">Glass sphere, top-left key light, warm-green throughlight from below, dawn-glow rim at 50% alpha.</p></div>
+        <div style="background:#0B0F0B; padding:20px 22px;"><p style="font-family:'Schibsted Grotesk'; font-size:13px; color:#9DC47B; font-weight:600; margin:0 0 6px;">Leaf</p><p style="font-size:13.5px; color:#8E9A86; margin:0; line-height:1.5;">Single suspended leaf, sage→moss vertical gradient, faint spine + two veins. The only "content."</p></div>
+        <div style="background:#0B0F0B; padding:20px 22px;"><p style="font-family:'Schibsted Grotesk'; font-size:13px; color:#9DC47B; font-weight:600; margin:0 0 6px;">Safe area</p><p style="font-size:13.5px; color:#8E9A86; margin:0; line-height:1.5;">Orb sits at ~58% diameter, centered, with generous dark margin so it survives the rounded mask.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- home-screen context -->
+  <div style="margin-top:72px; border-top:1px solid rgba(255,255,255,0.07); padding-top:48px;">
+    <p style="font-family:'Schibsted Grotesk'; font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#7BA85F; margin:0 0 26px;">On the home screen</p>
+    <div style="display:flex; gap:60px; align-items:center; flex-wrap:wrap;">
+      <!-- among other icons -->
+      <div style="display:flex; align-items:flex-end; gap:22px; padding:26px 30px; background:linear-gradient(160deg,#1a2030,#0c0f16); border-radius:28px;">
+        <div style="text-align:center;"><div style="width:62px; height:62px; border-radius:14px; background:#2B6CF6;"></div><p style="font-size:10px; color:#cbd3e0; margin:7px 0 0;">Messages</p></div>
+        <div style="text-align:center;"><div style="width:62px; height:62px; border-radius:14px; background:#111;"></div><p style="font-size:10px; color:#cbd3e0; margin:7px 0 0;">Photos</p></div>
+        <div style="text-align:center;"><img src="assets/AppIcon-180.png" width="62" height="62" style="border-radius:14px; display:block; box-shadow:0 6px 18px rgba(0,0,0,0.4);"><p style="font-size:10px; color:#cbd3e0; margin:7px 0 0; font-weight:600;">Paperweight</p></div>
+        <div style="text-align:center;"><div style="width:62px; height:62px; border-radius:14px; background:#E8503A;"></div><p style="font-size:10px; color:#cbd3e0; margin:7px 0 0;">Music</p></div>
+      </div>
+      <p style="font-family:'Spectral',serif; font-style:italic; font-weight:300; font-size:20px; color:#8E9A86; max-width:30ch; line-height:1.5; margin:0;">The dark, glowing orb is the calm one in the grid — the thing your eye rests on, not the one that pulls.</p>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

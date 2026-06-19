@@ -7,10 +7,11 @@ struct ConfirmUnlockView: View {
         VStack(spacing: 16) {
             Image(systemName: "lock.open")
                 .font(.system(size: 32))
-                .foregroundStyle(.orange)
+                .foregroundStyle(PW.dawnGlow)
 
             Text("Allow unlock?")
-                .font(.headline)
+                .font(.grotesk(16, weight: .semibold))
+                .foregroundStyle(PW.textPrimary)
 
             HStack(spacing: 12) {
                 Button(action: session.denyUnlock) {
@@ -18,14 +19,14 @@ struct ConfirmUnlockView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
-                .tint(.red)
+                .tint(PW.clay)
 
                 Button(action: session.confirmUnlock) {
                     Image(systemName: "checkmark")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(.green)
+                .tint(PW.sage)
             }
         }
         .padding()

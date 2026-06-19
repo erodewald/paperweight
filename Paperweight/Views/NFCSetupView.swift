@@ -12,84 +12,123 @@ struct NFCSetupView: View {
     @State private var generatedCodes: [String] = []
     @State private var showingCodes = false
 
+    private let durations: [(value: TimeInterval, label: String)] =
+        [(300, "5m"), (900, "15m"), (1800, "30m"), (3600, "1h")]
+    private let coolOffs: [(value: Int, label: String)] = [(1, "1 day"), (2, "2 days"), (3, "3 days")]
+
     var body: some View {
-        Form {
-            Section {
-                if let uid = vm.config.registeredNFCTagUID {
-                    LabeledContent("Registered Token", value: uid)
-                    Button("Replace Token", role: .destructive) { scan() }
-                } else {
-                    Button("Register NFC Token") { scan() }
-                }
-            } header: {
-                Text("Physical Token")
-            } footer: {
-                Text("Tap your NFC sticker to register it. Place the sticker on an object you won't carry everywhere.")
-            }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
 
-            Section {
-                Picker("Duration", selection: Binding(
+                SectionHeader(text: "Physical Token").padding(.bottom, 9)
+                GroupedCard {
+                    if let uid = vm.config.registeredNFCTagUID {
+                        HStack(spacing: 12) {
+                            Image(systemName: "wave.3.forward")
+                                .font(.system(size: 16)).foregroundStyle(PW.sage).frame(width: 18)
+                            Text("Registered Token").font(.grotesk(14.5)).foregroundStyle(PW.textPrimary)
+                            Spacer()
+                            Text(uid).font(.grotesk(12.5)).foregroundStyle(PW.textMuted).tracking(0.5)
+                        }
+                        .padding(.horizontal, 16).padding(.vertical, 13)
+                        CardDivider()
+                        Button { scan() } label: {
+                            Text("Replace Token").font(.grotesk(14.5)).foregroundStyle(PW.clay)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16).padding(.vertical, 13)
+                                .contentShape(Rectangle())
+                        }.buttonStyle(.plain)
+                    } else {
+                        Button { scan() } label: {
+                            Text("Register NFC Token").font(.grotesk(14.5)).foregroundStyle(PW.sage)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16).padding(.vertical, 13)
+                                .contentShape(Rectangle())
+                        }.buttonStyle(.plain)
+                    }
+                }
+                Text("Tap your NFC sticker to register it. Place it on an object you won't carry everywhere.")
+                    .font(.grotesk(11.5)).foregroundStyle(PW.textFaint)
+                    .padding(.horizontal, 8).padding(.top, 8)
+
+                SectionHeader(text: "Unlock Duration").padding(.top, 22).padding(.bottom, 9)
+                PWSegmented(options: durations, selection: Binding(
                     get: { vm.config.unlockDuration },
-                    set: { vm.config.unlockDuration = $0; vm.saveSelection() }
-                )) {
-                    Text("5 min").tag(TimeInterval(300))
-                    Text("15 min").tag(TimeInterval(900))
-                    Text("30 min").tag(TimeInterval(1800))
-                    Text("1 hour").tag(TimeInterval(3600))
-                }
-                .pickerStyle(.segmented)
-            } header: {
-                Text("Unlock Duration")
-            }
+                    set: { vm.config.unlockDuration = $0; vm.saveSelection() }))
 
-            Section {
-                Toggle("Require Watch tap to unlock", isOn: Binding(
-                    get: { vm.config.requireWatchConfirmation },
-                    set: { vm.config.requireWatchConfirmation = $0; vm.saveSelection() }
-                ))
-            } header: {
-                Text("Watch Confirmation")
-            } footer: {
-                Text("When on and a Watch is paired, the unlock button on your Watch must be tapped after NFC scan.")
-            }
-
-            Section {
-                let unused = vm.config.recoveryCodes.filter { !$0.isUsed }.count
-                if vm.config.recoveryCodes.isEmpty {
-                    Button("Generate Recovery Codes") { generateCodes() }
-                } else {
-                    LabeledContent("Codes Remaining", value: "\(unused) of \(RecoveryCodeService.codeCount)")
-                    Button("Regenerate All Codes", role: .destructive) { generateCodes() }
+                SectionHeader(text: "Watch Confirmation").padding(.top, 22).padding(.bottom, 9)
+                GroupedCard {
+                    Toggle(isOn: Binding(
+                        get: { vm.config.requireWatchConfirmation },
+                        set: { vm.config.requireWatchConfirmation = $0; vm.saveSelection() }
+                    )) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Require Watch tap").font(.grotesk(14.5)).foregroundStyle(PW.textPrimary)
+                            Text("Confirm unlocks on your wrist").font(.grotesk(11.5)).foregroundStyle(PW.textFaint)
+                        }
+                    }
+                    .toggleStyle(PWToggleStyle())
+                    .padding(.horizontal, 16).padding(.vertical, 14)
                 }
-            } header: {
-                Text("Recovery Codes")
-            } footer: {
-                Text("Single-use backup codes to disable Paperweight if your NFC token is lost. Generated codes are shown once — save them somewhere safe.")
-            }
 
-            Section {
-                Picker("Auto-unlock after", selection: Binding(
-                    get: { vm.config.maxLockedDays ?? 0 },
-                    set: { vm.config.maxLockedDays = $0 == 0 ? nil : $0; vm.saveSelection() }
-                )) {
-                    Text("Never (not recommended)").tag(0)
-                    Text("3 days").tag(3)
-                    Text("7 days").tag(7)
-                    Text("30 days").tag(30)
+                SectionHeader(text: "Recovery Codes").padding(.top, 22).padding(.bottom, 9)
+                GroupedCard {
+                    if vm.config.recoveryCodes.isEmpty {
+                        Button { generateCodes() } label: {
+                            Text("Generate Recovery Codes").font(.grotesk(14.5)).foregroundStyle(PW.sage)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16).padding(.vertical, 13).contentShape(Rectangle())
+                        }.buttonStyle(.plain)
+                    } else {
+                        let unused = vm.config.recoveryCodes.filter { !$0.isUsed }.count
+                        HStack {
+                            Text("Codes Remaining").font(.grotesk(14.5)).foregroundStyle(PW.textPrimary)
+                            Spacer()
+                            Text("\(unused) of \(RecoveryCodeService.codeCount)")
+                                .font(.grotesk(13)).foregroundStyle(PW.textMuted)
+                        }
+                        .padding(.horizontal, 16).padding(.vertical, 13)
+                        CardDivider()
+                        HStack {
+                            Text("Cool-off if token lost").font(.grotesk(13.5)).foregroundStyle(PW.textFaint)
+                            Spacer()
+                            Menu {
+                                ForEach(coolOffs, id: \.value) { o in
+                                    Button(o.label) { vm.config.coolOffDays = o.value; vm.saveSelection() }
+                                }
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Text(coolOffLabel).font(.grotesk(13)).foregroundStyle(PW.textMuted)
+                                    Image(systemName: "chevron.up.chevron.down")
+                                        .font(.system(size: 10)).foregroundStyle(PW.textFaint)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 16).padding(.vertical, 13)
+                        CardDivider()
+                        Button { generateCodes() } label: {
+                            Text("Regenerate All Codes").font(.grotesk(14.5)).foregroundStyle(PW.clay)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16).padding(.vertical, 13).contentShape(Rectangle())
+                        }.buttonStyle(.plain)
+                    }
                 }
-            } header: {
-                Text("Auto-Unlock Failsafe")
-            } footer: {
-                Text("If Paperweight is still active this many days after being enabled, all restrictions lift automatically. Prevents permanent lockout.")
+                Text("Single-use backup codes to disable Paperweight if your token is lost. Shown once — save them somewhere safe.")
+                    .font(.grotesk(11.5)).foregroundStyle(PW.textFaint)
+                    .padding(.horizontal, 8).padding(.top, 8).padding(.bottom, 24)
             }
+            .padding(.horizontal, 18)
+            .padding(.top, 8)
         }
+        .scrollContentBackground(.hidden)
+        .pwScreen()
         .navigationTitle("NFC Token & Recovery")
         .navigationBarTitleDisplayMode(.inline)
         .overlay {
             if isScanning {
                 ProgressView("Scanning…")
-                    .padding()
-                    .background(.regularMaterial)
+                    .tint(PW.sage)
+                    .padding().background(PW.surfaceRaised)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
         }
@@ -100,16 +139,15 @@ struct NFCSetupView: View {
             Text("Your NFC token has been saved. Generate recovery codes now in case you ever lose it.")
         }
         .alert("Error", isPresented: Binding(
-            get: { error != nil },
-            set: { if !$0 { error = nil } }
-        )) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(error?.localizedDescription ?? "")
-        }
+            get: { error != nil }, set: { if !$0 { error = nil } }
+        )) { Button("OK", role: .cancel) {} } message: { Text(error?.localizedDescription ?? "") }
         .sheet(isPresented: $showingCodes) {
             RecoveryCodesView(codes: generatedCodes)
         }
+    }
+
+    private var coolOffLabel: String {
+        "\(vm.config.coolOffDays) day\(vm.config.coolOffDays == 1 ? "" : "s")"
     }
 
     private func scan() {
@@ -121,9 +159,7 @@ struct NFCSetupView: View {
                 vm.saveSelection()
                 didRegister = true
             } catch is CancellationError {
-            } catch {
-                self.error = error
-            }
+            } catch { self.error = error }
             isScanning = false
         }
     }

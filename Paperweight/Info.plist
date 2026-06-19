@@ -20,5 +20,13 @@
     <string>Paperweight uses NFC to read your unlock token.</string>
     <key>UILaunchStoryboardName</key>
     <string>LaunchScreen</string>
+    <key>UIUserInterfaceStyle</key>
+    <string>Dark</string>
+    <key>UIAppFonts</key>
+    <array>
+        <string>Spectral-Light.ttf</string>
+        <string>Spectral-LightItalic.ttf</string>
+        <string>SchibstedGrotesk.ttf</string>
+    </array>
 </dict>
 </plist>

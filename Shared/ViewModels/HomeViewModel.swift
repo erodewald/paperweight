@@ -20,7 +20,7 @@ final class HomeViewModel: ObservableObject {
         self.familyService = familyService
         self.restrictionService = restrictionService
         self.config = configStore.load()
-        checkTimeBasedFailsafe()
+        enforceCoolOffExpiry()
     }
 
     func setEnabled(_ enabled: Bool) async {
@@ -29,7 +29,8 @@ final class HomeViewModel: ObservableObject {
                 try await familyService.requestAuthorization()
             }
             config.isEnabled = enabled
-            config.lockedAt = enabled ? Date() : nil
+            // A fresh activation clears any pending tokenless-unlock request.
+            if enabled { config.unlockRequestedAt = nil }
             try configStore.save(config)
             syncRestrictions()
         } catch {
@@ -39,7 +40,7 @@ final class HomeViewModel: ObservableObject {
 
     func disablePaperweight() async throws {
         config.isEnabled = false
-        config.lockedAt = nil
+        config.unlockRequestedAt = nil
         try configStore.save(config)
         restrictionService.removeAll()
     }
@@ -49,9 +50,29 @@ final class HomeViewModel: ObservableObject {
         syncRestrictions()
     }
 
+    // MARK: Cool-off unlock (tokenless)
+
+    /// Whether a tokenless unlock is currently counting down.
+    var isCoolOffPending: Bool { config.unlockRequestedAt != nil }
+
+    /// Starts the cool-off countdown; Paperweight keeps enforcing until it
+    /// elapses, then disables automatically.
+    func requestCoolOffUnlock() {
+        guard config.unlockRequestedAt == nil else { return }
+        config.unlockRequestedAt = Date()
+        try? configStore.save(config)
+    }
+
+    /// Cancels a pending cool-off unlock (e.g. the token turned up).
+    func cancelCoolOffUnlock() {
+        config.unlockRequestedAt = nil
+        try? configStore.save(config)
+    }
+
     /// Brings the shield in line with the current config: lifted when disabled
     /// or inside a free window, applied otherwise. Safe to call any time.
     func syncRestrictions() {
+        enforceCoolOffExpiry()
         guard config.isEnabled else {
             restrictionService.removeAll()
             return
@@ -63,13 +84,12 @@ final class HomeViewModel: ObservableObject {
         }
     }
 
-    private func checkTimeBasedFailsafe() {
-        guard config.isEnabled,
-              let maxDays = config.maxLockedDays,
-              let lockedAt = config.lockedAt else { return }
-        if Date().timeIntervalSince(lockedAt) > Double(maxDays) * 86400 {
+    /// If a requested cool-off unlock has elapsed, disable Paperweight.
+    private func enforceCoolOffExpiry() {
+        guard config.isEnabled, let release = config.coolOffReleaseDate else { return }
+        if Date() >= release {
             config.isEnabled = false
-            config.lockedAt = nil
+            config.unlockRequestedAt = nil
             try? configStore.save(config)
             restrictionService.removeAll()
         }
