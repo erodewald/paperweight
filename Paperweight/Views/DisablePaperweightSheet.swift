@@ -113,10 +113,6 @@ struct DisablePaperweightSheet: View {
     private func scanAndConfirm() async {
         do {
             try await unlockService.verifyTag()
-            if vm.config.requireWatchConfirmation && WatchConnectivityService.shared.watchIsReachable {
-                let confirmed = await WatchConnectivityService.shared.requestWatchConfirmation()
-                guard confirmed else { return }
-            }
             confirming = true
         } catch is CancellationError {
         } catch { self.error = error }

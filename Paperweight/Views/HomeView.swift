@@ -24,17 +24,26 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            settingsList
-                .navigationBarHidden(true)
+        ZStack {
+            NavigationStack {
+                settingsList
+                    .navigationBarHidden(true)
+            }
+            .tint(PW.sage)
+
+            // Quiet orb sits ABOVE a stable settings root as a plain overlay (not
+            // a sheet/cover, which failed to present at cold launch). The root
+            // never swaps, so pushing/popping the schedule stays clean.
+            if showQuiet {
+                QuietScreen(
+                    vm: vm,
+                    onUnlock: { showQuiet = false; showingDisableSheet = true },
+                    onSettings: { showQuiet = false })
+                    .transition(.opacity)
+                    .zIndex(1)
+            }
         }
-        .tint(PW.sage)
-        // Quiet orb sits ABOVE a stable settings root, so pushing/popping the
-        // schedule never swaps the root out from under a pushed view.
-        .fullScreenCover(isPresented: $showQuiet) {
-            QuietScreen(vm: vm, onSettings: { showQuiet = false })
-                .background(PW.black.ignoresSafeArea())
-        }
+        .animation(.easeInOut(duration: 0.25), value: showQuiet)
         .familyActivityPicker(
             headerText: "Choose apps and categories to restrict.",
             footerText: "Do not select Paperweight itself — blocking it could lock you out of these controls.",
@@ -266,6 +275,7 @@ private struct RestrictedTokensList: View {
 
 private struct QuietScreen: View {
     @ObservedObject var vm: HomeViewModel
+    var onUnlock: () -> Void
     var onSettings: () -> Void
 
     private let encouragements = [
@@ -318,7 +328,11 @@ private struct QuietScreen: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 30)
-                    .padding(.bottom, 22)
+                    .padding(.bottom, 18)
+
+                HoldToUnlockButton(onComplete: onUnlock)
+                    .padding(.horizontal, 44)
+                    .padding(.bottom, 18)
 
                 Divider().overlay(PW.hairline)
                 HStack {
@@ -334,7 +348,7 @@ private struct QuietScreen: View {
                     .buttonStyle(.plain)
                 }
                 .padding(.horizontal, 30)
-                .padding(.top, 16)
+                .padding(.top, 14)
                 .padding(.bottom, 22)
             }
         }
@@ -358,5 +372,43 @@ private struct QuietScreen: View {
         let h = total / 3600, m = (total % 3600) / 60
         if h > 0 { return "\(h)h \(m)m" }
         return "\(m)m"
+    }
+}
+
+// MARK: - Hold to unlock
+
+/// A press-and-hold control: the fill sweeps across as you hold, and only a
+/// completed hold fires `onComplete` (opens the NFC turn-off flow). Deliberate
+/// by design — a moment of intention rather than a tap.
+private struct HoldToUnlockButton: View {
+    var onComplete: () -> Void
+    private let duration = 1.1
+    @State private var progress: CGFloat = 0
+
+    var body: some View {
+        ZStack {
+            Capsule().fill(PW.surface)
+            GeometryReader { geo in
+                Capsule()
+                    .fill(PW.sage.opacity(0.28))
+                    .frame(width: geo.size.width * progress)
+            }
+            .clipShape(Capsule())
+            HStack(spacing: 8) {
+                Image(systemName: "lock.open").font(.system(size: 14))
+                Text("Hold to unlock").font(.grotesk(14, weight: .medium))
+            }
+            .foregroundStyle(PW.sage)
+        }
+        .frame(height: 50)
+        .overlay(Capsule().stroke(PW.sage.opacity(0.4), lineWidth: 1))
+        .contentShape(Capsule())
+        .onLongPressGesture(minimumDuration: duration, maximumDistance: 50) {
+            onComplete()
+        } onPressingChanged: { pressing in
+            withAnimation(.linear(duration: pressing ? duration : 0.25)) {
+                progress = pressing ? 1 : 0
+            }
+        }
     }
 }

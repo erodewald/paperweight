@@ -93,10 +93,6 @@ struct UnlockView: View {
         Task {
             do {
                 try await unlockService.verifyTag()
-                if vm.config.requireWatchConfirmation && WatchConnectivityService.shared.watchIsReachable {
-                    let confirmed = await WatchConnectivityService.shared.requestWatchConfirmation()
-                    guard confirmed else { return }
-                }
                 unlockService.grantUnlock(duration: vm.config.unlockDuration)
             } catch is CancellationError {
             } catch { self.error = error }

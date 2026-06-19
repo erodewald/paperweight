@@ -62,21 +62,6 @@ struct NFCSetupView: View {
                     get: { vm.config.unlockDuration },
                     set: { vm.config.unlockDuration = $0; vm.saveSelection() }))
 
-                SectionHeader(text: "Watch Confirmation").padding(.top, 22).padding(.bottom, 9)
-                GroupedCard {
-                    Toggle(isOn: Binding(
-                        get: { vm.config.requireWatchConfirmation },
-                        set: { vm.config.requireWatchConfirmation = $0; vm.saveSelection() }
-                    )) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Require Watch tap").font(.grotesk(14.5)).foregroundStyle(PW.textPrimary)
-                            Text("Confirm unlocks on your wrist").font(.grotesk(11.5)).foregroundStyle(PW.textFaint)
-                        }
-                    }
-                    .toggleStyle(PWToggleStyle())
-                    .padding(.horizontal, 16).padding(.vertical, 14)
-                }
-
                 SectionHeader(text: "Recovery Codes").padding(.top, 22).padding(.bottom, 9)
                 GroupedCard {
                     if vm.config.recoveryCodes.isEmpty {

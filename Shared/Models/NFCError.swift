@@ -6,6 +6,7 @@ enum NFCError: LocalizedError {
     case sessionFailed(Error)
     case noTagFound
     case readFailed
+    case busy
 
     var errorDescription: String? {
         switch self {
@@ -13,6 +14,7 @@ enum NFCError: LocalizedError {
         case .sessionFailed(let e): return "NFC session failed: \(e.localizedDescription)"
         case .noTagFound: return "No NFC tag found."
         case .readFailed: return "Could not read the NFC tag."
+        case .busy: return "A scan is already in progress. Try again in a moment."
         }
     }
 }
