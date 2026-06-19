@@ -24,6 +24,7 @@
 		2CD399E9A43A551F6AD5AA08 /* RestrictionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF61317C7984B6647AAAC75 /* RestrictionService.swift */; };
 		2D7EBE16171798DAE57F47E7 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0313BE6FC21A3B5741EF08E /* HomeViewModel.swift */; };
 		2D9AA9D10A2B06AC21BD531A /* NFCServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B4AA21743CE06BCF93E991 /* NFCServiceProtocol.swift */; };
+		32A91960EBE2A9869D2BC527 /* Phrases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35411EF9BA9E870DFC350E5B /* Phrases.swift */; };
 		32E61BBDBB546858D9D37A59 /* FamilyControlsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */; };
 		343373EAD62D693C32ADF916 /* PaperweightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264A71AAA48B827E09F01182 /* PaperweightTests.swift */; };
 		35246FB65A87F3CE6BA6F9C7 /* PaperweightSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B54307C7A7519A4B3438B18 /* PaperweightSchedule.swift */; };
@@ -173,6 +174,7 @@
 		2DCE96A22EF690AA116DAB93 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3209C3B6A76505D7AD40C5AF /* RestrictionServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestrictionServiceProtocols.swift; sourceTree = "<group>"; };
 		33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperweightConfig.swift; sourceTree = "<group>"; };
+		35411EF9BA9E870DFC350E5B /* Phrases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Phrases.swift; sourceTree = "<group>"; };
 		3559557FC1A539F56DBF5628 /* FamilyControlsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyControlsService.swift; sourceTree = "<group>"; };
 		497698F50F8F5D38D66B556C /* UnlockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockService.swift; sourceTree = "<group>"; };
 		49A7C4DD89DB4B7220D987F3 /* PaperweightMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PaperweightMonitor.entitlements; sourceTree = "<group>"; };
@@ -495,6 +497,7 @@
 				6C7930F0F3E94F416D019E71 /* Info.plist */,
 				BDAAADECFF58B99FC5491C06 /* Paperweight.entitlements */,
 				DB10A937CB25D4F1025ED58A /* PaperweightApp.swift */,
+				35411EF9BA9E870DFC350E5B /* Phrases.swift */,
 			);
 			path = Paperweight;
 			sourceTree = "<group>";
@@ -702,6 +705,7 @@
 				236D3E1A7F54C81B6219E82A /* PaperweightApp.swift in Sources */,
 				D77BA22D048D5BC84FAD3A61 /* PaperweightConfig.swift in Sources */,
 				82BB5D4E7DF0F181BE1DDD56 /* PaperweightSchedule.swift in Sources */,
+				32A91960EBE2A9869D2BC527 /* Phrases.swift in Sources */,
 				20B484AA1B047782345594AC /* QuietGlassControls.swift in Sources */,
 				72DB3538D76A9807E61A817C /* QuietGlassMotifs.swift in Sources */,
 				7582E00B005ACF79D4FAF826 /* RecoveryCode.swift in Sources */,

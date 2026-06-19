@@ -14,6 +14,7 @@ struct HomeView: View {
     @State private var showingDisableSheet = false
     /// Whether the full-screen Quiet orb is presented over the settings root.
     @State private var showQuiet = false
+    @State private var footerLine = Phrases.homeFooter.randomElement() ?? ""
 
     /// Quiet: armed and restricting right now (a scheduled blocked period, or
     /// always-blocked when no schedule is set).
@@ -128,9 +129,10 @@ struct HomeView: View {
                     .disabled(!vm.config.isEnabled)
                 }
 
-                Text("Put it down. The world keeps turning.")
+                Text(footerLine)
                     .font(.spectral(14, italic: true))
                     .foregroundStyle(PW.textFaint)
+                    .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
                     .padding(.top, 26)
                     .padding(.bottom, 30)
@@ -280,12 +282,7 @@ private struct QuietScreen: View {
     var onUnlock: () -> Void
     var onSettings: () -> Void
 
-    private let encouragements = [
-        "Nothing here needs you right now. That's the gift.",
-        "The world is still turning without the scroll.",
-        "Let it be heavy. Let it be quiet.",
-        "You set this down on purpose. Well done."
-    ]
+    @State private var line = Phrases.quiet.randomElement() ?? ""
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: 60)) { context in
@@ -324,13 +321,14 @@ private struct QuietScreen: View {
 
                 Spacer()
 
-                Text(encouragements[encouragementIndex])
+                Text(line)
                     .font(.spectral(16, italic: true))
                     .foregroundStyle(PW.textMuted)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 30)
                     .padding(.bottom, 18)
+                    .onAppear { line = Phrases.quiet.randomElement() ?? line }
 
                 HoldToUnlockButton(onComplete: onUnlock)
                     .padding(.horizontal, 44)
@@ -362,11 +360,6 @@ private struct QuietScreen: View {
         if apps > 0 { return "\(apps) app\(apps == 1 ? "" : "s") quiet" }
         if cats > 0 { return "\(cats) categor\(cats == 1 ? "y" : "ies") quiet" }
         return "Apps quiet"
-    }
-
-    private var encouragementIndex: Int {
-        let day = Calendar.current.ordinality(of: .day, in: .era, for: Date()) ?? 0
-        return day % encouragements.count
     }
 
     private static func format(_ t: TimeInterval) -> String {

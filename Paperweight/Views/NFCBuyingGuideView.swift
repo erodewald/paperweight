@@ -2,6 +2,7 @@ import SwiftUI
 
 struct NFCBuyingGuideView: View {
     @ObservedObject private var remote = RemoteConfigService.shared
+    @State private var placementLine = Phrases.placement.randomElement() ?? ""
 
     var body: some View {
         ScrollView {
@@ -66,7 +67,7 @@ struct NFCBuyingGuideView: View {
                     .font(.grotesk(11)).foregroundStyle(PW.textFaint)
                     .padding(.horizontal, 8).padding(.top, 8)
 
-                Text("Put it somewhere a little inconvenient — another room, inside a book, under a shelf. The way out should take a moment of intention.")
+                Text(placementLine)
                     .font(.spectral(15, italic: true)).foregroundStyle(PW.textMuted)
                     .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity)
