@@ -61,7 +61,6 @@ targets:
         com.apple.security.application-groups:
           - group.media.baltar.paperweight
         com.apple.developer.nfc.readersession.formats:
-          - NDEF
           - TAG
     dependencies:
       - target: PaperweightMonitor
