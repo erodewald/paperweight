@@ -43,6 +43,7 @@
 		5EC0D88794BAA83D5A2E1336 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E0A914AA260D4008747A4F /* ManagedSettings.framework */; };
 		5FB4A31E86CBF59A93F84E8B /* PaperweightConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2591C379D3DFA09823FAC /* PaperweightConfig.swift */; };
 		607E11DB3417A76739DF2E19 /* ConfirmUnlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9926973113F59267BAFE8FEE /* ConfirmUnlockView.swift */; };
+		63494D2979924E643F1212B6 /* NFCBuyingGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63469D0E8F92F2C207D15434 /* NFCBuyingGuideView.swift */; };
 		635F665B2460E2705D1035EF /* MockNFCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547419179AFC16EBCAE9BE6A /* MockNFCService.swift */; };
 		650E12E7894E8260902B4AB5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4F583245D32301B7B51FA /* Constants.swift */; };
 		6514A59845272D81E15ABEFF /* NFCError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D9688BE57BB64F825FADF /* NFCError.swift */; };
@@ -178,6 +179,7 @@
 		4DDF5A88B6F793390794C8EB /* FamilyControlsServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyControlsServiceProtocol.swift; sourceTree = "<group>"; };
 		5246118BE8B6DCB165645370 /* FamilyActivitySelection+Summary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FamilyActivitySelection+Summary.swift"; sourceTree = "<group>"; };
 		547419179AFC16EBCAE9BE6A /* MockNFCService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNFCService.swift; sourceTree = "<group>"; };
+		63469D0E8F92F2C207D15434 /* NFCBuyingGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCBuyingGuideView.swift; sourceTree = "<group>"; };
 		67C0A6F2ECCBB5247566970C /* RecoveryCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryCodeService.swift; sourceTree = "<group>"; };
 		6B5F811117BA243EEA446573 /* NFCService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCService.swift; sourceTree = "<group>"; };
 		6C7930F0F3E94F416D019E71 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -355,6 +357,7 @@
 				5C37387709B78025025AF4B0 /* Components */,
 				C6B07495D8CF9F6B55D21578 /* DisablePaperweightSheet.swift */,
 				D16052C368FABF3E1EF3AF80 /* HomeView.swift */,
+				63469D0E8F92F2C207D15434 /* NFCBuyingGuideView.swift */,
 				B54086F0817AEB7475A36F78 /* NFCSetupView.swift */,
 				1013F9C16F8E8EC69938A8FF /* RecoveryCodesView.swift */,
 				4A67E90D190AAFCA2C024FF7 /* ScheduleView.swift */,
@@ -692,6 +695,7 @@
 				73E676B9CFAB3F345FE496C5 /* FamilyControlsServiceProtocol.swift in Sources */,
 				4665B03758F0126826B2AC47 /* HomeView.swift in Sources */,
 				A302E708456D7170EED1527A /* HomeViewModel.swift in Sources */,
+				63494D2979924E643F1212B6 /* NFCBuyingGuideView.swift in Sources */,
 				F226E770514F86CD56A48425 /* NFCError.swift in Sources */,
 				B3B16CBBAF9C7007E03A1C2D /* NFCService.swift in Sources */,
 				6D5F7540E174A627BABDE9B3 /* NFCServiceProtocol.swift in Sources */,

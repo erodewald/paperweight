@@ -46,6 +46,12 @@ struct NFCSetupView: View {
                                 .contentShape(Rectangle())
                         }.buttonStyle(.plain)
                     }
+                    CardDivider()
+                    NavigationLink { NFCBuyingGuideView() } label: {
+                        NavRow(title: "Where to buy a token",
+                               titleColor: PW.textMuted,
+                               systemImage: "cart", iconColor: PW.textMuted)
+                    }
                 }
                 Text("Tap your NFC sticker to register it. Place it on an object you won't carry everywhere.")
                     .font(.grotesk(11.5)).foregroundStyle(PW.textFaint)
