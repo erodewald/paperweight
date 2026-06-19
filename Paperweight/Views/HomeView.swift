@@ -39,6 +39,8 @@ struct HomeView: View {
                     vm: vm,
                     onUnlock: { showQuiet = false; showingDisableSheet = true },
                     onSettings: { showQuiet = false })
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(PW.black.ignoresSafeArea())
                     .transition(.opacity)
                     .zIndex(1)
             }
