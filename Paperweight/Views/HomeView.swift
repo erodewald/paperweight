@@ -106,6 +106,7 @@ struct HomeView: View {
         .sheet(isPresented: $showUnlockSetup) {
             NavigationStack { NFCSetupView(vm: vm) }
                 .tint(PW.sage)
+                .presentationDragIndicator(.visible)
         }
     }
 

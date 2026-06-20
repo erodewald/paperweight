@@ -139,6 +139,7 @@ struct NFCSetupView: View {
         )) { Button("OK", role: .cancel) {} } message: { Text(error?.localizedDescription ?? "") }
         .sheet(isPresented: $showingCodes) {
             RecoveryCodesView(codes: generatedCodes)
+                .presentationDragIndicator(.visible)
         }
     }
 

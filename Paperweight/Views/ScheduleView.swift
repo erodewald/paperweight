@@ -116,6 +116,7 @@ struct ScheduleView: View {
         .sheet(isPresented: $showUnlockSetup) {
             NavigationStack { NFCSetupView(vm: vm) }
                 .tint(PW.sage)
+                .presentationDragIndicator(.visible)
         }
         .familyActivityPicker(isPresented: $showingPicker, selection: $vm.config.selection)
         .onChange(of: showingPicker) { _, presented in
