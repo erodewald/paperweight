@@ -62,6 +62,13 @@ final class HomeViewModel: ObservableObject {
         syncRestrictions()
     }
 
+    /// True when there's at least one way to unlock — a registered NFC token or
+    /// unused recovery codes. Paperweight must not be armed without one, or the
+    /// only way back would be the cool-off / deleting the app.
+    var hasUnlockMethod: Bool {
+        config.registeredNFCTagUID != nil || config.recoveryCodes.contains { !$0.isUsed }
+    }
+
     // MARK: Cool-off unlock (tokenless)
 
     /// Whether a tokenless unlock is currently counting down.

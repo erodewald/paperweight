@@ -7,6 +7,8 @@ struct ScheduleView: View {
     @State private var freeSlots: Set<Int>
     @State private var dragPaintValue: Bool?
     @State private var lastPaintLocation: CGPoint?
+    @State private var showNeedsUnlock = false
+    @State private var showUnlockSetup = false
 
     private let dayLabels = ["S", "M", "T", "W", "T", "F", "S"]
     private let hours = 24
@@ -95,6 +97,16 @@ struct ScheduleView: View {
                     }
                 }
             }
+        }
+        .alert("Set up a way back first", isPresented: $showNeedsUnlock) {
+            Button("Set It Up") { showUnlockSetup = true }
+            Button("Not now", role: .cancel) { dismiss() }
+        } message: {
+            Text("Before Paperweight can turn on, register an NFC token or generate recovery codes so you can always unlock. Your schedule is saved — finish setup and save again to arm it.")
+        }
+        .sheet(isPresented: $showUnlockSetup) {
+            NavigationStack { NFCSetupView(vm: vm) }
+                .tint(PW.sage)
         }
     }
 
@@ -234,6 +246,13 @@ struct ScheduleView: View {
     private func save() async {
         let schedule = freeSlots.isEmpty ? nil : PaperweightSchedule(freeSlots: freeSlots)
         vm.config.schedule = schedule
+        // Never arm without a way back. Persist the painted schedule, but require
+        // an NFC token or recovery codes before turning Paperweight on.
+        guard vm.hasUnlockMethod else {
+            vm.saveSelection()
+            showNeedsUnlock = true
+            return
+        }
         await vm.setEnabled(true)
         ScheduleService.shared.updateSchedule(schedule, enabled: true)
         dismiss()
