@@ -14,6 +14,9 @@ struct HomeView: View {
     @State private var showingDisableSheet = false
     /// Whether the full-screen Quiet orb is presented over the settings root.
     @State private var showQuiet = false
+    @State private var showNeedsUnlock = false
+    @State private var showUnlockSetup = false
+    @State private var showNeedsApps = false
     @State private var footerLine = Phrases.homeFooter.randomElement() ?? ""
     /// Selection captured when the picker opens, to detect (and gate) removals.
     @State private var selectionSnapshot: FamilyActivitySelection?
@@ -88,6 +91,23 @@ struct HomeView: View {
         .alert("Change reverted", isPresented: Binding(
             get: { selectionRevertMessage != nil }, set: { if !$0 { selectionRevertMessage = nil } }
         )) { Button("OK", role: .cancel) {} } message: { Text(selectionRevertMessage ?? "") }
+        .alert("Choose apps to block first", isPresented: $showNeedsApps) {
+            Button("Choose Apps") { showingPicker = true }
+            Button("Not now", role: .cancel) {}
+        } message: {
+            Text("Paperweight has nothing to quiet yet. Pick the apps or categories to restrict first.")
+        }
+        .alert("Set up a way back first", isPresented: $showNeedsUnlock) {
+            Button("Set It Up") { showUnlockSetup = true }
+            Button("Not now", role: .cancel) {}
+        } message: {
+            Text("Before Paperweight can turn on, register an NFC token or generate recovery codes so you can always unlock.")
+        }
+        .sheet(isPresented: $showUnlockSetup) {
+            NavigationStack { NFCSetupView(vm: vm) }
+                .tint(PW.sage)
+                .presentationDragIndicator(.visible)
+        }
     }
 
     /// Applies a picker change. While Paperweight is active, *removing* any app
@@ -217,9 +237,15 @@ struct HomeView: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text("Paperweight is off").font(.grotesk(15, weight: .semibold))
                     .foregroundStyle(PW.textPrimary)
-                Text("Set a schedule below to arm it. Restrictions then apply on their own — no switch to forget.")
-                    .font(.grotesk(12.5)).foregroundStyle(PW.textMuted)
-                    .fixedSize(horizontal: false, vertical: true)
+                if !vm.hasAppsSelected {
+                    onboardingLine("First, choose the apps and categories to block.")
+                    onboardingButton(icon: "app.badge.checkmark", title: "Choose apps") { showingPicker = true }
+                } else if !vm.hasUnlockMethod {
+                    onboardingLine("Now set up a way back — an NFC token or recovery codes.")
+                    onboardingButton(icon: "key.fill", title: "Set up unlock") { showUnlockSetup = true }
+                } else {
+                    onboardingLine("Set a schedule below to arm it. Restrictions then apply on their own — no switch to forget.")
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(18)
@@ -227,6 +253,24 @@ struct HomeView: View {
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .overlay(RoundedRectangle(cornerRadius: 16).stroke(PW.hairline, lineWidth: 1))
         }
+    }
+
+    private func onboardingLine(_ text: String) -> some View {
+        Text(text)
+            .font(.grotesk(12.5)).foregroundStyle(PW.textMuted)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func onboardingButton(icon: String, title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: icon).font(.system(size: 12))
+                Text(title).font(.grotesk(13, weight: .medium))
+            }
+            .foregroundStyle(PW.sage)
+        }
+        .buttonStyle(.plain)
+        .padding(.top, 6)
     }
 
     private var scheduleStatusText: String {
@@ -238,6 +282,8 @@ struct HomeView: View {
     // MARK: - Shortcuts (unchanged behavior)
 
     private func enable() async {
+        guard vm.hasAppsSelected else { showNeedsApps = true; return }
+        guard vm.hasUnlockMethod else { showNeedsUnlock = true; return }
         await vm.setEnabled(true)
         ScheduleService.shared.updateSchedule(vm.config.schedule, enabled: true)
     }

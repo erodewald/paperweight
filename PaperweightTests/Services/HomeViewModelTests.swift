@@ -54,5 +54,38 @@ final class HomeViewModelTests: XCTestCase {
 
         XCTAssertFalse(configStore.load().isEnabled)
     }
+
+    @MainActor
+    func test_hasUnlockMethod_falseWithNoTokenOrCodes() {
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        XCTAssertFalse(vm.hasUnlockMethod)
+    }
+
+    @MainActor
+    func test_hasUnlockMethod_trueWithRegisteredToken() {
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        vm.config.registeredNFCTagUID = "04A29F1C"
+        XCTAssertTrue(vm.hasUnlockMethod)
+    }
+
+    @MainActor
+    func test_hasUnlockMethod_trueWithUnusedRecoveryCode() {
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        vm.config.recoveryCodes = [RecoveryCode(id: UUID(), codeHash: "abc", isUsed: false)]
+        XCTAssertTrue(vm.hasUnlockMethod)
+    }
+
+    @MainActor
+    func test_hasAppsSelected_falseWhenSelectionEmpty() {
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        XCTAssertFalse(vm.hasAppsSelected)
+    }
+
+    @MainActor
+    func test_hasUnlockMethod_falseWhenAllCodesUsed() {
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        vm.config.recoveryCodes = [RecoveryCode(id: UUID(), codeHash: "abc", isUsed: true)]
+        XCTAssertFalse(vm.hasUnlockMethod)
+    }
 }
 #endif

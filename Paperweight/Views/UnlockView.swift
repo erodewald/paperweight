@@ -78,6 +78,7 @@ struct UnlockView: View {
             // Redeeming a recovery code disables Paperweight entirely — pop back
             // to Home once it's done.
             RecoveryCodeEntryView(vm: vm, onSuccess: { dismiss() })
+                .presentationDragIndicator(.visible)
         }
     }
 

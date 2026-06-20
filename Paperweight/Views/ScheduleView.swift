@@ -1,4 +1,5 @@
 import SwiftUI
+import FamilyControls
 
 struct ScheduleView: View {
     @ObservedObject var vm: HomeViewModel
@@ -7,6 +8,10 @@ struct ScheduleView: View {
     @State private var freeSlots: Set<Int>
     @State private var dragPaintValue: Bool?
     @State private var lastPaintLocation: CGPoint?
+    @State private var showNeedsUnlock = false
+    @State private var showUnlockSetup = false
+    @State private var showNeedsApps = false
+    @State private var showingPicker = false
 
     private let dayLabels = ["S", "M", "T", "W", "T", "F", "S"]
     private let hours = 24
@@ -95,6 +100,27 @@ struct ScheduleView: View {
                     }
                 }
             }
+        }
+        .alert("Choose apps to block first", isPresented: $showNeedsApps) {
+            Button("Choose Apps") { showingPicker = true }
+            Button("Not now", role: .cancel) { dismiss() }
+        } message: {
+            Text("Paperweight has nothing to quiet yet. Pick the apps or categories to restrict, then save again to arm.")
+        }
+        .alert("Set up a way back first", isPresented: $showNeedsUnlock) {
+            Button("Set It Up") { showUnlockSetup = true }
+            Button("Not now", role: .cancel) { dismiss() }
+        } message: {
+            Text("Before Paperweight can turn on, register an NFC token or generate recovery codes so you can always unlock. Your schedule is saved — finish setup and save again to arm it.")
+        }
+        .sheet(isPresented: $showUnlockSetup) {
+            NavigationStack { NFCSetupView(vm: vm) }
+                .tint(PW.sage)
+                .presentationDragIndicator(.visible)
+        }
+        .familyActivityPicker(isPresented: $showingPicker, selection: $vm.config.selection)
+        .onChange(of: showingPicker) { _, presented in
+            if !presented { vm.saveSelection() }
         }
     }
 
@@ -234,6 +260,18 @@ struct ScheduleView: View {
     private func save() async {
         let schedule = freeSlots.isEmpty ? nil : PaperweightSchedule(freeSlots: freeSlots)
         vm.config.schedule = schedule
+        // Don't arm into a broken state. Persist the painted schedule, but require
+        // both something to block and a way back before turning Paperweight on.
+        guard vm.hasAppsSelected else {
+            vm.saveSelection()
+            showNeedsApps = true
+            return
+        }
+        guard vm.hasUnlockMethod else {
+            vm.saveSelection()
+            showNeedsUnlock = true
+            return
+        }
         await vm.setEnabled(true)
         ScheduleService.shared.updateSchedule(schedule, enabled: true)
         dismiss()

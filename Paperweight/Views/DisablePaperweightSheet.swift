@@ -59,6 +59,7 @@ struct DisablePaperweightSheet: View {
             }
             .sheet(isPresented: $showingRecoveryEntry) {
                 RecoveryCodeEntryView(vm: vm, onSuccess: { dismiss() })
+                    .presentationDragIndicator(.visible)
             }
             .alert("Error", isPresented: Binding(
                 get: { error != nil }, set: { if !$0 { error = nil } }
