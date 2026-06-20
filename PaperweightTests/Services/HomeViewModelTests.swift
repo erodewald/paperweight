@@ -76,6 +76,12 @@ final class HomeViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_hasAppsSelected_falseWhenSelectionEmpty() {
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        XCTAssertFalse(vm.hasAppsSelected)
+    }
+
+    @MainActor
     func test_hasUnlockMethod_falseWhenAllCodesUsed() {
         let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
         vm.config.recoveryCodes = [RecoveryCode(id: UUID(), codeHash: "abc", isUsed: true)]

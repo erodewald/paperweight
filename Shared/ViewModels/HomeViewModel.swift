@@ -69,6 +69,13 @@ final class HomeViewModel: ObservableObject {
         config.registeredNFCTagUID != nil || config.recoveryCodes.contains { !$0.isUsed }
     }
 
+    /// True when at least one app, category, or web domain is selected. Arming
+    /// with nothing selected would shield nothing — "active" but useless.
+    var hasAppsSelected: Bool {
+        let s = config.selection
+        return !(s.applicationTokens.isEmpty && s.categoryTokens.isEmpty && s.webDomainTokens.isEmpty)
+    }
+
     // MARK: Cool-off unlock (tokenless)
 
     /// Whether a tokenless unlock is currently counting down.
