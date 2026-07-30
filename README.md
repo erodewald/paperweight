@@ -19,10 +19,12 @@ An iOS focus tool built on Apple's Screen Time (Family Controls) framework. Ever
 - **CoreNFC** — reads the token's hardware UID (`NFCTagReaderSession`); tags need no programming.
 - **CryptoKit** — SHA-256 hashing for recovery codes (stored hashed, never in plaintext).
 - **App Group** (`group.media.baltar.paperweight`) — shares config between the app and the monitor extension.
+- **WidgetKit** — small/medium Home Screen and circular/rectangular Lock Screen widgets, driven by a token-free `WidgetSnapshot` in the App Group so the widget never links FamilyControls. Read-only: no arming or disarming from a widget.
 
 ```
 Paperweight/            iOS app (views, services, app entry)
 PaperweightMonitor/     DeviceActivity monitor extension
+PaperweightWidget/      WidgetKit extension (Home + Lock Screen)
 Shared/                 models, view-models, services, theme (compiled into both)
 PaperweightTests/       unit tests (standalone, no host app)
 docs/                   GitHub Pages: support + privacy

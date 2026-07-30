@@ -71,6 +71,10 @@ struct UnlockView: View {
         .pwScreen()
         .navigationTitle("Unlock")
         .navigationBarTitleDisplayMode(.inline)
+        // An unlock granted before the app was killed is still running: pick the
+        // countdown back up from the persisted expiry instead of showing the
+        // scan prompt over a lifted shield.
+        .onAppear { unlockService.resumeIfUnlocked() }
         .alert("Error", isPresented: Binding(
             get: { error != nil }, set: { if !$0 { error = nil } }
         )) { Button("OK", role: .cancel) {} } message: { Text(error?.localizedDescription ?? "") }

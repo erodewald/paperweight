@@ -9,16 +9,19 @@ final class UnlockService: ObservableObject {
     private let configStore: ConfigStore
     private let nfcService: NFCServiceProtocol
     private let restrictionService: RestrictionService
+    private let widgetStore: WidgetSnapshotStore
     private var relockTask: Task<Void, Never>?
 
     init(
         configStore: ConfigStore = ConfigStore(),
         nfcService: NFCServiceProtocol,
-        restrictionService: RestrictionService = RestrictionService()
+        restrictionService: RestrictionService = RestrictionService(),
+        widgetStore: WidgetSnapshotStore = WidgetSnapshotStore()
     ) {
         self.configStore = configStore
         self.nfcService = nfcService
         self.restrictionService = restrictionService
+        self.widgetStore = widgetStore
     }
 
     func registerTag() async throws {
@@ -52,18 +55,22 @@ final class UnlockService: ObservableObject {
     }
 
     func grantUnlock(duration: TimeInterval) {
-        let config = configStore.load()
+        let expiry = Date().addingTimeInterval(duration)
         restrictionService.removeAll()
         isUnlocked = true
-        unlockExpiresAt = Date().addingTimeInterval(duration)
+        unlockExpiresAt = expiry
 
-        relockTask?.cancel()
-        relockTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(duration))
-            guard !Task.isCancelled else { return }
-            await self?.relock()
-        }
-        _ = config
+        // Persist the expiry, not just the in-memory countdown. Two reasons:
+        // the widget can't see @Published state, and if the app is killed
+        // mid-unlock the in-process timer dies with it — on next launch
+        // `resumeIfUnlocked()` re-arms from this date instead of leaving the
+        // shield lifted until the monitor's next boundary.
+        var config = configStore.load()
+        config.unlockExpiresAt = expiry
+        try? configStore.save(config)
+        widgetStore.write(config: config)
+
+        scheduleRelock(after: duration)
     }
 
     func relock() {
@@ -71,14 +78,43 @@ final class UnlockService: ObservableObject {
         relockTask = nil
         isUnlocked = false
         unlockExpiresAt = nil
+
+        var config = configStore.load()
+        config.unlockExpiresAt = nil
+        try? configStore.save(config)
+
         syncRestrictions()
+        widgetStore.write(config: config)
+    }
+
+    /// Re-establishes an unlock that outlived the process — call on launch and on
+    /// foreground. Expired unlocks re-lock immediately; live ones get their timer
+    /// back for whatever time is left.
+    func resumeIfUnlocked() {
+        let config = configStore.load()
+        guard let expiry = config.unlockExpiresAt else { return }
+        guard Date() < expiry else { relock(); return }
+
+        isUnlocked = true
+        unlockExpiresAt = expiry
+        restrictionService.removeAll()
+        scheduleRelock(after: expiry.timeIntervalSinceNow)
+    }
+
+    private func scheduleRelock(after delay: TimeInterval) {
+        relockTask?.cancel()
+        relockTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(max(0, delay)))
+            guard !Task.isCancelled else { return }
+            await self?.relock()
+        }
     }
 
     /// Re-applies the shield to match current state: lifted when Paperweight is
-    /// off or inside a free window, restricted otherwise.
+    /// off, mid-unlock, or inside a free window; restricted otherwise.
     private func syncRestrictions() {
         let config = configStore.load()
-        guard config.isEnabled else {
+        guard config.isEnabled, !config.isUnlocked() else {
             restrictionService.removeAll()
             return
         }

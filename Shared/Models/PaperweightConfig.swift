@@ -16,10 +16,21 @@ struct PaperweightConfig: Codable {
     // When non-nil, a tokenless unlock has been requested; Paperweight disables
     // itself once `coolOffDays` have elapsed from this moment.
     var unlockRequestedAt: Date? = nil
+    // When non-nil, a timed NFC unlock is running and the shield stays lifted
+    // until this moment. Persisted rather than held in memory so the widget and
+    // the monitor extension can both see it, and so killing the app mid-unlock
+    // can't strand the shield in a lifted state.
+    var unlockExpiresAt: Date? = nil
 
     /// The moment a pending cool-off unlock will release, if one is requested.
     var coolOffReleaseDate: Date? {
         unlockRequestedAt.map { $0.addingTimeInterval(Double(coolOffDays) * 86400) }
+    }
+
+    /// True while a timed NFC unlock is still running.
+    func isUnlocked(at date: Date = Date()) -> Bool {
+        guard let expiry = unlockExpiresAt else { return false }
+        return date < expiry
     }
     #if os(iOS)
     var selection: FamilyActivitySelection = .init()
@@ -41,6 +52,7 @@ struct PaperweightConfig: Codable {
         recoveryCodes = try c.decodeIfPresent([RecoveryCode].self, forKey: .recoveryCodes) ?? []
         coolOffDays = try c.decodeIfPresent(Int.self, forKey: .coolOffDays) ?? 1
         unlockRequestedAt = try c.decodeIfPresent(Date.self, forKey: .unlockRequestedAt)
+        unlockExpiresAt = try c.decodeIfPresent(Date.self, forKey: .unlockExpiresAt)
         #if os(iOS)
         selection = try c.decodeIfPresent(FamilyActivitySelection.self, forKey: .selection) ?? .init()
         appOverrides = try c.decodeIfPresent([AppScheduleOverride].self, forKey: .appOverrides) ?? []

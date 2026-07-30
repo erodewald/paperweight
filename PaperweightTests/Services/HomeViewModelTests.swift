@@ -6,6 +6,7 @@ final class HomeViewModelTests: XCTestCase {
     var configStore: ConfigStore!
     var familyService: MockFamilyControlsService!
     var restrictionService: RestrictionService!
+    var widgetStore: WidgetSnapshotStore!
 
     @MainActor
     override func setUp() {
@@ -13,12 +14,15 @@ final class HomeViewModelTests: XCTestCase {
         configStore = ConfigStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
         familyService = MockFamilyControlsService()
         restrictionService = RestrictionService(store: MockManagedSettingsStore())
+        // Isolated suite: the default store writes to the real App Group, which
+        // would leak widget state between tests and into the installed app.
+        widgetStore = WidgetSnapshotStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
     }
 
     @MainActor
     func test_enable_requestsAuthorizationIfNeeded() async {
         familyService.isAuthorized = false
-        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService, widgetStore: widgetStore)
 
         await vm.setEnabled(true)
 
@@ -28,7 +32,7 @@ final class HomeViewModelTests: XCTestCase {
     @MainActor
     func test_enable_doesNotRequestAuth_ifAlreadyAuthorized() async {
         familyService.isAuthorized = true
-        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService, widgetStore: widgetStore)
 
         await vm.setEnabled(true)
 
@@ -38,7 +42,7 @@ final class HomeViewModelTests: XCTestCase {
     @MainActor
     func test_enable_savesConfig() async {
         familyService.isAuthorized = true
-        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService, widgetStore: widgetStore)
 
         await vm.setEnabled(true)
 
@@ -48,7 +52,7 @@ final class HomeViewModelTests: XCTestCase {
     @MainActor
     func test_disable_savesConfig() async {
         familyService.isAuthorized = true
-        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService, widgetStore: widgetStore)
         await vm.setEnabled(true)
         await vm.setEnabled(false)
 
@@ -57,33 +61,33 @@ final class HomeViewModelTests: XCTestCase {
 
     @MainActor
     func test_hasUnlockMethod_falseWithNoTokenOrCodes() {
-        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService, widgetStore: widgetStore)
         XCTAssertFalse(vm.hasUnlockMethod)
     }
 
     @MainActor
     func test_hasUnlockMethod_trueWithRegisteredToken() {
-        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService, widgetStore: widgetStore)
         vm.config.registeredNFCTagUID = "04A29F1C"
         XCTAssertTrue(vm.hasUnlockMethod)
     }
 
     @MainActor
     func test_hasUnlockMethod_trueWithUnusedRecoveryCode() {
-        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService, widgetStore: widgetStore)
         vm.config.recoveryCodes = [RecoveryCode(id: UUID(), codeHash: "abc", isUsed: false)]
         XCTAssertTrue(vm.hasUnlockMethod)
     }
 
     @MainActor
     func test_hasAppsSelected_falseWhenSelectionEmpty() {
-        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService, widgetStore: widgetStore)
         XCTAssertFalse(vm.hasAppsSelected)
     }
 
     @MainActor
     func test_hasUnlockMethod_falseWhenAllCodesUsed() {
-        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService)
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService, widgetStore: widgetStore)
         vm.config.recoveryCodes = [RecoveryCode(id: UUID(), codeHash: "abc", isUsed: true)]
         XCTAssertFalse(vm.hasUnlockMethod)
     }

@@ -6,6 +6,7 @@ final class UnlockServiceTests: XCTestCase {
     var configStore: ConfigStore!
     var nfcService: MockNFCService!
     var restrictionService: RestrictionService!
+    var widgetStore: WidgetSnapshotStore!
 
     @MainActor
     override func setUp() {
@@ -13,18 +14,21 @@ final class UnlockServiceTests: XCTestCase {
         configStore = ConfigStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
         nfcService = MockNFCService()
         restrictionService = RestrictionService(store: MockManagedSettingsStore())
+        // Isolated suite: the default store writes to the real App Group, which
+        // would leak widget state between tests and into the installed app.
+        widgetStore = WidgetSnapshotStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
     }
 
     @MainActor
     func test_registerTag_savesUID() async throws {
-        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService)
+        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService, widgetStore: widgetStore)
         try await service.registerTag()
         XCTAssertEqual(configStore.load().registeredNFCTagUID, "AABBCCDD")
     }
 
     @MainActor
     func test_unlock_failsIfNoTagRegistered() async {
-        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService)
+        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService, widgetStore: widgetStore)
         do {
             try await service.unlock()
             XCTFail("Should have thrown")
@@ -42,7 +46,7 @@ final class UnlockServiceTests: XCTestCase {
         try configStore.save(config)
 
         nfcService.mockUID = "FFEEDDCC"
-        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService)
+        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService, widgetStore: widgetStore)
 
         do {
             try await service.unlock()
@@ -61,7 +65,7 @@ final class UnlockServiceTests: XCTestCase {
         config.isEnabled = true
         try configStore.save(config)
 
-        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService)
+        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService, widgetStore: widgetStore)
         try await service.unlock()
 
         XCTAssertTrue(service.isUnlocked)
