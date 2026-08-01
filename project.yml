@@ -13,6 +13,7 @@ schemes:
       targets:
         Paperweight: all
         PaperweightMonitor: all
+        PaperweightWidget: all
     run:
       config: Debug
     test:
@@ -37,7 +38,13 @@ schemes:
 settings:
   base:
     SWIFT_VERSION: "5.9"
-    DEVELOPMENT_TEAM: ""
+
+# DEVELOPMENT_TEAM lives in an xcconfig rather than in `settings` above, because
+# a build setting written into the project would override the xcconfig and get
+# clobbered on every regeneration. See Configs/Signing.xcconfig.
+configFiles:
+  Debug: Configs/Signing.xcconfig
+  Release: Configs/Signing.xcconfig
 
 targets:
 
@@ -64,6 +71,7 @@ targets:
           - TAG
     dependencies:
       - target: PaperweightMonitor
+      - target: PaperweightWidget
       - sdk: FamilyControls.framework
       - sdk: ManagedSettings.framework
       - sdk: DeviceActivity.framework
@@ -90,6 +98,39 @@ targets:
       - sdk: FamilyControls.framework
       - sdk: ManagedSettings.framework
       - sdk: DeviceActivity.framework
+
+  # Widget extension. Its source list is enumerated file-by-file rather than
+  # pulling in all of `Shared` on purpose: the widget must never see
+  # FamilyActivitySelection or the Family Controls entitlement. It reads only the
+  # token-free WidgetSnapshot from the App Group.
+  PaperweightWidget:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: PaperweightWidget
+      - path: Shared/Theme.swift
+      - path: Shared/Constants.swift
+      - path: Shared/Models/PaperweightSchedule.swift
+      - path: Shared/Models/WidgetSnapshot.swift
+      - path: Shared/Models/WidgetPresentation.swift
+      - path: Shared/Store/WidgetSnapshotStore.swift
+      - path: Paperweight/Views/Components/QuietGlassMotifs.swift
+      - path: Paperweight/Resources/Fonts
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: media.baltar.paperweight.widget
+        INFOPLIST_FILE: PaperweightWidget/Info.plist
+        TARGETED_DEVICE_FAMILY: "1"
+    entitlements:
+      path: PaperweightWidget/PaperweightWidget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.media.baltar.paperweight
+    dependencies:
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
 
   PaperweightTests:
     type: bundle.unit-test

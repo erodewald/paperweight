@@ -114,6 +114,38 @@ struct PaperweightSchedule: Codable, Equatable {
         return (remaining, max(0, min(1, fraction)), ends)
     }
 
+    /// The mirror of `quietStatus`: while currently *inside* a free window,
+    /// returns how long until it closes, the fraction of the window already
+    /// spent (for a filling progress ring), and when it ends. Returns nil when
+    /// quiet, when no schedule is set, or when always-free (no boundary ahead).
+    func freeStatus(at date: Date, calendar: Calendar = .current)
+        -> (remaining: TimeInterval, elapsedFraction: Double, ends: Date)? {
+        guard !isEmpty, isFree(at: date, calendar: calendar) else { return nil }
+        let comps = calendar.dateComponents([.weekday, .hour, .minute], from: date)
+        guard let weekday = comps.weekday, let hour = comps.hour else { return nil }
+        let minute = comps.minute ?? 0
+        let current = (weekday - 1) * Self.halfHoursPerDay + Self.halfHour(hour: hour, minute: minute)
+        let slotMinute = minute >= 30 ? 30 : 0
+        guard let slotStart = calendar.date(bySettingHour: hour, minute: slotMinute, second: 0, of: date)
+        else { return nil }
+
+        func freeAt(_ i: Int) -> Bool { freeSlots.contains(((i % Self.slotCount) + Self.slotCount) % Self.slotCount) }
+
+        var ahead = 0
+        while ahead < Self.slotCount && freeAt(current + ahead) { ahead += 1 }
+        if ahead >= Self.slotCount { return nil }   // always free
+
+        var behind = 0
+        while behind < Self.slotCount && freeAt(current - 1 - behind) { behind += 1 }
+
+        let ends = slotStart.addingTimeInterval(Double(ahead) * 1800)
+        let starts = slotStart.addingTimeInterval(-Double(behind) * 1800)
+        let remaining = ends.timeIntervalSince(date)
+        let total = ends.timeIntervalSince(starts)
+        let elapsed = total > 0 ? (total - remaining) / total : 0
+        return (remaining, max(0, min(1, elapsed)), ends)
+    }
+
     /// A human-readable summary of free windows for a given day index (0 = Sun).
     func summary(forDay day: Int) -> String {
         var parts: [String] = []

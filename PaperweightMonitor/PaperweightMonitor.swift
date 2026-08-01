@@ -6,6 +6,7 @@ import ManagedSettings
 class PaperweightMonitor: DeviceActivityMonitor {
     private let managedStore = ManagedSettingsStore(named: .init(Paperweight.storeName))
     private let configStore = ConfigStore()
+    private let widgetStore = WidgetSnapshotStore()
 
     override func intervalDidStart(for activity: DeviceActivityName) {
         super.intervalDidStart(for: activity)
@@ -25,6 +26,7 @@ class PaperweightMonitor: DeviceActivityMonitor {
     private func syncShield() {
         var config = configStore.load()
         let service = RestrictionService(store: managedStore)
+        defer { widgetStore.write(config: config) }
 
         // Cool-off unlock: if a tokenless unlock was requested and its delay has
         // elapsed, disable everything. This runs in the extension — which is
@@ -33,12 +35,21 @@ class PaperweightMonitor: DeviceActivityMonitor {
         if config.isEnabled, let release = config.coolOffReleaseDate, Date() >= release {
             config.isEnabled = false
             config.unlockRequestedAt = nil
+            config.unlockExpiresAt = nil
             try? configStore.save(config)
             service.removeAll()
             return
         }
 
-        guard config.isEnabled else {
+        // A timed NFC unlock that outlived the app: clear it once it has closed,
+        // so the boundary we're handling re-applies the shield instead of the
+        // stale expiry keeping it lifted.
+        if let expiry = config.unlockExpiresAt, Date() >= expiry {
+            config.unlockExpiresAt = nil
+            try? configStore.save(config)
+        }
+
+        guard config.isEnabled, !config.isUnlocked() else {
             service.removeAll()
             return
         }

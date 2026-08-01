@@ -75,6 +75,7 @@ struct HomeView: View {
             updateShortcutItems(isEnabled: vm.config.isEnabled)
         }
         .onChange(of: shortcutManager.pendingShortcutType) { _, _ in handlePendingShortcut() }
+        .onOpenURL { url in handleWidgetLink(url) }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 vm.syncRestrictions()
@@ -299,6 +300,30 @@ struct HomeView: View {
                 showQuiet = false
                 showingDisableSheet = true
             default: break
+            }
+        }
+    }
+
+    /// Handles a `paperweight://` deep link from the widget. The widget is
+    /// read-only, so every destination is somewhere the user still has to act —
+    /// none of these change state on their own.
+    private func handleWidgetLink(_ url: URL) {
+        guard url.scheme == "paperweight" else { return }
+        DispatchQueue.main.async {
+            switch url.host {
+            case "choose-apps":
+                showQuiet = false
+                showingPicker = true
+            case "unlock-setup":
+                showQuiet = false
+                showUnlockSetup = true
+            case "unlock":
+                // Mid-unlock the Quiet cover is already down; this is the
+                // re-lock affordance.
+                showQuiet = false
+                showingDisableSheet = true
+            default:
+                break   // "home" — the root is already what's on screen
             }
         }
     }

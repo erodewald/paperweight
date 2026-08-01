@@ -10,17 +10,21 @@ final class HomeViewModel: ObservableObject {
     private let configStore: ConfigStore
     private let familyService: FamilyControlsServiceProtocol
     private let restrictionService: RestrictionService
+    private let widgetStore: WidgetSnapshotStore
 
     init(
         configStore: ConfigStore = ConfigStore(),
         familyService: FamilyControlsServiceProtocol,
-        restrictionService: RestrictionService = RestrictionService()
+        restrictionService: RestrictionService = RestrictionService(),
+        widgetStore: WidgetSnapshotStore = WidgetSnapshotStore()
     ) {
         self.configStore = configStore
         self.familyService = familyService
         self.restrictionService = restrictionService
+        self.widgetStore = widgetStore
         self.config = configStore.load()
         enforceCoolOffExpiry()
+        publishWidgetSnapshot()
     }
 
     func setEnabled(_ enabled: Bool) async {
@@ -41,8 +45,10 @@ final class HomeViewModel: ObservableObject {
     func disablePaperweight() async throws {
         config.isEnabled = false
         config.unlockRequestedAt = nil
+        config.unlockExpiresAt = nil
         try configStore.save(config)
         restrictionService.removeAll()
+        publishWidgetSnapshot()
     }
 
     /// Redeems a one-time recovery code: marks it permanently used and disables
@@ -53,8 +59,10 @@ final class HomeViewModel: ObservableObject {
         }
         config.isEnabled = false
         config.unlockRequestedAt = nil
+        config.unlockExpiresAt = nil
         try? configStore.save(config)
         restrictionService.removeAll()
+        publishWidgetSnapshot()
     }
 
     func saveSelection() {
@@ -87,19 +95,24 @@ final class HomeViewModel: ObservableObject {
         guard config.unlockRequestedAt == nil else { return }
         config.unlockRequestedAt = Date()
         try? configStore.save(config)
+        publishWidgetSnapshot()
     }
 
     /// Cancels a pending cool-off unlock (e.g. the token turned up).
     func cancelCoolOffUnlock() {
         config.unlockRequestedAt = nil
         try? configStore.save(config)
+        publishWidgetSnapshot()
     }
 
-    /// Brings the shield in line with the current config: lifted when disabled
-    /// or inside a free window, applied otherwise. Safe to call any time.
+    /// Brings the shield in line with the current config: lifted when disabled,
+    /// mid-unlock, or inside a free window; applied otherwise. Safe to call any
+    /// time.
     func syncRestrictions() {
         enforceCoolOffExpiry()
-        guard config.isEnabled else {
+        enforceUnlockExpiry()
+        defer { publishWidgetSnapshot() }
+        guard config.isEnabled, !config.isUnlocked() else {
             restrictionService.removeAll()
             return
         }
@@ -119,6 +132,20 @@ final class HomeViewModel: ObservableObject {
             try? configStore.save(config)
             restrictionService.removeAll()
         }
+    }
+
+    /// Clears a timed unlock whose window has closed, so a stale expiry can't
+    /// keep the shield lifted after the app was killed mid-unlock.
+    private func enforceUnlockExpiry() {
+        guard let expiry = config.unlockExpiresAt, Date() >= expiry else { return }
+        config.unlockExpiresAt = nil
+        try? configStore.save(config)
+    }
+
+    /// Republishes the widget's view of the world. Called after every state
+    /// change; the store itself no-ops when nothing visible actually changed.
+    func publishWidgetSnapshot() {
+        widgetStore.write(config: config, isScreenTimeAuthorized: familyService.isAuthorized)
     }
 }
 #endif

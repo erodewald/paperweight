@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build & test
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain
+        run: |
+          xcodebuild -version
+          xcodegen --version || true
+
+      # The .xcodeproj is not committed — it is generated from project.yml, which
+      # is the source of truth. This is also what keeps CI honest: it builds the
+      # same project a fresh clone gets.
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate project
+        run: xcodegen generate
+
+      # Runner images rotate their simulator sets, so pick whatever iPhone is
+      # actually installed rather than pinning a model that may vanish.
+      - name: Select a simulator
+        id: sim
+        run: |
+          set -euo pipefail
+          # `|| true` is load-bearing: grep exits 1 when nothing matches, and
+          # under `set -e` that aborts the assignment before the check below,
+          # turning "no simulator" into a bare pipefail with no explanation.
+          # The name may be non-numeric ("iPhone Air"), so don't require a digit.
+          name=$(xcrun simctl list devices available \
+                 | grep -oE 'iPhone [A-Za-z0-9][A-Za-z0-9 ]*' \
+                 | sed 's/ *$//' | head -1 || true)
+          if [ -z "$name" ]; then
+            echo "::error::No iPhone simulator available on this runner"
+            xcrun simctl list devices available
+            exit 1
+          fi
+          echo "Using: $name"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+      # CODE_SIGNING_ALLOWED=NO is what makes this secret-free: there is no
+      # signing identity on the runner and none is needed for a simulator build.
+      # DEVELOPMENT_TEAM stays empty here exactly as it does in a fresh clone —
+      # see Configs/Signing.xcconfig. Nothing in CI needs the team ID.
+      - name: Build app, monitor and widget
+        env:
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+        run: |
+          set -euo pipefail
+          xcodebuild build \
+            -project Paperweight.xcodeproj \
+            -scheme Paperweight \
+            -destination "platform=iOS Simulator,name=$SIM_NAME" \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Run unit tests
+        env:
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+        run: |
+          set -euo pipefail
+          xcodebuild test \
+            -project Paperweight.xcodeproj \
+            -scheme PaperweightTests \
+            -destination "platform=iOS Simulator,name=$SIM_NAME" \
+            -resultBundlePath TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults.xcresult
+          retention-days: 7
+
+  # Cheap guard against the one mistake this repo's layout invites: a real team
+  # ID committed by hand into project.yml or a tracked xcconfig, where every
+  # `xcodegen generate` would then spread it.
+  no-committed-team:
+    name: No committed team ID
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check DEVELOPMENT_TEAM is empty in tracked files
+        run: |
+          set -euo pipefail
+          # An Apple Team ID is exactly 10 upper-case alphanumerics. Docs use
+          # <YOUR_TEAM_ID> so that no file needs excluding from this check.
+          pattern='DEVELOPMENT_TEAM[[:space:]]*[:=][[:space:]]*[A-Z0-9]{10}'
+          # Distinguish "no match" (1) from a real git failure (>1). Plain
+          # `if git grep` treats both as a pass, which would let this guard fail
+          # open — the one thing a guard must never do.
+          set +e
+          git grep -nE "$pattern"
+          rc=$?
+          set -e
+          case "$rc" in
+            0) echo "::error::A Development Team ID looks committed. Put it in the"
+               echo "::error::git-ignored Configs/Signing.local.xcconfig instead."
+               exit 1 ;;
+            1) echo "No team ID committed." ;;
+            *) echo "::error::git grep failed with status $rc"; exit 1 ;;
+          esac

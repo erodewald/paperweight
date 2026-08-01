@@ -105,6 +105,9 @@ struct OrbGlow: View {
 struct ProgressRing: View {
     var progress: Double          // 0…1
     var size: CGFloat
+    /// Defaults to sage — the quiet state. Free windows use moss and the timed
+    /// unlock uses clay, matching the accent each state carries elsewhere.
+    var tint: Color = PW.sage
 
     var body: some View {
         ZStack {
@@ -112,9 +115,9 @@ struct ProgressRing: View {
                 .stroke(Color.white.opacity(0.07), lineWidth: 2)
             Circle()
                 .trim(from: 0, to: max(0, min(1, progress)))
-                .stroke(PW.sage, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                .stroke(tint, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
                 .rotationEffect(.degrees(-90))
-                .shadow(color: PW.sage.opacity(0.6), radius: 6)
+                .shadow(color: tint.opacity(0.6), radius: 6)
         }
         .frame(width: size, height: size)
     }
