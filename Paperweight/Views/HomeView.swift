@@ -346,7 +346,7 @@ struct HomeView: View {
 /// Enumerates the actual restricted apps/categories using FamilyControls' own
 /// `Label(token)` views (real names + icons). App names are privacy-gated and
 /// can't be read as strings, so we render the system labels directly.
-private struct RestrictedTokensList: View {
+struct RestrictedTokensList: View {
     let selection: FamilyActivitySelection
     private let limit = 6
 
