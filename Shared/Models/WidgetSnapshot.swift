@@ -170,8 +170,8 @@ extension WidgetState {
             return WidgetCopy(eyebrow: "QUIET", value: .word(d),
                               caption: "of quiet left",
                               accessoryValue: d,
-                              accessoryLine: "until \(WidgetState.clock(ends))",
-                              boundaryLine: "Quiet until \(WidgetState.clock(ends))")
+                              accessoryLine: "until \(WidgetState.dayClock(ends, from: date, abbreviated: true))",
+                              boundaryLine: "Quiet until \(WidgetState.dayClock(ends, from: date))")
 
         case .quietOpen:
             return WidgetCopy(eyebrow: "QUIET", value: .word("Quiet"),
@@ -185,15 +185,15 @@ extension WidgetState {
             return WidgetCopy(eyebrow: "FREE WINDOW", value: .word(d),
                               caption: "before it goes quiet",
                               accessoryValue: d,
-                              accessoryLine: "quiet at \(WidgetState.clock(ends))",
-                              boundaryLine: "Free until \(WidgetState.clock(ends)), then quiet")
+                              accessoryLine: "quiet at \(WidgetState.dayClock(ends, from: date, abbreviated: true))",
+                              boundaryLine: "Free until \(WidgetState.dayClock(ends, from: date)), then quiet")
 
         case .timedUnlock(let ends, _):
             return WidgetCopy(eyebrow: "UNLOCKED", value: .countdown(to: ends),
                               caption: "then it closes on its own",
                               accessoryValue: WidgetState.compactDuration(ends.timeIntervalSince(date)),
-                              accessoryLine: "re-locks at \(WidgetState.clock(ends))",
-                              boundaryLine: "Unlocked — re-locks at \(WidgetState.clock(ends))")
+                              accessoryLine: "re-locks \(WidgetState.dayClock(ends, from: date, abbreviated: true))",
+                              boundaryLine: "Unlocked — re-locks at \(WidgetState.dayClock(ends, from: date))")
 
         case .coolOff(let ends, _):
             return WidgetCopy(eyebrow: "COOL-OFF",
@@ -291,6 +291,36 @@ extension WidgetState {
 
     static func clock(_ date: Date) -> String {
         date.formatted(date: .omitted, time: .shortened)
+    }
+
+    /// `clock`, qualified by day whenever the boundary isn't today.
+    ///
+    /// A bare "02:00" is read as *tonight* — which is right most of the time and
+    /// wrong in exactly the case that matters: a Friday evening looking down the
+    /// barrel of a free window that runs until Sunday. "Free until 02:00" then
+    /// promises quiet in three hours when it's really two and a half days out.
+    ///
+    /// The comparison is calendar days, not elapsed hours, so 23:50 → 00:10 is
+    /// "tomorrow" (it is) while 09:00 → 22:00 stays bare (it's still today).
+    /// `abbreviated` is for the Lock Screen rectangular line, which has room for
+    /// about 24 characters and no more.
+    static func dayClock(_ date: Date, from now: Date,
+                         calendar: Calendar = .current,
+                         abbreviated: Bool = false) -> String {
+        let time = clock(date)
+        let days = calendar.dateComponents([.day],
+                                           from: calendar.startOfDay(for: now),
+                                           to: calendar.startOfDay(for: date)).day ?? 0
+        switch days {
+        case ..<1:
+            return time
+        case 1:
+            return abbreviated ? "\(time) tmrw" : "\(time) tomorrow"
+        default:
+            // A weekly schedule never points more than 7 days out, so the
+            // weekday alone is unambiguous.
+            return "\(time) \(date.formatted(.dateTime.weekday(abbreviated ? .abbreviated : .wide)))"
+        }
     }
 
     static func relative(_ date: Date, from now: Date) -> String {

@@ -196,6 +196,10 @@ final class WidgetSnapshotTests: XCTestCase {
             .quietBounded(ends: reference.addingTimeInterval(12 * 3600), fraction: 0.5),
             .freeWindow(ends: reference.addingTimeInterval(3600), fraction: 0.5),
             .timedUnlock(ends: reference.addingTimeInterval(600), fraction: 0.5),
+            // Day-qualified boundaries are the long ones — "tomorrow" is the
+            // worst case, longer than any abbreviated weekday.
+            .quietBounded(ends: reference.addingTimeInterval(26 * 3600), fraction: 0.5),
+            .freeWindow(ends: reference.addingTimeInterval(51 * 3600), fraction: 0.5),
         ]
         for state in states {
             let copy = state.copy(at: reference)
@@ -211,6 +215,39 @@ final class WidgetSnapshotTests: XCTestCase {
         // A boundary that has arrived is a different state, never "0m".
         XCTAssertEqual(WidgetState.compactDuration(0), "1m")
         XCTAssertEqual(WidgetState.compactDuration(-500), "1m")
+    }
+
+    // MARK: Boundaries that aren't today
+
+    /// A bare "02:00" reads as *tonight*. That's fine when it is tonight, and
+    /// badly wrong when the free window runs 51 hours to Tuesday — the widget
+    /// was telling people to expect quiet in a few hours.
+    func test_boundaryLaterTodayStaysBareTime() {
+        let ends = reference.addingTimeInterval(3 * 3600) // Sunday 17:00
+        let copy = WidgetState.freeWindow(ends: ends, fraction: 0.5).copy(at: reference)
+        XCTAssertEqual(copy.boundaryLine, "Free until \(WidgetState.clock(ends)), then quiet")
+    }
+
+    func test_boundaryTomorrowSaysTomorrow() {
+        let ends = reference.addingTimeInterval(24 * 3600) // Monday 14:00
+        let copy = WidgetState.freeWindow(ends: ends, fraction: 0.5).copy(at: reference)
+        XCTAssertTrue(copy.boundaryLine.contains("tomorrow"), copy.boundaryLine)
+    }
+
+    func test_boundaryDaysOutNamesTheWeekday() {
+        let ends = reference.addingTimeInterval(51 * 3600) // Tuesday 17:00
+        let copy = WidgetState.freeWindow(ends: ends, fraction: 0.5).copy(at: reference)
+        XCTAssertTrue(copy.boundaryLine.contains("Tuesday"), copy.boundaryLine)
+        XCTAssertFalse(copy.boundaryLine.contains("tomorrow"), copy.boundaryLine)
+    }
+
+    /// Day-based, not 24-hour-based: 40 minutes across midnight is still a
+    /// different day, and "00:10" alone would read as ten past midnight tonight.
+    func test_boundaryJustPastMidnightSaysTomorrow() {
+        let lateSunday = reference.addingTimeInterval(9.5 * 3600) // 23:30
+        let ends = lateSunday.addingTimeInterval(40 * 60)         // Monday 00:10
+        let copy = WidgetState.quietBounded(ends: ends, fraction: 0.5).copy(at: lateSunday)
+        XCTAssertTrue(copy.boundaryLine.contains("tomorrow"), copy.boundaryLine)
     }
 
     // MARK: Deep links

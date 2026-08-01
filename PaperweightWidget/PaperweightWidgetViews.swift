@@ -88,21 +88,32 @@ struct PaperweightSmallView: View {
                 .font(.grotesk(9, weight: .semibold))
                 .tracking(1.6)
                 .foregroundStyle(PW.textFaint)
+                .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            Spacer(minLength: 8)
-
-            ZStack {
-                // pulse: false — the repeating animation never advances in a
-                // widget, so force the static branch rather than render the
-                // dimmer resting frame of an animation that will never run.
-                OrbGlow(size: 92, pulse: false)
-                ProgressRing(progress: state.ringProgress ?? 0, size: 70, tint: state.accent)
-                StateOrb(state: state, size: 40)
+            // The orb takes whatever the text rows leave, rather than claiming a
+            // fixed 92pt. At a fixed size this stack came to 167pt inside a
+            // 138pt widget; the host resolves that by clipping, which is what
+            // shaved the eyebrow and pushed the caption off the bottom edge.
+            // GeometryReader is greedy in a VStack, so it absorbs exactly the
+            // remainder and the stack can no longer overflow at any widget size.
+            GeometryReader { geo in
+                let d = min(geo.size.width, geo.size.height, 92)
+                ZStack {
+                    // pulse: false — the repeating animation never advances in a
+                    // widget, so force the static branch rather than render the
+                    // dimmer resting frame of an animation that will never run.
+                    OrbGlow(size: d, pulse: false)
+                    ProgressRing(progress: state.ringProgress ?? 0, size: d * 0.76, tint: state.accent)
+                    StateOrb(state: state, size: d * 0.43)
+                }
+                .frame(width: geo.size.width, height: geo.size.height)
             }
-            .frame(width: 92, height: 92)
-
-            Spacer(minLength: 10)
+            // A floor so the orb stays recognisable in the states whose caption
+            // wraps to two lines. Worst case is the smallest widget with the
+            // longest caption, which comes to 123pt of a 126pt box.
+            .frame(minHeight: 44)
+            .padding(.vertical, 6)
 
             WidgetHeadline(value: copy.value, now: entry.date,
                            font: .grotesk(22, weight: .bold), color: state.headlineColor)
