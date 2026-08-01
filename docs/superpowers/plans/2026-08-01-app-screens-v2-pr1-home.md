@@ -240,7 +240,7 @@ git commit -m "feat: derive per-day locked/open runs from the schedule"
 
 ### Task 3: The countdown format
 
-Screen 01 shows `2:14` with a separate `left`. The existing `WidgetCopy.compactDuration` renders `2h 14m`, which is the widget's format, not this one. Add a small formatter rather than overloading `WidgetCopy`.
+Screen 01 shows `2:14` with a separate `left`. The existing `WidgetState.compactDuration` renders `2h 14m`, which is the widget's format, not this one. Add a small formatter rather than overloading `WidgetCopy`.
 
 **Files:**
 - Create: `Shared/Models/HomeCopy.swift`
@@ -626,7 +626,7 @@ The rewrite. `HomeView` keeps every non-list responsibility it has today — sce
 - Modify: `Paperweight/Views/HomeView.swift`
 
 **Interfaces:**
-- Consumes: `WeekStrip`, `SimpleScene`, `SettingsView`, `HomeCopy.countdown`, `WidgetCopy.dayClock`, `WidgetCopy.compactDuration`, `PaperweightSchedule.quietStatus(at:)`, `PaperweightSchedule.freeStatus(at:)`.
+- Consumes: `WeekStrip`, `SimpleScene`, `SettingsView`, `HomeCopy.countdown`, `WidgetState.dayClock`, `WidgetState.compactDuration`, `PaperweightSchedule.quietStatus(at:)`, `PaperweightSchedule.freeStatus(at:)`.
 
 - [ ] **Step 1: Delete the Quiet cover and the hold control**
 
@@ -732,7 +732,7 @@ Replace the `var body: some View` and the `settingsList` / `statusCard` / `onboa
                     eyebrow: "● Locked",
                     eyebrowColor: PW.dawnGlow,
                     headline: status.map {
-                        "Down until \(WidgetCopy.dayClock($0.ends, from: context.date))"
+                        "Down until \(WidgetState.dayClock($0.ends, from: context.date))"
                     } ?? "Down until you say otherwise",
                     borderColor: PW.dawnGlow.opacity(0.4),
                     glow: true)
@@ -751,7 +751,7 @@ Replace the `var body: some View` and the `settingsList` / `statusCard` / `onboa
                     progressBar(elapsed: 1 - status.remainingFraction)
                         .padding(.top, 10)
 
-                    Text("Unlocks at \(WidgetCopy.dayClock(status.ends, from: context.date))")
+                    Text("Unlocks at \(WidgetState.dayClock(status.ends, from: context.date))")
                         .font(.grotesk(13))
                         .foregroundStyle(PW.textMuted)
                         .padding(.top, 6)
@@ -789,7 +789,7 @@ Replace the `var body: some View` and the `settingsList` / `statusCard` / `onboa
                         borderColor: PW.hairline,
                         glow: false,
                         detail: status.map {
-                            "Locks at \(WidgetCopy.dayClock($0.ends, from: context.date)) · in \(WidgetCopy.compactDuration($0.remaining))"
+                            "Locks at \(WidgetState.dayClock($0.ends, from: context.date)) · in \(WidgetState.compactDuration($0.remaining))"
                         })
 
                     if let schedule = vm.config.schedule, !schedule.isEmpty {
