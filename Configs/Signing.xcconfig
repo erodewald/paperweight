@@ -1,0 +1,18 @@
+// Signing configuration.
+//
+// The team is intentionally empty here so nobody's Apple Developer Team ID ends
+// up in the repository. Set yours once in a local, git-ignored override:
+//
+//     echo 'DEVELOPMENT_TEAM = <YOUR_TEAM_ID>' > Configs/Signing.local.xcconfig
+//
+// The include below is optional (`#include?`), so a fresh clone still generates
+// and builds for the Simulator without it. Because this is an xcconfig rather
+// than a build setting baked into project.yml, your team ID survives every
+// `xcodegen generate` — the project can be regenerated freely.
+//
+// Family Controls and NFC only run on a physical device, and device builds
+// require a team.
+
+DEVELOPMENT_TEAM =
+
+#include? "Signing.local.xcconfig"

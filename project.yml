@@ -38,7 +38,13 @@ schemes:
 settings:
   base:
     SWIFT_VERSION: "5.9"
-    DEVELOPMENT_TEAM: ""
+
+# DEVELOPMENT_TEAM lives in an xcconfig rather than in `settings` above, because
+# a build setting written into the project would override the xcconfig and get
+# clobbered on every regeneration. See Configs/Signing.xcconfig.
+configFiles:
+  Debug: Configs/Signing.xcconfig
+  Release: Configs/Signing.xcconfig
 
 targets:
 
