@@ -38,9 +38,13 @@ jobs:
         id: sim
         run: |
           set -euo pipefail
+          # `|| true` is load-bearing: grep exits 1 when nothing matches, and
+          # under `set -e` that aborts the assignment before the check below,
+          # turning "no simulator" into a bare pipefail with no explanation.
+          # The name may be non-numeric ("iPhone Air"), so don't require a digit.
           name=$(xcrun simctl list devices available \
-                 | grep -oE 'iPhone [0-9]+[A-Za-z ]*' \
-                 | sed 's/ *$//' | head -1)
+                 | grep -oE 'iPhone [A-Za-z0-9][A-Za-z0-9 ]*' \
+                 | sed 's/ *$//' | head -1 || true)
           if [ -z "$name" ]; then
             echo "::error::No iPhone simulator available on this runner"
             xcrun simctl list devices available
@@ -98,9 +102,17 @@ jobs:
           # An Apple Team ID is exactly 10 upper-case alphanumerics. Docs use
           # <YOUR_TEAM_ID> so that no file needs excluding from this check.
           pattern='DEVELOPMENT_TEAM[[:space:]]*[:=][[:space:]]*[A-Z0-9]{10}'
-          if git grep -nE "$pattern"; then
-            echo "::error::A Development Team ID looks committed. Put it in the"
-            echo "::error::git-ignored Configs/Signing.local.xcconfig instead."
-            exit 1
-          fi
-          echo "No team ID committed."
+          # Distinguish "no match" (1) from a real git failure (>1). Plain
+          # `if git grep` treats both as a pass, which would let this guard fail
+          # open — the one thing a guard must never do.
+          set +e
+          git grep -nE "$pattern"
+          rc=$?
+          set -e
+          case "$rc" in
+            0) echo "::error::A Development Team ID looks committed. Put it in the"
+               echo "::error::git-ignored Configs/Signing.local.xcconfig instead."
+               exit 1 ;;
+            1) echo "No team ID committed." ;;
+            *) echo "::error::git grep failed with status $rc"; exit 1 ;;
+          esac
