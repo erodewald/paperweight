@@ -41,6 +41,10 @@ struct HomeView: View {
             }
             .pwScreen()
             .navigationTitle("")
+            // The root never swaps, so pushing/popping the schedule stays clean —
+            // keep this on the Group, not inside the branches, since setupState,
+            // lockedState, and openState swap out from under it as config changes.
+            .navigationDestination(isPresented: $showingSchedule) { ScheduleView(vm: vm) }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
@@ -161,7 +165,6 @@ struct HomeView: View {
             .padding(.horizontal, 22)
             .padding(.bottom, 24)
         }
-        .navigationDestination(isPresented: $showingSchedule) { ScheduleView(vm: vm) }
     }
 
     // MARK: - Open (screen 02)
@@ -205,7 +208,6 @@ struct HomeView: View {
             }
             .scrollContentBackground(.hidden)
         }
-        .navigationDestination(isPresented: $showingSchedule) { ScheduleView(vm: vm) }
     }
 
     // MARK: - Not armed yet
@@ -231,7 +233,6 @@ struct HomeView: View {
         }
         .padding(.horizontal, 22)
         .padding(.bottom, 24)
-        .navigationDestination(isPresented: $showingSchedule) { ScheduleView(vm: vm) }
     }
 
     private var setupDetail: String {
