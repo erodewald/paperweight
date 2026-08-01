@@ -30,6 +30,21 @@ struct DioramaScene: View {
         (690, 170, 2.6, 1.3, 6), (220,  90, 3.0, 5.3, 7),
     ]
 
+    /// Blob canopy circles, relative to the crown: x, y, radius.
+    private static let canopyCircles: [(Double, Double, Double)] = [
+        (0.0, -92.0, 40.0), (-26.0, -74.0, 25.0), (27.0, -75.0, 24.0),
+    ]
+
+    /// Blob canopy highlight circles, relative to the crown: x, y, radius.
+    private static let canopyHighlights: [(Double, Double, Double)] = [
+        (-13.0, -104.0, 9.0), (16.0, -86.0, 6.0),
+    ]
+
+    /// Firefly trail steps: lag, radius scale, alpha.
+    private static let flyTrail: [(Double, Double, Double)] = [
+        (0.42, 0.50, 0.12), (0.28, 0.62, 0.20), (0.14, 0.78, 0.32),
+    ]
+
     var body: some View {
         Canvas { context, size in
             let scale = size.width / Self.designSize.width
@@ -52,9 +67,9 @@ struct DioramaScene: View {
     private func drawGround(_ context: inout GraphicsContext,
                             y: CGFloat, rx: CGFloat, ry: CGFloat, color: Color) {
         let rect = CGRect(x: 390 - rx, y: y - ry, width: rx * 2, height: ry * 2)
-        context.opacity = lock
-        context.fill(Path(ellipseIn: rect), with: .color(color))
-        context.opacity = 1
+        var layer = context
+        layer.opacity = lock
+        layer.fill(Path(ellipseIn: rect), with: .color(color))
     }
 
     // MARK: Pines
@@ -104,10 +119,10 @@ struct DioramaScene: View {
         crown.rotate(by: .degrees(PWMotion.sway(at: time, phase: blob.phase) * grown))
         crown.translateBy(x: 0, y: 60)
 
-        for (cx, cy, r) in [(0.0, -92.0, 40.0), (-26.0, -74.0, 25.0), (27.0, -75.0, 24.0)] {
+        for (cx, cy, r) in Self.canopyCircles {
             crown.fill(Self.circle(cx, cy, r), with: .color(canopy))
         }
-        for (cx, cy, r) in [(-13.0, -104.0, 9.0), (16.0, -86.0, 6.0)] {
+        for (cx, cy, r) in Self.canopyHighlights {
             crown.fill(Self.circle(cx, cy, r), with: .color(highlight))
         }
         if blob.fruit {
@@ -134,7 +149,7 @@ struct DioramaScene: View {
         var layer = context
         layer.opacity = brightness
 
-        for (lag, radiusScale, alpha) in [(0.42, 0.50, 0.12), (0.28, 0.62, 0.20), (0.14, 0.78, 0.32)] {
+        for (lag, radiusScale, alpha) in Self.flyTrail {
             let point = position(lag)
             layer.fill(Self.circle(point.x, point.y, fly.r * radiusScale),
                        with: .color(PW.dawnGlow.opacity(alpha)))
