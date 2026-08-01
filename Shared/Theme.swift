@@ -29,6 +29,16 @@ enum PW {
     static let textFaint     = Color(pwHex: 0x5A6356)
     static let textFaintest  = Color(pwHex: 0x4A5247)
     static let warn          = Color(pwHex: 0x9A6A6A)   // the one red-ish warning line
+    // Locked-screen forest palette. Depth is read entirely through value here —
+    // the far trees are nearly the background, the near ones nearly the moss.
+    static let treeDark      = Color(pwHex: 0x101C12)   // furthest pines
+    static let treeMid       = Color(pwHex: 0x1D3322)   // mid-ground canopy
+    static let treeFront     = Color(pwHex: 0x2E4A30)   // nearest canopy
+    static let trunk         = Color(pwHex: 0x1A2C1C)
+    static let bush          = Color(pwHex: 0x234026)
+    static let stem          = Color(pwHex: 0x3D5C36)
+    static let groundBack    = Color(pwHex: 0x0E1810)
+    static let groundFront   = Color(pwHex: 0x0B140C)
     static let onAccent      = Color(pwHex: 0x0A140B)   // text/icon on a sage button
     static let encourage     = Color(pwHex: 0xA9B5A1)   // poetic lines
 
