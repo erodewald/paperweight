@@ -37,6 +37,10 @@ struct SettingsView: View {
                         NavRow(title: "NFC Token & Recovery")
                     }
                     CardDivider()
+                    NavigationLink { LockedScenePicker(vm: vm) } label: {
+                        NavRow(title: "Locked screen", value: vm.config.lockedScene.title)
+                    }
+                    CardDivider()
                     NavigationLink { UnlockView(vm: vm) } label: {
                         NavRow(title: "Emergency unlock",
                                titleColor: vm.config.isEnabled ? PW.textPrimary : PW.textFaint,
