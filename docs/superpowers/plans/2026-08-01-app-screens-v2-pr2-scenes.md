@@ -713,22 +713,19 @@ struct OvergrownScene: View {
     private static let topRightSize = CGSize(width: 480, height: 400)
     private static let bottomLeftSize = CGSize(width: 340, height: 260)
 
-    private static var topRightBack: [Sprig] {
-        [
+    private static let topRightBack: [Sprig] = [
             Sprig(p0: .init(x: 484, y: -8), p1: .init(x: 370, y: 60), p2: .init(x: 250, y: 180),
                   leaflets: 11, size: 21, slot: 0, phase: 0.5, flip: 1,
                   colors: [PW.treeMid, PW.bush], stem: PW.trunk, bud: false),
             Sprig(p0: .init(x: 476, y: 40), p1: .init(x: 430, y: 180), p2: .init(x: 400, y: 320),
                   leaflets: 9, size: 18, slot: 1, phase: 2.8, flip: -1,
                   colors: [PW.treeMid, PW.bush], stem: PW.trunk, bud: false),
-            Sprig(p0: .init(x: 460, y: 220), p1: .init(x: 370, y: 280), p2: .init(x: 260, y: 330),
-                  leaflets: 9, size: 16, slot: 2, phase: 4.6, flip: 1,
-                  colors: [PW.bush, PW.treeMid], stem: PW.trunk, bud: false),
-        ]
-    }
+        Sprig(p0: .init(x: 460, y: 220), p1: .init(x: 370, y: 280), p2: .init(x: 260, y: 330),
+              leaflets: 9, size: 16, slot: 2, phase: 4.6, flip: 1,
+              colors: [PW.bush, PW.treeMid], stem: PW.trunk, bud: false),
+    ]
 
-    private static var topRightFront: [Sprig] {
-        [
+    private static let topRightFront: [Sprig] = [
             Sprig(p0: .init(x: 482, y: -4), p1: .init(x: 400, y: 40), p2: .init(x: 300, y: 120),
                   leaflets: 12, size: 17, slot: 3, phase: 0, flip: 1,
                   colors: [PW.treeFront, PW.moss], stem: PW.stem, bud: true),
@@ -744,27 +741,22 @@ struct OvergrownScene: View {
             Sprig(p0: .init(x: 474, y: 262), p1: .init(x: 400, y: 312), p2: .init(x: 310, y: 346),
                   leaflets: 8, size: 12, slot: 7, phase: 5.2, flip: -1,
                   colors: [PW.moss, PW.treeFront], stem: PW.stem, bud: true),
-        ]
-    }
+    ]
 
-    private static var bottomLeftBack: [Sprig] {
-        [
+    private static let bottomLeftBack: [Sprig] = [
             Sprig(p0: .init(x: -8, y: 266), p1: .init(x: 90, y: 258), p2: .init(x: 204, y: 240),
                   leaflets: 9, size: 15, slot: 8, phase: 3.9, flip: -1,
                   colors: [PW.treeMid, PW.bush], stem: PW.trunk, bud: false),
-        ]
-    }
+    ]
 
-    private static var bottomLeftFront: [Sprig] {
-        [
+    private static let bottomLeftFront: [Sprig] = [
             Sprig(p0: .init(x: -4, y: 264), p1: .init(x: 70, y: 240), p2: .init(x: 152, y: 192),
                   leaflets: 10, size: 13, slot: 9, phase: 1.3, flip: -1,
                   colors: [PW.moss, PW.treeFront], stem: PW.stem, bud: true),
             Sprig(p0: .init(x: 0, y: 252), p1: .init(x: 40, y: 192), p2: .init(x: 82, y: 132),
                   leaflets: 7, size: 10, slot: 10, phase: 3.3, flip: 1,
                   colors: [PW.mossLight, PW.moss], stem: PW.stem, bud: true),
-        ]
-    }
+    ]
 
     var body: some View {
         Canvas { context, size in
