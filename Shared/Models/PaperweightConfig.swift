@@ -22,6 +22,10 @@ struct PaperweightConfig: Codable {
     // can't strand the shield in a lifted state.
     var unlockExpiresAt: Date? = nil
 
+    /// Which artwork the locked Home draws. Purely cosmetic — it never affects
+    /// what is restricted.
+    var lockedScene: LockedScene = .diorama
+
     /// The moment a pending cool-off unlock will release, if one is requested.
     var coolOffReleaseDate: Date? {
         unlockRequestedAt.map { $0.addingTimeInterval(Double(coolOffDays) * 86400) }
@@ -53,6 +57,7 @@ struct PaperweightConfig: Codable {
         coolOffDays = try c.decodeIfPresent(Int.self, forKey: .coolOffDays) ?? 1
         unlockRequestedAt = try c.decodeIfPresent(Date.self, forKey: .unlockRequestedAt)
         unlockExpiresAt = try c.decodeIfPresent(Date.self, forKey: .unlockExpiresAt)
+        lockedScene = (try? c.decodeIfPresent(LockedScene.self, forKey: .lockedScene)) as? LockedScene ?? .diorama
         #if os(iOS)
         selection = try c.decodeIfPresent(FamilyActivitySelection.self, forKey: .selection) ?? .init()
         appOverrides = try c.decodeIfPresent([AppScheduleOverride].self, forKey: .appOverrides) ?? []
