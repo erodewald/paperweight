@@ -24,7 +24,8 @@ enum PW {
     static let dawnGlow      = Color(pwHex: 0xBCE890)   // brightest accent
     static let clay          = Color(pwHex: 0xC8A27B)   // escape-hatch / destructive
     static let textPrimary   = Color(pwHex: 0xECF1E6)
-    static let textMuted     = Color(pwHex: 0x8E9A86)
+    static let textMuted     = Color(pwHex: 0xA3AF9B)   // v2 secondary text
+    static let textLabel     = Color(pwHex: 0x7D8A75)   // v2 uppercase section labels
     static let textFaint     = Color(pwHex: 0x5A6356)
     static let textFaintest  = Color(pwHex: 0x4A5247)
     static let warn          = Color(pwHex: 0x9A6A6A)   // the one red-ish warning line
@@ -57,6 +58,16 @@ extension View {
         self.font(.grotesk(11, weight: .semibold))
             .tracking(1.8)
             .foregroundStyle(PW.textFaint)
+            .textCase(.uppercase)
+    }
+
+    /// Uppercase section label for **app screens**, at the v2 13px text floor.
+    /// Widgets keep `pwSectionLabel()` — they have their own space budget, and
+    /// raising the floor there overflows the small widget.
+    func pwScreenLabel() -> some View {
+        self.font(.grotesk(13, weight: .semibold))
+            .tracking(2.4)
+            .foregroundStyle(PW.textLabel)
             .textCase(.uppercase)
     }
 }
