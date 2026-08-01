@@ -12,12 +12,10 @@ struct HomeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var showingPicker = false
     @State private var showingDisableSheet = false
-    /// Whether the full-screen Quiet orb is presented over the settings root.
-    @State private var showQuiet = false
     @State private var showNeedsUnlock = false
     @State private var showUnlockSetup = false
     @State private var showNeedsApps = false
-    @State private var footerLine = Phrases.homeFooter.randomElement() ?? ""
+    @State private var showingSchedule = false
     /// Selection captured when the picker opens, to detect (and gate) removals.
     @State private var selectionSnapshot: FamilyActivitySelection?
     @State private var selectionRevertMessage: String?
@@ -31,28 +29,33 @@ struct HomeView: View {
     }
 
     var body: some View {
-        ZStack {
-            NavigationStack {
-                settingsList
-                    .navigationBarHidden(true)
+        NavigationStack {
+            Group {
+                if !vm.config.isEnabled {
+                    setupState
+                } else if isQuiet {
+                    lockedState
+                } else {
+                    openState
+                }
             }
-            .tint(PW.sage)
-
-            // Quiet orb sits ABOVE a stable settings root as a plain overlay (not
-            // a sheet/cover, which failed to present at cold launch). The root
-            // never swaps, so pushing/popping the schedule stays clean.
-            if showQuiet {
-                QuietScreen(
-                    vm: vm,
-                    onUnlock: { showQuiet = false; showingDisableSheet = true },
-                    onSettings: { showQuiet = false })
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(PW.black.ignoresSafeArea())
-                    .transition(.opacity)
-                    .zIndex(1)
+            .pwScreen()
+            .navigationTitle("")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink {
+                        SettingsView(vm: vm,
+                                     showingPicker: $showingPicker,
+                                     onTurnOff: { showingDisableSheet = true })
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .font(.system(size: 17))
+                            .foregroundStyle(PW.textMuted)
+                    }
+                }
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: showQuiet)
+        .tint(PW.sage)
         .familyActivityPicker(
             headerText: "Choose apps and categories to restrict.",
             footerText: "Do not select Paperweight itself — blocking it could lock you out of these controls.",
@@ -68,9 +71,7 @@ struct HomeView: View {
         .onChange(of: vm.config.isEnabled) { _, isEnabled in
             updateShortcutItems(isEnabled: isEnabled)
         }
-        .onChange(of: isQuiet) { _, quiet in showQuiet = quiet }
         .onAppear {
-            showQuiet = isQuiet
             handlePendingShortcut()
             updateShortcutItems(isEnabled: vm.config.isEnabled)
         }
@@ -80,7 +81,6 @@ struct HomeView: View {
             if phase == .active {
                 vm.syncRestrictions()
                 ScheduleService.shared.updateSchedule(vm.config.schedule, enabled: vm.config.isEnabled)
-                showQuiet = isQuiet
             }
         }
         .sheet(isPresented: $showingDisableSheet) {
@@ -109,6 +109,202 @@ struct HomeView: View {
                 .tint(PW.sage)
                 .presentationDragIndicator(.visible)
         }
+    }
+
+    // MARK: - Locked (screen 01)
+
+    private var lockedState: some View {
+        TimelineView(.periodic(from: .now, by: 60)) { context in
+            let status = vm.config.schedule?.quietStatus(at: context.date)
+            VStack(alignment: .leading, spacing: 0) {
+                banner(
+                    eyebrow: "● Locked",
+                    eyebrowColor: PW.dawnGlow,
+                    headline: status.map {
+                        "Down until \(WidgetState.dayClock($0.ends, from: context.date))"
+                    } ?? "Down until you say otherwise",
+                    borderColor: PW.dawnGlow.opacity(0.4),
+                    glow: true)
+
+                if let status {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(HomeCopy.countdown(status.remaining))
+                            .font(.grotesk(44, weight: .bold))
+                            .foregroundStyle(PW.textPrimary)
+                        Text("left")
+                            .font(.grotesk(14, weight: .medium))
+                            .foregroundStyle(PW.textMuted)
+                    }
+                    .padding(.top, 22)
+
+                    progressBar(elapsed: 1 - status.remainingFraction)
+                        .padding(.top, 10)
+
+                    Text("Unlocks at \(WidgetState.dayClock(status.ends, from: context.date))")
+                        .font(.grotesk(13))
+                        .foregroundStyle(PW.textMuted)
+                        .padding(.top, 6)
+                }
+
+                SimpleScene()
+                    .frame(maxHeight: .infinity)
+
+                AccentButton(title: "View schedule") { showingSchedule = true }
+                    .padding(.top, 8)
+
+                Text("Emergency unlock lives in Settings — never here.")
+                    .font(.grotesk(13))
+                    .foregroundStyle(PW.textFaint)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 12)
+            }
+            .padding(.horizontal, 22)
+            .padding(.bottom, 24)
+        }
+        .navigationDestination(isPresented: $showingSchedule) { ScheduleView(vm: vm) }
+    }
+
+    // MARK: - Open (screen 02)
+
+    private var openState: some View {
+        TimelineView(.periodic(from: .now, by: 60)) { context in
+            let status = vm.config.schedule?.freeStatus(at: context.date)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    banner(
+                        eyebrow: "○ Open",
+                        eyebrowColor: PW.textLabel,
+                        headline: "In your hands.",
+                        borderColor: PW.hairline,
+                        glow: false,
+                        detail: status.map {
+                            "Locks at \(WidgetState.dayClock($0.ends, from: context.date)) · in \(WidgetState.compactDuration($0.remaining))"
+                        })
+
+                    if let schedule = vm.config.schedule, !schedule.isEmpty {
+                        WeekStrip(schedule: schedule)
+                            .padding(.top, 20)
+                    }
+
+                    GroupedCard {
+                        Button { showingPicker = true } label: {
+                            NavRow(title: "Restricted apps",
+                                   systemImage: "lock",
+                                   iconColor: PW.textMuted,
+                                   value: restrictedCountText)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.top, 18)
+
+                    AccentButton(title: "Edit schedule") { showingSchedule = true }
+                        .padding(.top, 18)
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 24)
+            }
+            .scrollContentBackground(.hidden)
+        }
+        .navigationDestination(isPresented: $showingSchedule) { ScheduleView(vm: vm) }
+    }
+
+    // MARK: - Not armed yet
+
+    private var setupState: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            banner(eyebrow: "○ Off",
+                   eyebrowColor: PW.textLabel,
+                   headline: "Nothing is quiet yet.",
+                   borderColor: PW.hairline,
+                   glow: false,
+                   detail: setupDetail)
+
+            Spacer()
+
+            if !vm.hasAppsSelected {
+                AccentButton(title: "Choose apps") { showingPicker = true }
+            } else if !vm.hasUnlockMethod {
+                AccentButton(title: "Set up a way back") { showUnlockSetup = true }
+            } else {
+                AccentButton(title: "Set a schedule") { showingSchedule = true }
+            }
+        }
+        .padding(.horizontal, 22)
+        .padding(.bottom, 24)
+        .navigationDestination(isPresented: $showingSchedule) { ScheduleView(vm: vm) }
+    }
+
+    private var setupDetail: String {
+        if !vm.hasAppsSelected {
+            return "First, choose the apps and categories to quiet."
+        }
+        if !vm.hasUnlockMethod {
+            return "Now set up a way back — an NFC token or recovery codes."
+        }
+        return "Paint a schedule and it arms itself. There is no switch to forget."
+    }
+
+    // MARK: - Shared pieces
+
+    private func banner(eyebrow: String,
+                        eyebrowColor: Color,
+                        headline: String,
+                        borderColor: Color,
+                        glow: Bool,
+                        detail: String? = nil) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(eyebrow)
+                .font(.grotesk(13, weight: .bold))
+                .tracking(2.4)
+                .textCase(.uppercase)
+                .foregroundStyle(eyebrowColor)
+            Text(headline)
+                .font(.spectral(26))
+                .foregroundStyle(PW.textPrimary)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 4)
+            if let detail {
+                Text(detail)
+                    .font(.grotesk(13))
+                    .foregroundStyle(PW.textMuted)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 6)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background {
+            RoundedRectangle(cornerRadius: 18)
+                .fill(PW.surfaceRaised)
+                .overlay {
+                    if glow {
+                        RoundedRectangle(cornerRadius: 18)
+                            .fill(RadialGradient(
+                                colors: [PW.dawnGlow.opacity(0.16), .clear],
+                                center: .top, startRadius: 0, endRadius: 180))
+                    }
+                }
+        }
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(borderColor, lineWidth: 1))
+    }
+
+    private func progressBar(elapsed: Double) -> some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                Capsule().fill(Color.white.opacity(0.12))
+                Capsule()
+                    .fill(LinearGradient(colors: [PW.moss, PW.dawnGlow],
+                                         startPoint: .leading, endPoint: .trailing))
+                    .frame(width: max(0, geo.size.width * min(max(elapsed, 0), 1)))
+            }
+        }
+        .frame(height: 6)
+    }
+
+    private var restrictedCountText: String {
+        let s = vm.config.selection
+        let total = s.applicationTokens.count + s.categoryTokens.count + s.webDomainTokens.count
+        return "\(total) app\(total == 1 ? "" : "s")"
     }
 
     /// Applies a picker change. While Paperweight is active, *removing* any app
@@ -145,141 +341,6 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Settings list
-
-    private var settingsList: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                Text("Paperweight")
-                    .font(.spectral(34))
-                    .foregroundStyle(PW.textPrimary)
-                    .padding(.top, 18)
-                    .padding(.bottom, 18)
-
-                statusCard
-                    .padding(.bottom, 8)
-
-                SectionHeader(text: "Restricted Apps").padding(.top, 16).padding(.bottom, 10)
-                GroupedCard {
-                    Button { showingPicker = true } label: {
-                        NavRow(title: "Choose Apps & Categories",
-                               systemImage: "app.badge.checkmark", showsChevron: true)
-                    }
-                    .buttonStyle(.plain)
-                    if !vm.config.selection.isEmpty {
-                        CardDivider()
-                        RestrictedTokensList(selection: vm.config.selection)
-                    }
-                }
-
-                SectionHeader(text: "Configure").padding(.top, 22).padding(.bottom, 10)
-                GroupedCard {
-                    NavigationLink { ScheduleView(vm: vm) } label: {
-                        NavRow(title: "Schedule", value: scheduleStatusText)
-                    }
-                    CardDivider()
-                    NavigationLink { NFCSetupView(vm: vm) } label: {
-                        NavRow(title: "NFC Token & Recovery")
-                    }
-                    CardDivider()
-                    NavigationLink { UnlockView(vm: vm) } label: {
-                        NavRow(title: "Emergency Unlock",
-                               titleColor: vm.config.isEnabled ? PW.textPrimary : PW.textFaint,
-                               value: vm.config.isEnabled ? nil : "Off",
-                               valueColor: PW.textFaint,
-                               showsChevron: vm.config.isEnabled)
-                    }
-                    .disabled(!vm.config.isEnabled)
-                }
-
-                Text(footerLine)
-                    .font(.spectral(14, italic: true))
-                    .foregroundStyle(PW.textFaint)
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 26)
-                    .padding(.bottom, 30)
-            }
-            .padding(.horizontal, 18)
-        }
-        .scrollContentBackground(.hidden)
-        .background(PW.black.ignoresSafeArea())
-    }
-
-    @ViewBuilder
-    private var statusCard: some View {
-        if vm.config.isEnabled {
-            Button { showingDisableSheet = true } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: vm.isCoolOffPending ? "hourglass" : "lock.fill")
-                        .foregroundStyle(vm.isCoolOffPending ? PW.clay : PW.sage)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Paperweight active").font(.grotesk(15, weight: .semibold))
-                            .foregroundStyle(PW.textPrimary)
-                        if vm.isCoolOffPending, let release = vm.config.coolOffReleaseDate {
-                            Text("Timed unlock lifts \(release.formatted(.relative(presentation: .named)))")
-                                .font(.grotesk(12.5)).foregroundStyle(PW.clay)
-                        } else {
-                            Text("Tap to turn off (requires NFC token)")
-                                .font(.grotesk(12.5)).foregroundStyle(PW.textMuted)
-                        }
-                    }
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .semibold)).foregroundStyle(PW.textFaint)
-                }
-                .padding(18)
-                .background(PW.surface)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .overlay(RoundedRectangle(cornerRadius: 16).stroke(PW.hairline, lineWidth: 1))
-            }
-            .buttonStyle(.plain)
-        } else {
-            VStack(alignment: .leading, spacing: 5) {
-                Text("Paperweight is off").font(.grotesk(15, weight: .semibold))
-                    .foregroundStyle(PW.textPrimary)
-                if !vm.hasAppsSelected {
-                    onboardingLine("First, choose the apps and categories to block.")
-                    onboardingButton(icon: "app.badge.checkmark", title: "Choose apps") { showingPicker = true }
-                } else if !vm.hasUnlockMethod {
-                    onboardingLine("Now set up a way back — an NFC token or recovery codes.")
-                    onboardingButton(icon: "key.fill", title: "Set up unlock") { showUnlockSetup = true }
-                } else {
-                    onboardingLine("Set a schedule below to arm it. Restrictions then apply on their own — no switch to forget.")
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(18)
-            .background(PW.surface)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(RoundedRectangle(cornerRadius: 16).stroke(PW.hairline, lineWidth: 1))
-        }
-    }
-
-    private func onboardingLine(_ text: String) -> some View {
-        Text(text)
-            .font(.grotesk(12.5)).foregroundStyle(PW.textMuted)
-            .fixedSize(horizontal: false, vertical: true)
-    }
-
-    private func onboardingButton(icon: String, title: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
-                Image(systemName: icon).font(.system(size: 12))
-                Text(title).font(.grotesk(13, weight: .medium))
-            }
-            .foregroundStyle(PW.sage)
-        }
-        .buttonStyle(.plain)
-        .padding(.top, 6)
-    }
-
-    private var scheduleStatusText: String {
-        guard let s = vm.config.schedule, !s.isEmpty else { return "Set up" }
-        if vm.config.isEnabled && !s.isFree(at: Date()) { return "Quiet now" }
-        return "Ready"
-    }
-
     // MARK: - Shortcuts (unchanged behavior)
 
     private func enable() async {
@@ -296,8 +357,6 @@ struct HomeView: View {
             switch type {
             case "enable-paperweight": Task { await enable() }
             case "disable-paperweight":
-                // Drop the Quiet cover first so the sheet isn't hidden beneath it.
-                showQuiet = false
                 showingDisableSheet = true
             default: break
             }
@@ -312,15 +371,10 @@ struct HomeView: View {
         DispatchQueue.main.async {
             switch url.host {
             case "choose-apps":
-                showQuiet = false
                 showingPicker = true
             case "unlock-setup":
-                showQuiet = false
                 showUnlockSetup = true
             case "unlock":
-                // Mid-unlock the Quiet cover is already down; this is the
-                // re-lock affordance.
-                showQuiet = false
                 showingDisableSheet = true
             default:
                 break   // "home" — the root is already what's on screen
@@ -385,192 +439,5 @@ struct RestrictedTokensList: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 9)
             .overlay(alignment: .top) { CardDivider() }
-    }
-}
-
-// MARK: - Quiet screen
-
-private struct QuietScreen: View {
-    @ObservedObject var vm: HomeViewModel
-    var onUnlock: () -> Void
-    var onSettings: () -> Void
-
-    @State private var line = Phrases.quiet.randomElement() ?? ""
-
-    var body: some View {
-        TimelineView(.periodic(from: .now, by: 60)) { context in
-            let quiet = vm.config.schedule?.quietStatus(at: context.date)
-            VStack(spacing: 0) {
-                Text("Brick Mode")
-                    .font(.grotesk(11, weight: .medium))
-                    .tracking(3.0)
-                    .textCase(.uppercase)
-                    .foregroundStyle(PW.textFaint)
-                    .padding(.top, 22)
-
-                Spacer()
-
-                ZStack {
-                    OrbGlow(size: 240)
-                    ProgressRing(progress: quiet?.remainingFraction ?? 1, size: 180)
-                    GlassOrb(size: 104)
-                }
-
-                if let quiet {
-                    Text(Self.format(quiet.remaining))
-                        .font(.grotesk(34, weight: .bold))
-                        .foregroundStyle(PW.textPrimary)
-                        .padding(.top, 30)
-                    Text("of quiet remaining")
-                        .font(.spectral(17, italic: true))
-                        .foregroundStyle(PW.encourage)
-                        .padding(.top, 4)
-                } else {
-                    Text("Quiet")
-                        .font(.grotesk(28, weight: .bold))
-                        .foregroundStyle(PW.textPrimary)
-                        .padding(.top, 30)
-                }
-
-                Spacer()
-
-                Text(line)
-                    .font(.spectral(16, italic: true))
-                    .foregroundStyle(PW.textMuted)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 30)
-                    .padding(.bottom, 18)
-                    .onAppear { line = Phrases.quiet.randomElement() ?? line }
-
-                HoldToUnlockButton(onComplete: onUnlock)
-                    .padding(.horizontal, 44)
-                    .padding(.bottom, 18)
-
-                Divider().overlay(PW.hairline)
-                HStack {
-                    Text(appsQuietLabel).font(.grotesk(13)).foregroundStyle(PW.textFaint)
-                    Spacer()
-                    Button(action: onSettings) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "gearshape").font(.system(size: 13))
-                            Text("Settings").font(.grotesk(13))
-                        }
-                        .foregroundStyle(PW.moss)
-                    }
-                    .buttonStyle(.plain)
-                }
-                .padding(.horizontal, 30)
-                .padding(.top, 14)
-                .padding(.bottom, 22)
-            }
-        }
-    }
-
-    private var appsQuietLabel: String {
-        let apps = vm.config.selection.applicationTokens.count
-        let cats = vm.config.selection.categoryTokens.count
-        if apps > 0 { return "\(apps) app\(apps == 1 ? "" : "s") quiet" }
-        if cats > 0 { return "\(cats) categor\(cats == 1 ? "y" : "ies") quiet" }
-        return "Apps quiet"
-    }
-
-    private static func format(_ t: TimeInterval) -> String {
-        let total = max(0, Int(t))
-        let h = total / 3600, m = (total % 3600) / 60
-        if h > 0 { return "\(h)h \(m)m" }
-        return "\(m)m"
-    }
-}
-
-// MARK: - Hold to unlock
-
-/// A press-and-hold control: the fill accelerates (ease-in, slow → fast) as you
-/// hold, with haptic pulses that quicken and intensify to match, then a success
-/// thunk on completion (opens the NFC turn-off flow). Deliberate by design — a
-/// moment of intention rather than a tap.
-private struct HoldToUnlockButton: View {
-    var onComplete: () -> Void
-
-    private let duration: Double = 1.3
-    private let easeExponent: Double = 2.2    // >1 = slow start, fast finish
-    private let hapticStep: CGFloat = 0.06    // pulse every 6% of (eased) progress
-
-    @State private var progress: CGFloat = 0
-    @State private var holdStart: Date?
-    @State private var lastHapticStep = 0
-    @State private var timer: Timer?
-    @State private var completed = false
-    @State private var impact = UIImpactFeedbackGenerator(style: .medium)
-
-    var body: some View {
-        ZStack {
-            Capsule().fill(PW.surface)
-            GeometryReader { geo in
-                Capsule()
-                    .fill(PW.sage.opacity(0.28))
-                    .frame(width: geo.size.width * progress)
-            }
-            .clipShape(Capsule())
-            HStack(spacing: 8) {
-                Image(systemName: "lock.open").font(.system(size: 14))
-                Text("Hold to unlock").font(.grotesk(14, weight: .medium))
-            }
-            .foregroundStyle(PW.sage)
-        }
-        .frame(height: 50)
-        .overlay(Capsule().stroke(PW.sage.opacity(0.4), lineWidth: 1))
-        .contentShape(Capsule())
-        .gesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in start() }
-                .onEnded { _ in cancel() }
-        )
-    }
-
-    private func start() {
-        guard timer == nil, !completed else { return }
-        completed = false
-        lastHapticStep = 0
-        holdStart = Date()
-        impact.prepare()
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { _ in tick() }
-    }
-
-    private func tick() {
-        guard let holdStart else { return }
-        let frac = min(Date().timeIntervalSince(holdStart) / duration, 1)
-        let eased = CGFloat(pow(frac, easeExponent))
-        progress = eased
-
-        // Pulses are spaced evenly in eased progress; since progress
-        // accelerates, the real-time gaps shrink — slow → fast.
-        let step = Int(eased / hapticStep)
-        if step > lastHapticStep {
-            lastHapticStep = step
-            impact.impactOccurred(intensity: 0.3 + 0.7 * eased)
-            impact.prepare()
-        }
-        if frac >= 1 { complete() }
-    }
-
-    private func complete() {
-        guard !completed else { return }
-        completed = true
-        invalidate()
-        UINotificationFeedbackGenerator().notificationOccurred(.success)
-        onComplete()
-    }
-
-    private func cancel() {
-        guard !completed else { invalidate(); return }
-        invalidate()
-        withAnimation(.easeOut(duration: 0.25)) { progress = 0 }
-    }
-
-    private func invalidate() {
-        timer?.invalidate()
-        timer = nil
-        holdStart = nil
     }
 }
