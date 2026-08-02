@@ -22,9 +22,6 @@ struct OvergrownScene: View {
         let bud: Bool
     }
 
-    private static let topRightSize = CGSize(width: 480, height: 400)
-    private static let bottomLeftSize = CGSize(width: 340, height: 260)
-
     private static let topRightBack: [Sprig] = [
         Sprig(p0: .init(x: 484, y: -8), p1: .init(x: 370, y: 60), p2: .init(x: 250, y: 180),
               leaflets: 11, size: 21, slot: 0, phase: 0.5, flip: 1,
@@ -72,12 +69,15 @@ struct OvergrownScene: View {
 
     var body: some View {
         Canvas { context, size in
+            let scale = size.width / 780
             let swayTopRight = PWMotion.sway(at: time, phase: 0.6) * lock
             let swayBottomLeft = PWMotion.sway(at: time, phase: 3.1) * lock
 
             // Top-right cluster, anchored to the top-right corner.
             var topRight = context
-            topRight.translateBy(x: size.width - Self.topRightSize.width, y: 0)
+            topRight.translateBy(x: size.width, y: 0)
+            topRight.scaleBy(x: scale, y: scale)
+            topRight.translateBy(x: -480, y: 0)
             draw(&topRight, Self.topRightBack, opacity: 0.85,
                  rotation: swayTopRight * 0.6, about: CGPoint(x: 480, y: 0))
             draw(&topRight, Self.topRightFront, opacity: 1,
@@ -85,7 +85,9 @@ struct OvergrownScene: View {
 
             // Bottom-left cluster, anchored to the bottom-left corner.
             var bottomLeft = context
-            bottomLeft.translateBy(x: 0, y: size.height - Self.bottomLeftSize.height)
+            bottomLeft.translateBy(x: 0, y: size.height)
+            bottomLeft.scaleBy(x: scale, y: scale)
+            bottomLeft.translateBy(x: 0, y: -260)
             draw(&bottomLeft, Self.bottomLeftBack, opacity: 0.85,
                  rotation: swayBottomLeft * 0.6, about: CGPoint(x: 0, y: 260))
             draw(&bottomLeft, Self.bottomLeftFront, opacity: 1,
@@ -124,7 +126,7 @@ struct OvergrownScene: View {
             let u = 0.14 + 0.8 * (Double(index) / Double(slots))
             // Leaflets trail the stem tip and pop in order along it.
             let opened = PWMotion.grow(PWMotion.ramp(grown - 0.7 * u, 0, 0.3))
-                * min(max((stemProgress - u) * 10, 0), 1)
+                * PWMotion.ramp(stemProgress, u, min(u + 0.1, 1.0))
             guard opened > 0.001 else { continue }
 
             let point = Self.point(sprig, at: u)

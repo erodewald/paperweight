@@ -57,7 +57,7 @@ struct PaperweightConfig: Codable {
         coolOffDays = try c.decodeIfPresent(Int.self, forKey: .coolOffDays) ?? 1
         unlockRequestedAt = try c.decodeIfPresent(Date.self, forKey: .unlockRequestedAt)
         unlockExpiresAt = try c.decodeIfPresent(Date.self, forKey: .unlockExpiresAt)
-        lockedScene = (try? c.decodeIfPresent(LockedScene.self, forKey: .lockedScene)) as? LockedScene ?? .diorama
+        lockedScene = (try? c.decodeIfPresent(LockedScene.self, forKey: .lockedScene)) ?? .diorama
         #if os(iOS)
         selection = try c.decodeIfPresent(FamilyActivitySelection.self, forKey: .selection) ?? .init()
         appOverrides = try c.decodeIfPresent([AppScheduleOverride].self, forKey: .appOverrides) ?? []

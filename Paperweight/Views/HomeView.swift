@@ -10,6 +10,7 @@ struct HomeView: View {
     )
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showingPicker = false
     @State private var showingDisableSheet = false
     @State private var showNeedsUnlock = false
@@ -185,6 +186,12 @@ struct HomeView: View {
     /// How long the sprout takes once a quiet window begins.
     private static let sproutDuration: Double = 1.6
 
+    /// Whether the chosen scene has anything that moves. Simple is static type,
+    /// so it must not hold a 30fps clock open for no reason.
+    private var sceneAnimates: Bool {
+        vm.config.lockedScene != .simple && !reduceMotion
+    }
+
     /// The chosen artwork, driven by one clock.
     ///
     /// `lock` is derived from the timeline's own date rather than an animated
@@ -195,7 +202,7 @@ struct HomeView: View {
     /// Pausing rather than branching means a backgrounded app stops redrawing but
     /// keeps its last frame, so sway and blink don't snap when it returns.
     private var lockedScene: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: scenePhase != .active)) { context in
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: scenePhase != .active || !sceneAnimates)) { context in
             let elapsed = quietSince.map { context.date.timeIntervalSince($0) } ?? 0
             scene(lock: PWMotion.settle(PWMotion.ramp(elapsed, 0, Self.sproutDuration)),
                   time: context.date.timeIntervalSince(sceneEpoch))
