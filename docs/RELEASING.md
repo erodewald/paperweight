@@ -134,9 +134,11 @@ the cap wondering which of five certs is real.
 which the release workflow sets:
 
 - **Marketing version** comes from the tag: `v1.1.0` → `1.1.0`.
-- **Build number** is the GitHub Actions run number, which only ever increases. TestFlight
-  rejects a build number it has seen before for the same marketing version, so this must
-  never be reused or hand-edited backwards.
+- **Build number** is the GitHub Actions run number plus an offset of `1000`, so the first
+  automated build is `1001`. TestFlight rejects a build number it has seen before for the
+  same marketing version, and `run_number` restarts at 1 for a newly added workflow — the
+  offset is what keeps automated builds above the ones uploaded by hand before this
+  existed. **Never lower it.** Build numbers may only ever go up.
 
 All three targets get the same pair. App Store validation rejects an app whose extensions
 disagree with it on version.

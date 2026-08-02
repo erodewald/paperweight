@@ -132,7 +132,9 @@ Structure it as follows. Read `.github/workflows/ci.yml` first and match its hou
 
 1. **Trigger:** `on: push: tags: ['v*']`, plus `workflow_dispatch` with an optional version input so a release can be re-run without re-tagging.
 2. **Guard:** fail early and clearly if any required secret is empty. A missing secret otherwise surfaces as an inscrutable codesign error forty minutes in. Do not print the secret — check emptiness only.
-3. **Derive the version:** strip the leading `v` from `github.ref_name` for `MARKETING_VERSION`; use `github.run_number` for `CURRENT_PROJECT_VERSION`.
+3. **Derive the version:** strip the leading `v` from `github.ref_name` for `MARKETING_VERSION`. For `CURRENT_PROJECT_VERSION`, use `github.run_number` **plus `BUILD_NUMBER_OFFSET`, a workflow-level env set to `1000`**.
+
+   The offset is load-bearing. `run_number` restarts at 1 for a newly added workflow, and builds were already uploaded by hand from a repo whose `CFBundleVersion` was `4` — so an un-offset first run would upload build `1` and be rejected as lower than what App Store Connect already holds. Starting at 1001 clears any plausible hand-made build while staying monotonic. Never lower this value: build numbers may only ever go up.
 4. **Run the tests first.** Do not ship a red build. Reuse `ci.yml`'s simulator-selection approach rather than pinning a device name — runner images rotate their simulator sets.
 5. **Signing setup:**
    - Create a temporary keychain with a random password, unlock it, set a long timeout, and add it to the search list.
