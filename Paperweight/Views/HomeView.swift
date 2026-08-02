@@ -22,8 +22,10 @@ struct HomeView: View {
     /// Fixed origin for the scene clock, so sway and blink phases are stable
     /// across redraws rather than restarting whenever the body re-evaluates.
     @State private var sceneEpoch = Date()
-    /// Drives the sprout. Animates 0 → 1 once when the quiet window begins.
-    @State private var sceneLock: Double = 0
+    /// When the current quiet window began, or `.distantPast` when it was already
+    /// underway as Home appeared — which is what keeps the sprout from replaying
+    /// on every launch.
+    @State private var quietSince: Date?
 
     /// Quiet: armed and restricting right now (a scheduled blocked period, or
     /// always-blocked when no schedule is set).
@@ -51,14 +53,12 @@ struct HomeView: View {
             // lockedState, and openState swap out from under it as config changes.
             .navigationDestination(isPresented: $showingSchedule) { ScheduleView(vm: vm) }
             .onAppear {
-                // Already quiet at launch: show the grown scene without replaying
-                // the sprout, which would look like the lock just happened.
-                sceneLock = isQuiet ? 1 : 0
+                // Already quiet at launch: start fully grown rather than replaying
+                // the sprout, which would read as though the lock just happened.
+                quietSince = isQuiet ? .distantPast : nil
             }
             .onChange(of: isQuiet) { _, quiet in
-                withAnimation(.easeOut(duration: quiet ? 1.6 : 0.8)) {
-                    sceneLock = quiet ? 1 : 0
-                }
+                quietSince = quiet ? Date() : nil
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -182,27 +182,28 @@ struct HomeView: View {
         }
     }
 
-    /// The chosen artwork, driven by its own clock.
+    /// How long the sprout takes once a quiet window begins.
+    private static let sproutDuration: Double = 1.6
+
+    /// The chosen artwork, driven by one clock.
     ///
-    /// `TimelineView(.animation)` is capped at 30fps and stops entirely when the
-    /// app is not active — a scene that sways forever would otherwise redraw at
-    /// display rate behind a locked phone, which is the opposite of the point.
-    @ViewBuilder
+    /// `lock` is derived from the timeline's own date rather than an animated
+    /// `@State`: a `Canvas` draw closure is not `Animatable`, so `withAnimation`
+    /// on a stored `Double` would never interpolate it. Computing it per frame is
+    /// what actually makes the scene grow in.
+    ///
+    /// Pausing rather than branching means a backgrounded app stops redrawing but
+    /// keeps its last frame, so sway and blink don't snap when it returns.
     private var lockedScene: some View {
-        if scenePhase == .active {
-            TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: false)) { context in
-                scene(at: context.date.timeIntervalSince(sceneEpoch))
-            }
-        } else {
-            scene(at: 0)
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: scenePhase != .active)) { context in
+            let elapsed = quietSince.map { context.date.timeIntervalSince($0) } ?? 0
+            scene(lock: PWMotion.settle(PWMotion.ramp(elapsed, 0, Self.sproutDuration)),
+                  time: context.date.timeIntervalSince(sceneEpoch))
         }
     }
 
     @ViewBuilder
-    private func scene(at time: Double) -> some View {
-        // The lock has already landed by the time Home is on screen, so the
-        // scene rests at full growth rather than replaying its sprout.
-        let lock = PWMotion.settle(sceneLock)
+    private func scene(lock: Double, time: Double) -> some View {
         switch vm.config.lockedScene {
         case .simple:    SimpleScene(lock: lock)
         case .diorama:   DioramaScene(lock: lock, time: time)
