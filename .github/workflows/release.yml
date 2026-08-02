@@ -1,0 +1,268 @@
+name: Release
+
+# Cutting a release is `git tag v1.1.0 && git push origin v1.1.0`.
+# See docs/RELEASING.md for the one-time Apple-side setup behind this.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Marketing version, e.g. 1.1.0 (dry runs only — no tag is created)'
+        required: true
+        type: string
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # `run_number` restarts at 1 for a newly added workflow, and builds were
+  # already uploaded by hand from a repo whose CFBundleVersion was 4. Without
+  # this offset the first automated run would upload build 1 and App Store
+  # Connect would reject it as lower than what it already holds.
+  # NEVER LOWER THIS. Build numbers may only ever increase.
+  BUILD_NUMBER_OFFSET: 1000
+
+jobs:
+  testflight:
+    name: Build & upload to TestFlight
+    runs-on: macos-15
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Fail here, loudly, rather than forty minutes later inside an
+      # inscrutable codesign error. Only emptiness is checked — the values
+      # themselves are never printed.
+      - name: Check required secrets are present
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          DIST_CERT_P12: ${{ secrets.DIST_CERT_P12 }}
+          DIST_CERT_PASSWORD: ${{ secrets.DIST_CERT_PASSWORD }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          set -euo pipefail
+          missing=""
+          for name in APPLE_TEAM_ID DIST_CERT_P12 DIST_CERT_PASSWORD \
+                      ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8; do
+            # Indirect expansion: check the variable named by $name.
+            if [ -z "${!name:-}" ]; then missing="$missing $name"; fi
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing"
+            echo "::error::See docs/RELEASING.md for how to create them."
+            exit 1
+          fi
+          echo "All six secrets are present."
+
+      - name: Derive version and build number
+        id: version
+        env:
+          # Passed through env rather than interpolated into the script: this is
+          # the one value on this workflow a human types, and a `${{ }}` splice
+          # of it into a shell line is a command-injection seam.
+          INPUT_VERSION: ${{ inputs.version }}
+          EVENT_NAME: ${{ github.event_name }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            marketing="$INPUT_VERSION"
+          else
+            # refs/tags/v1.1.0 arrives as ref_name "v1.1.0"; drop the leading v.
+            marketing="${GITHUB_REF_NAME#v}"
+          fi
+          if ! printf '%s' "$marketing" | grep -qE '^[0-9]+(\.[0-9]+){1,2}$'; then
+            echo "::error::Version '$marketing' is not N.N or N.N.N — App Store Connect will reject it."
+            exit 1
+          fi
+          build=$(( RUN_NUMBER + BUILD_NUMBER_OFFSET ))
+          echo "Marketing version: $marketing"
+          echo "Build number:      $build"
+          echo "marketing=$marketing" >> "$GITHUB_OUTPUT"
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      # The team ID lands in the git-ignored local override, exactly where a
+      # developer's own would. Nothing writes it into a tracked file, so the
+      # `no-committed-team` guard in ci.yml stays satisfied — it uses `git grep`,
+      # which only searches tracked content.
+      - name: Configure signing team
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          printf 'DEVELOPMENT_TEAM = %s\n' "$APPLE_TEAM_ID" > Configs/Signing.local.xcconfig
+          echo "Wrote Configs/Signing.local.xcconfig (git-ignored)."
+
+      - name: Generate project
+        run: xcodegen generate
+
+      # Runner images rotate their simulator sets, so pick whatever iPhone is
+      # actually installed rather than pinning a model that may vanish.
+      - name: Select a simulator
+        id: sim
+        run: |
+          set -euo pipefail
+          name=$(xcrun simctl list devices available \
+                 | grep -oE 'iPhone [A-Za-z0-9][A-Za-z0-9 ]*' \
+                 | sed 's/ *$//' | head -1 || true)
+          if [ -z "$name" ]; then
+            echo "::error::No iPhone simulator available on this runner"
+            exit 1
+          fi
+          echo "Using: $name"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+      # Never ship a red build. This runs before any signing work so a failing
+      # suite costs seconds, not a full archive.
+      - name: Run tests
+        env:
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+        run: |
+          set -euo pipefail
+          xcodebuild test \
+            -project Paperweight.xcodeproj \
+            -scheme PaperweightTests \
+            -destination "platform=iOS Simulator,name=$SIM_NAME" \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Import signing certificate
+        env:
+          DIST_CERT_P12: ${{ secrets.DIST_CERT_P12 }}
+          DIST_CERT_PASSWORD: ${{ secrets.DIST_CERT_PASSWORD }}
+        run: |
+          set -euo pipefail
+          keychain="$RUNNER_TEMP/release.keychain-db"
+          # A random password that exists only for this job. Masked so it can
+          # never surface in the log even via a traced command.
+          password=$(uuidgen)
+          echo "::add-mask::$password"
+          echo "KEYCHAIN_PATH=$keychain" >> "$GITHUB_ENV"
+
+          security create-keychain -p "$password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$password" "$keychain"
+
+          printf '%s' "$DIST_CERT_P12" | base64 --decode > "$RUNNER_TEMP/dist.p12"
+          security import "$RUNNER_TEMP/dist.p12" \
+            -k "$keychain" -P "$DIST_CERT_PASSWORD" \
+            -T /usr/bin/codesign -T /usr/bin/security
+          rm -f "$RUNNER_TEMP/dist.p12"
+
+          # Without this, codesign blocks on a UI prompt that will never be
+          # answered and the job hangs until it times out.
+          security set-key-partition-list -S apple-tool:,apple:,codesign: \
+            -s -k "$password" "$keychain" >/dev/null
+
+          # Put it first in the search list so xcodebuild finds the identity.
+          security list-keychains -d user -s "$keychain" $(security list-keychains -d user | tr -d '"')
+
+          count=$(security find-identity -v -p codesigning "$keychain" | grep -c "Apple Distribution" || true)
+          if [ "$count" -eq 0 ]; then
+            echo "::error::No Apple Distribution identity in the keychain after import."
+            echo "::error::Check DIST_CERT_P12 is a .p12 containing the private key, and that DIST_CERT_PASSWORD matches."
+            exit 1
+          fi
+          echo "Imported $count Apple Distribution identity/identities."
+
+      - name: Write App Store Connect API key
+        env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          set -euo pipefail
+          # Under RUNNER_TEMP, never under the workspace — nothing here may end
+          # up in an artifact or a stray commit.
+          key_path="$RUNNER_TEMP/asc_key.p8"
+          printf '%s' "$ASC_KEY_P8" | base64 --decode > "$key_path"
+          chmod 600 "$key_path"
+          echo "ASC_KEY_PATH=$key_path" >> "$GITHUB_ENV"
+
+      # -allowProvisioningUpdates plus the API key lets Xcode create and fetch
+      # the three distribution profiles itself, so no .mobileprovision files
+      # need to be kept as secrets and rotated by hand each year.
+      - name: Archive
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          MARKETING: ${{ steps.version.outputs.marketing }}
+          BUILD: ${{ steps.version.outputs.build }}
+        run: |
+          set -euo pipefail
+          xcodebuild archive \
+            -project Paperweight.xcodeproj \
+            -scheme Paperweight \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Paperweight.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            MARKETING_VERSION="$MARKETING" \
+            CURRENT_PROJECT_VERSION="$BUILD"
+
+      # Confirm the archive carries the versions we asked for. Xcode silently
+      # rewriting the build number is the failure this guards against, and it
+      # is far cheaper to catch here than as an App Store Connect rejection.
+      - name: Verify archived version
+        env:
+          MARKETING: ${{ steps.version.outputs.marketing }}
+          BUILD: ${{ steps.version.outputs.build }}
+        run: |
+          set -euo pipefail
+          plist="$RUNNER_TEMP/Paperweight.xcarchive/Products/Applications/Paperweight.app/Info.plist"
+          got_marketing=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$plist")
+          got_build=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$plist")
+          echo "Archive reports $got_marketing ($got_build)"
+          if [ "$got_marketing" != "$MARKETING" ] || [ "$got_build" != "$BUILD" ]; then
+            echo "::error::Archive version does not match what was requested."
+            exit 1
+          fi
+
+      - name: Export and upload to TestFlight
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          MARKETING: ${{ steps.version.outputs.marketing }}
+          BUILD: ${{ steps.version.outputs.build }}
+        run: |
+          set -euo pipefail
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/Paperweight.xcarchive" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -exportOptionsPlist Configs/ExportOptions.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+          echo "Uploaded $MARKETING ($BUILD) to App Store Connect."
+
+      # Only on failure: the archive is large, and on success the build is
+      # already where it needs to be.
+      - name: Upload archive for debugging
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Paperweight-${{ steps.version.outputs.build }}.xcarchive
+          path: ${{ runner.temp }}/Paperweight.xcarchive
+          retention-days: 5
+
+      # Must run even when the build fails: a signing identity outliving the
+      # job is the failure mode that actually matters here.
+      - name: Clean up signing material
+        if: always()
+        run: |
+          set -euo pipefail
+          rm -f "$RUNNER_TEMP/asc_key.p8" "$RUNNER_TEMP/dist.p12" || true
+          if [ -n "${KEYCHAIN_PATH:-}" ] && [ -f "$KEYCHAIN_PATH" ]; then
+            security delete-keychain "$KEYCHAIN_PATH" || true
+          fi
+          rm -f Configs/Signing.local.xcconfig || true
+          echo "Signing material removed."

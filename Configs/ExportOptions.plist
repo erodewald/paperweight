@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+	Export options for the TestFlight release workflow.
+
+	Key values and their defaults were read from `xcodebuild -help` on Xcode 26.6
+	rather than from memory, because a wrong value here fails at export — after
+	the entire archive has already been built.
+
+	- method: `app-store-connect` is the current spelling. `app-store` still
+	  works but is documented as deprecated.
+	- destination: `upload` hands the build straight to App Store Connect, so no
+	  separate altool or Transporter step is needed. Defaults to `export`.
+	- manageAppVersionAndBuildNumber: defaults to YES, which lets Xcode rewrite
+	  the build number during export. That would silently undo the version wiring
+	  the release workflow depends on, so it must be NO.
+	- signingStyle: `automatic` lets Xcode create the three distribution profiles
+	  using the App Store Connect API key. Per Apple's own docs this creates
+	  profiles but does not register devices, register app IDs, or modify app ID
+	  settings — so CI cannot reconfigure the identifiers behind your back.
+-->
+<plist version="1.0">
+<dict>
+	<key>method</key>
+	<string>app-store-connect</string>
+	<key>destination</key>
+	<string>upload</string>
+	<key>signingStyle</key>
+	<string>automatic</string>
+	<key>uploadSymbols</key>
+	<true/>
+	<key>manageAppVersionAndBuildNumber</key>
+	<false/>
+</dict>
+</plist>

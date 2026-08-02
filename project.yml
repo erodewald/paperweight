@@ -38,6 +38,8 @@ schemes:
 settings:
   base:
     SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
 
 # DEVELOPMENT_TEAM lives in an xcconfig rather than in `settings` above, because
 # a build setting written into the project would override the xcconfig and get
