@@ -17,6 +17,16 @@ final class ConfigStore {
         guard let data = defaults.data(forKey: key),
               let config = try? JSONDecoder().decode(PaperweightConfig.self, from: data)
         else { return PaperweightConfig() }
-        return config
+
+        var promoted = config
+        promoted.promotePendingScheduleIfDue()
+        // Only a due promotion clears pendingSchedule here, so this also tells
+        // us whether anything actually changed and needs persisting.
+        if config.pendingSchedule != nil && promoted.pendingSchedule == nil {
+            // A failure to persist the promotion must not prevent returning the
+            // promoted config — worst case it's recomputed on the next load.
+            try? save(promoted)
+        }
+        return promoted
     }
 }
