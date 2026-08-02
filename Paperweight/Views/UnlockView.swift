@@ -16,11 +16,13 @@ struct UnlockView: View {
 
             ZStack {
                 if !unlockService.isUnlocked {
-                    NFCWaves(size: 150)
+                    NFCWaves(size: 150, tint: PW.clay)
                 }
+                // Clay throughout — this screen is an exit, and the way out
+                // never reads as the sage "quiet" accent, unlocked or not.
                 GlyphOrb(size: 116,
                          systemName: unlockService.isUnlocked ? "lock.open" : "lock",
-                         tint: unlockService.isUnlocked ? PW.sage : PW.dawnGlow)
+                         tint: PW.clay)
                     .animation(.spring(), value: unlockService.isUnlocked)
             }
             .padding(.bottom, 36)
@@ -32,10 +34,12 @@ struct UnlockView: View {
                     .font(.grotesk(14)).foregroundStyle(PW.textMuted)
                     .padding(.top, 12)
             } else {
-                Text("Emergency unlock")
+                Text("A way out, briefly.")
                     .font(.spectral(26)).foregroundStyle(PW.textPrimary)
-                Text("Tap your NFC token to lift restrictions for \(unlockMinutes) minutes.")
-                    .font(.grotesk(14)).foregroundStyle(PW.textMuted)
+                (Text("Tap your NFC token to lift restrictions for ").foregroundStyle(PW.textMuted)
+                 + Text("\(unlockMinutes) minutes").foregroundStyle(PW.textPrimary)
+                 + Text(". The quiet returns on its own.").foregroundStyle(PW.textMuted))
+                    .font(.grotesk(14))
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 12)
@@ -49,15 +53,26 @@ struct UnlockView: View {
                             borderColor: PW.clay.opacity(0.35)) { unlockService.relock() }
                     .padding(.horizontal, 30)
             } else {
-                AccentButton(title: "Scan token", systemImage: "wave.3.right",
-                             enabled: vm.config.registeredNFCTagUID != nil) {
-                    scan()
+                let canScan = vm.config.registeredNFCTagUID != nil
+                Button { scan() } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "wave.3.right").font(.system(size: 17, weight: .medium))
+                        Text("Scan token…").font(.grotesk(15, weight: .semibold))
+                    }
+                    .foregroundStyle(PW.clay)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 48)
+                    .background(PW.clay.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .opacity(canScan ? 1 : 0.4)
                 }
+                .buttonStyle(.plain)
+                .disabled(!canScan)
                 .padding(.horizontal, 30)
 
                 if !vm.config.recoveryCodes.filter({ !$0.isUsed }).isEmpty {
                     Button { showingRecoveryEntry = true } label: {
-                        (Text("Lost your token? ").foregroundStyle(PW.textFaint)
+                        (Text("Lost your token? ").foregroundStyle(PW.textMuted)
                          + Text("Use a recovery code").foregroundStyle(PW.textMuted).underline())
                             .font(.grotesk(13))
                     }
