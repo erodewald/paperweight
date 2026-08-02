@@ -75,6 +75,17 @@ struct OvergrownScene: View {
     /// sprigs push too far past the corners they are meant to frame.
     private static let maxOverscale: CGFloat = 1.5
 
+    /// Where the drawn stem begins and ends, as fractions of its length. These
+    /// bracket the leaflets, which sit at u = 0.14…0.94.
+    private static let stemStart: CGFloat = 0.11
+    private static let stemEnd: CGFloat = 0.95
+
+    /// How far a frond sags below its own chord, as a fraction of its reach.
+    private static let sag: CGFloat = 0.20
+    /// Stem width at the base, and how much of it is lost by the tip.
+    private static let stemWidth: CGFloat = 3.6
+    private static let stemTaper: CGFloat = 2.5
+
     var body: some View {
         Canvas { context, size in
             let widthScale = size.width / Self.designSize.width
@@ -123,13 +134,34 @@ struct OvergrownScene: View {
 
         // The stem draws itself in over the first 70% of the sprig's growth.
         let stemProgress = min(grown / 0.7, 1)
+        let control = Self.control(for: sprig)
         var stem = Path()
         stem.move(to: sprig.p0)
-        stem.addQuadCurve(to: sprig.p2, control: sprig.p1)
-        context.stroke(
-            stem.trimmedPath(from: 0, to: stemProgress),
-            with: .color(sprig.stem),
-            style: StrokeStyle(lineWidth: 3, lineCap: .round))
+        stem.addQuadCurve(to: sprig.p2, control: control)
+
+        // Leaflets only occupy u = 0.14…0.94, so a stem drawn end to end leaves a
+        // bare stub at each tip — which reads as a twig jutting out of nothing on
+        // the sprigs whose start point sits inside the canvas. Draw only the
+        // stretch the foliage actually covers; sprigs with a bud keep their full
+        // length, since the bud caps them.
+        let end = stemProgress * (sprig.bud ? 1 : Self.stemEnd)
+
+        // A frond's rachis is thick where it leaves the branch and fine at the
+        // tip. One uniform stroke reads as wire, so walk the curve in short
+        // segments and let the width fall away.
+        if end > Self.stemStart {
+            let steps = 14
+            for step in 0..<steps {
+                let a = Self.stemStart + (end - Self.stemStart) * CGFloat(step) / CGFloat(steps)
+                let b = Self.stemStart + (end - Self.stemStart) * CGFloat(step + 1) / CGFloat(steps)
+                let taper = CGFloat(step) / CGFloat(steps - 1)
+                context.stroke(
+                    stem.trimmedPath(from: a, to: b),
+                    with: .color(sprig.stem),
+                    style: StrokeStyle(lineWidth: Self.stemWidth - Self.stemTaper * taper,
+                                       lineCap: .round))
+            }
+        }
 
         let slots = max(sprig.leaflets - 1, 1)
         for index in 0..<sprig.leaflets {
@@ -139,8 +171,8 @@ struct OvergrownScene: View {
                 * PWMotion.ramp(stemProgress, u, min(u + 0.1, 1.0))
             guard opened > 0.001 else { continue }
 
-            let point = Self.point(sprig, at: u)
-            let angle = Self.tangentDegrees(sprig, at: u)
+            let point = Self.point(sprig, control: control, at: u)
+            let angle = Self.tangentDegrees(sprig, control: control, at: u)
             let side = (index % 2 == 1 ? 1 : -1) * sprig.flip
             let leafSize = sprig.size * (1 - 0.5 * CGFloat(Double(index) / Double(slots)))
 
@@ -165,19 +197,31 @@ struct OvergrownScene: View {
         }
     }
 
+    /// The control point, pulled down so the frond hangs under its own weight.
+    ///
+    /// The authored points bow most sprigs slightly *upward*, which is why they
+    /// read as stiff wire jutting off the corner. Flattening that bow and then
+    /// sagging by a fraction of the sprig's reach gives the droop: a longer
+    /// frond carries more weight and gives more, exactly as a real one does.
+    private static func control(for sprig: Sprig) -> CGPoint {
+        let chordY = (sprig.p0.y + sprig.p2.y) / 2
+        let reach = hypot(sprig.p2.x - sprig.p0.x, sprig.p2.y - sprig.p0.y)
+        return CGPoint(x: sprig.p1.x, y: max(sprig.p1.y, chordY) + reach * sag)
+    }
+
     /// Point on the quadratic Bézier at `u`.
-    private static func point(_ sprig: Sprig, at u: Double) -> CGPoint {
+    private static func point(_ sprig: Sprig, control: CGPoint, at u: Double) -> CGPoint {
         let t = CGFloat(u)
         let a = (1 - t) * (1 - t), b = 2 * (1 - t) * t, c = t * t
-        return CGPoint(x: a * sprig.p0.x + b * sprig.p1.x + c * sprig.p2.x,
-                       y: a * sprig.p0.y + b * sprig.p1.y + c * sprig.p2.y)
+        return CGPoint(x: a * sprig.p0.x + b * control.x + c * sprig.p2.x,
+                       y: a * sprig.p0.y + b * control.y + c * sprig.p2.y)
     }
 
     /// Tangent direction on the curve at `u`, in degrees.
-    private static func tangentDegrees(_ sprig: Sprig, at u: Double) -> Double {
+    private static func tangentDegrees(_ sprig: Sprig, control: CGPoint, at u: Double) -> Double {
         let t = CGFloat(u)
-        let dx = 2 * (1 - t) * (sprig.p1.x - sprig.p0.x) + 2 * t * (sprig.p2.x - sprig.p1.x)
-        let dy = 2 * (1 - t) * (sprig.p1.y - sprig.p0.y) + 2 * t * (sprig.p2.y - sprig.p1.y)
+        let dx = 2 * (1 - t) * (control.x - sprig.p0.x) + 2 * t * (sprig.p2.x - control.x)
+        let dy = 2 * (1 - t) * (control.y - sprig.p0.y) + 2 * t * (sprig.p2.y - control.y)
         return atan2(Double(dy), Double(dx)) * 180 / .pi
     }
 }
