@@ -9,6 +9,8 @@
 **Tech Stack:** Swift 5.9, SwiftUI (`Canvas`, `TimelineView`), iOS 17+, XcodeGen, XCTest.
 
 **Spec:** `docs/superpowers/specs/2026-08-01-app-screens-v2-design.md` §4.
+> **Superseded in places.** A final whole-branch review changed four things after this plan ran: `OvergrownScene` now scales by `size.width / 780` and anchors each cluster to its own corner (unscaled, its clusters collided and clipped); its leaflet stem-gate now uses `PWMotion.ramp` so tip leaflets finish growing; `HomeView` gained Reduce Motion support; and the scene clock is also paused for the static Simple style. Read the shipped source, not the listings below, if the two disagree.
+
 **Geometry source:** `design_handoff_paperweight/designs/MotionStudy.jsx` (local, gitignored). All coordinates below are already extracted from it — you do not need to open it.
 
 ## Global Constraints
