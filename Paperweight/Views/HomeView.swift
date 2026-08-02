@@ -9,6 +9,9 @@ struct HomeView: View {
         restrictionService: RestrictionService()
     )
     @ObservedObject private var shortcutManager = ShortcutManager.shared
+    #if DEBUG
+    @ObservedObject private var debug = DebugSettings.shared
+    #endif
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showingPicker = false
@@ -31,6 +34,11 @@ struct HomeView: View {
     /// Quiet: armed and restricting right now (a scheduled blocked period, or
     /// always-blocked when no schedule is set).
     private var isQuiet: Bool {
+        #if DEBUG
+        // Presentation only — this shows the quiet screen without restricting
+        // anything, so the artwork can be looked at during development.
+        if debug.forceQuiet { return true }
+        #endif
         guard vm.config.isEnabled else { return false }
         if let s = vm.config.schedule, !s.isEmpty { return !s.isFree(at: Date()) }
         return true
@@ -39,10 +47,15 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if !vm.config.isEnabled {
-                    setupState
-                } else if isQuiet {
+                // isQuiet is checked first so the #if DEBUG override inside it can
+                // reach the locked screen. This is equivalent in Release: isQuiet
+                // already guards on isEnabled, so not-armed still falls through to
+                // setupState, armed-and-quiet still gives lockedState, and
+                // armed-and-open still gives openState.
+                if isQuiet {
                     lockedState
+                } else if !vm.config.isEnabled {
+                    setupState
                 } else {
                     openState
                 }
