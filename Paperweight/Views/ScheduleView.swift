@@ -23,16 +23,40 @@ struct ScheduleView: View {
 
     init(vm: HomeViewModel) {
         self.vm = vm
-        _freeSlots = State(initialValue: vm.config.schedule?.freeSlots ?? [])
+        // Seed from the pending edit when one exists, not the active schedule —
+        // the active schedule doesn't yet include a loosening the user already
+        // asked for, and painting on top of it would both misrepresent what was
+        // last saved and discard that pending change on the next save.
+        _freeSlots = State(initialValue: (vm.config.pendingSchedule ?? vm.config.schedule)?.freeSlots ?? [])
     }
 
     private var blockedRightNow: Bool {
         !PaperweightSchedule(freeSlots: freeSlots).isFree(at: Date())
     }
 
-    /// While Paperweight is active the schedule is read-only — otherwise you
-    /// could repaint "now" as free and slip the lock without the token.
-    private var locked: Bool { vm.config.isEnabled }
+    /// The schedule actually in force right now, independent of what's being
+    /// painted or what's still pending.
+    private var activeSchedule: PaperweightSchedule { vm.config.schedule ?? PaperweightSchedule() }
+
+    /// Slots that are quiet under the active schedule but open in the edit
+    /// currently being painted — what will open once the loosening lands. This
+    /// is deliberately computed from the live `freeSlots` being painted, not
+    /// `config.pendingOpeningSlots`, which reflects the last *saved* pending
+    /// change rather than what's on screen right now.
+    private var openingSlots: Set<Int> {
+        freeSlots.subtracting(activeSchedule.freeSlots)
+    }
+
+    private var hasPendingChange: Bool { !openingSlots.isEmpty }
+
+    /// Copy shown under the quiet-hours total. Only relevant while armed, since
+    /// there's no deferral rule to explain otherwise.
+    private var pendingFooterText: String? {
+        guard vm.config.isEnabled else { return nil }
+        guard hasPendingChange else { return "Loosening takes effect tomorrow." }
+        let hours = Double(openingSlots.count) / 2.0
+        return String(format: "%g hours open up at midnight.", hours)
+    }
 
     private var now: (day: Int, hour: Int) {
         let c = Calendar.current.dateComponents([.weekday, .hour], from: Date())
@@ -41,21 +65,20 @@ struct ScheduleView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            if locked {
-                lockedBanner
-            } else {
-                VStack(spacing: 6) {
-                    Text("Paint your quiet hours.")
-                        .font(.grotesk(13)).foregroundStyle(PW.textMuted)
-                    HStack(spacing: 12) {
-                        legend(color: PW.moss, label: "Locked — quiet")
-                        legend(color: nil, label: "Open")
+            VStack(spacing: 6) {
+                Text("Paint your quiet hours.")
+                    .font(.grotesk(13)).foregroundStyle(PW.textMuted)
+                HStack(spacing: 12) {
+                    legend(color: PW.moss, label: "Locked — quiet")
+                    legend(color: nil, label: "Open")
+                    if hasPendingChange {
+                        legend(color: PW.moss.opacity(0.35), label: "Opens tomorrow", dashed: true)
                     }
                 }
-                .padding(.top, 4).padding(.horizontal, 18)
-
-                if blockedRightNow { lockWarning }
             }
+            .padding(.top, 4).padding(.horizontal, 18)
+
+            if blockedRightNow { lockWarning }
 
             GeometryReader { geo in
                 // Clamp to non-negative: during transient layout passes geo.size
@@ -77,29 +100,27 @@ struct ScheduleView: View {
                 .font(.grotesk(13)).foregroundStyle(PW.textMuted)
                 .padding(.top, 2)
 
-            if locked {
-                Text("Turn Paperweight off to change your schedule.")
+            if let pendingFooterText {
+                Text(pendingFooterText)
                     .font(.grotesk(13)).foregroundStyle(PW.textFaint)
-                    .padding(.horizontal, 24).padding(.top, 4).padding(.bottom, 8)
-            } else {
-                AccentButton(title: "Save schedule") { Task { await save() } }
-                    .padding(.horizontal, 24).padding(.top, 4).padding(.bottom, 8)
+                    .padding(.horizontal, 24).padding(.top, 2)
             }
+
+            AccentButton(title: "Save schedule") { Task { await save() } }
+                .padding(.horizontal, 24).padding(.top, 4).padding(.bottom, 8)
         }
         .padding(.vertical, 8)
         .pwScreen()
         .navigationTitle("Schedule")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            if !locked {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button("Open: Weekday evenings") { freeSlots = PaperweightSchedule.weekdayEvenings().freeSlots }
-                        Button("Open: All week") { freeSlots = PaperweightSchedule.alwaysFree().freeSlots }
-                        Button("Quiet: The whole week", role: .destructive) { freeSlots = [] }
-                    } label: {
-                        Image(systemName: "wand.and.stars").foregroundStyle(PW.sage)
-                    }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button("Open: Weekday evenings") { freeSlots = PaperweightSchedule.weekdayEvenings().freeSlots }
+                    Button("Open: All week") { freeSlots = PaperweightSchedule.alwaysFree().freeSlots }
+                    Button("Quiet: The whole week", role: .destructive) { freeSlots = [] }
+                } label: {
+                    Image(systemName: "wand.and.stars").foregroundStyle(PW.sage)
                 }
             }
         }
@@ -126,20 +147,6 @@ struct ScheduleView: View {
         }
     }
 
-    private var lockedBanner: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "lock.fill")
-            Text("Locked while Paperweight is active. This is your schedule right now.")
-        }
-        .font(.grotesk(13))
-        .foregroundStyle(PW.sage)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 10).padding(.vertical, 6)
-        .background(PW.sage.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
-        .padding(.horizontal, 18)
-    }
-
     private var lockWarning: some View {
         HStack(spacing: 6) {
             Image(systemName: "exclamationmark.triangle.fill")
@@ -154,13 +161,16 @@ struct ScheduleView: View {
     }
 
     /// Mirrors `WeekStrip`'s legend swatch styling so the two screens agree.
-    private func legend(color: Color?, label: String) -> some View {
+    /// `dashed` adds the outgoing-quiet border that marks the "opens tomorrow"
+    /// swatch, matching state 2 in `cell(day:hour:w:h:isNow:)`.
+    private func legend(color: Color?, label: String, dashed: Bool = false) -> some View {
         HStack(spacing: 6) {
             RoundedRectangle(cornerRadius: 3)
                 .fill(color ?? Color.white.opacity(0.05))
                 .overlay(
                     RoundedRectangle(cornerRadius: 3)
-                        .stroke(color == nil ? Color.white.opacity(0.16) : .clear, lineWidth: 1)
+                        .strokeBorder(dashed ? PW.moss : (color == nil ? Color.white.opacity(0.16) : .clear),
+                                      style: StrokeStyle(lineWidth: 1, dash: dashed ? [2, 2] : []))
                 )
                 .frame(width: 10, height: 10)
             Text(label)
@@ -212,15 +222,33 @@ struct ScheduleView: View {
         )
     }
 
+    /// Three cell states, derived from two sources: `freeSlots` (the edit being
+    /// painted) and `activeSchedule` (what's actually in force):
+    ///   1. Quiet in the painted edit — solid `PW.moss`. This also covers a
+    ///      brand-new tightening (open in `activeSchedule`, quiet in the edit):
+    ///      tightening applies immediately on save, so it reads the same as an
+    ///      already-quiet cell.
+    ///   2. Open in the painted edit but still quiet in `activeSchedule` — the
+    ///      loosening hasn't landed yet. Dashed `PW.moss` border over a faint
+    ///      moss fill, so it reads as leaving rather than a third unrelated
+    ///      category.
+    ///   3. Open in both — the existing faint fill.
     private func cell(day: Int, hour: Int, w: CGFloat, h: CGFloat, isNow: Bool) -> some View {
-        let quiet = !isHourFree(day: day, hour: hour)
+        let paintedQuiet = !isHourFree(day: day, hour: hour, in: freeSlots)
+        let openingSoon = !paintedQuiet && !isHourFree(day: day, hour: hour, in: activeSchedule.freeSlots)
+
+        let fill: Color = paintedQuiet ? PW.moss : (openingSoon ? PW.moss.opacity(0.35) : Color.white.opacity(0.04))
+        let borderColor: Color = isNow ? PW.dawnGlow
+            : paintedQuiet ? PW.mossLight.opacity(0.6)
+            : openingSoon ? PW.moss
+            : Color.white.opacity(0.12)
+        let dashed = openingSoon && !isNow
+
         return RoundedRectangle(cornerRadius: 4)
-            .fill(quiet ? PW.moss : Color.white.opacity(0.04))
+            .fill(fill)
             .overlay(
                 RoundedRectangle(cornerRadius: 4)
-                    .strokeBorder(isNow ? PW.dawnGlow
-                                        : (quiet ? PW.mossLight.opacity(0.6) : Color.white.opacity(0.12)),
-                                  lineWidth: isNow ? 2 : 1)
+                    .strokeBorder(borderColor, style: StrokeStyle(lineWidth: isNow ? 2 : 1, dash: dashed ? [2, 2] : []))
             )
             .shadow(color: isNow ? PW.sage.opacity(0.5) : .clear, radius: isNow ? 3 : 0)
             .frame(width: w, height: h)
@@ -228,8 +256,12 @@ struct ScheduleView: View {
 
     // MARK: - Hour <-> slot helpers (model stays at 30-min; we paint whole hours)
 
-    private func isHourFree(day: Int, hour: Int) -> Bool {
+    private func isHourFree(day: Int, hour: Int, in freeSlots: Set<Int>) -> Bool {
         freeSlots.contains(PaperweightSchedule.slot(day: day, halfHour: hour * 2))
+    }
+
+    private func isHourFree(day: Int, hour: Int) -> Bool {
+        isHourFree(day: day, hour: hour, in: freeSlots)
     }
 
     private func setHour(day: Int, hour: Int, free: Bool) {
@@ -242,7 +274,7 @@ struct ScheduleView: View {
     // MARK: - Painting
 
     private func paint(at location: CGPoint, cellW: CGFloat, cellH: CGFloat) {
-        guard !locked, cellW > 0, cellH > 0 else { return }
+        guard cellW > 0, cellH > 0 else { return }
         if dragPaintValue == nil, let c = cellAt(location, cellW: cellW, cellH: cellH) {
             dragPaintValue = !isHourFree(day: c.day, hour: c.hour)
         }
@@ -276,10 +308,20 @@ struct ScheduleView: View {
     }
 
     private func save() async {
-        let schedule = freeSlots.isEmpty ? nil : PaperweightSchedule(freeSlots: freeSlots)
-        vm.config.schedule = schedule
-        // Don't arm into a broken state. Persist the painted schedule, but require
-        // both something to block and a way back before turning Paperweight on.
+        let edit = freeSlots.isEmpty ? PaperweightSchedule() : PaperweightSchedule(freeSlots: freeSlots)
+
+        // Already armed: saveScheduleEdit applies the asymmetric rule itself
+        // (tighten now, loosen tomorrow) and persists. No arm-time guards apply —
+        // it's already armed.
+        guard !vm.config.isEnabled else {
+            vm.saveScheduleEdit(edit)
+            dismiss()
+            return
+        }
+
+        // Not yet armed: persist the edit, but don't arm into a broken state —
+        // require both something to block and a way back first.
+        vm.saveScheduleEdit(edit)
         guard vm.hasAppsSelected else {
             vm.saveSelection()
             showNeedsApps = true
@@ -291,7 +333,7 @@ struct ScheduleView: View {
             return
         }
         await vm.setEnabled(true)
-        ScheduleService.shared.updateSchedule(schedule, enabled: true)
+        ScheduleService.shared.updateSchedule(vm.config.schedule, enabled: true)
         dismiss()
     }
 }
