@@ -171,3 +171,22 @@ struct OvergrownScene: View {
         return atan2(Double(dy), Double(dx)) * 180 / .pi
     }
 }
+
+// The simulator can't reach the locked screen (Screen Time doesn't exist there),
+// so the canvas is where this artwork actually gets looked at.
+#Preview("Overgrown — grown") {
+    TimelineView(.animation) { context in
+        OvergrownScene(lock: 1, time: context.date.timeIntervalSinceReferenceDate)
+    }
+    .frame(height: 420)
+    .background(PW.black)
+}
+
+#Preview("Overgrown — sprouting") {
+    TimelineView(.animation) { context in
+        let t = context.date.timeIntervalSinceReferenceDate
+        OvergrownScene(lock: PWMotion.settle(t.truncatingRemainder(dividingBy: 4) / 4), time: t)
+    }
+    .frame(height: 420)
+    .background(PW.black)
+}

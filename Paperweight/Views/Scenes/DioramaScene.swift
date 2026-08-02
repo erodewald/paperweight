@@ -173,3 +173,22 @@ struct DioramaScene: View {
         Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2))
     }
 }
+
+// The simulator can't reach the locked screen (Screen Time doesn't exist there),
+// so the canvas is where this artwork actually gets looked at.
+#Preview("Diorama — grown") {
+    TimelineView(.animation) { context in
+        DioramaScene(lock: 1, time: context.date.timeIntervalSinceReferenceDate)
+    }
+    .frame(height: 260)
+    .background(PW.black)
+}
+
+#Preview("Diorama — sprouting") {
+    TimelineView(.animation) { context in
+        let t = context.date.timeIntervalSinceReferenceDate
+        DioramaScene(lock: PWMotion.settle(t.truncatingRemainder(dividingBy: 4) / 4), time: t)
+    }
+    .frame(height: 260)
+    .background(PW.black)
+}
