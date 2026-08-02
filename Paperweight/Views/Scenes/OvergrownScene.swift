@@ -67,9 +67,19 @@ struct OvergrownScene: View {
               colors: [PW.mossLight, PW.moss], stem: PW.stem, bud: true),
     ]
 
+    /// The card this scene was authored against. Scaling by width alone leaves
+    /// the two clusters marooned at opposite corners of a tall screen.
+    private static let designSize = CGSize(width: 780, height: 430)
+
+    /// How far the scene may grow beyond its width-derived size before the
+    /// sprigs push too far past the corners they are meant to frame.
+    private static let maxOverscale: CGFloat = 1.5
+
     var body: some View {
         Canvas { context, size in
-            let scale = size.width / 780
+            let widthScale = size.width / Self.designSize.width
+            let heightScale = size.height / Self.designSize.height
+            let scale = min(max(widthScale, heightScale), widthScale * Self.maxOverscale)
             let swayTopRight = PWMotion.sway(at: time, phase: 0.6) * lock
             let swayBottomLeft = PWMotion.sway(at: time, phase: 3.1) * lock
 
