@@ -20,27 +20,28 @@ struct NFCSetupView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
 
-                SectionHeader(text: "Physical Token").padding(.bottom, 9)
+                Text("Physical token").pwScreenLabel()
+                    .padding(.top, 6).padding(.bottom, 10)
                 GroupedCard {
                     if let uid = vm.config.registeredNFCTagUID {
                         HStack(spacing: 12) {
                             Image(systemName: "wave.3.forward")
                                 .font(.system(size: 16)).foregroundStyle(PW.sage).frame(width: 18)
-                            Text("Registered Token").font(.grotesk(14.5)).foregroundStyle(PW.textPrimary)
+                            Text("Registered token").font(.grotesk(14.5)).foregroundStyle(PW.textPrimary)
                             Spacer()
-                            Text(uid).font(.grotesk(12.5)).foregroundStyle(PW.textMuted).tracking(0.5)
+                            Text(uid).font(.grotesk(13)).foregroundStyle(PW.textMuted).tracking(0.5)
                         }
                         .padding(.horizontal, 16).padding(.vertical, 13)
                         CardDivider()
                         Button { scan() } label: {
-                            Text("Replace Token").font(.grotesk(14.5)).foregroundStyle(PW.clay)
+                            Text("Replace token…").font(.grotesk(14.5)).foregroundStyle(PW.clay)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 16).padding(.vertical, 13)
                                 .contentShape(Rectangle())
                         }.buttonStyle(.plain)
                     } else {
                         Button { scan() } label: {
-                            Text("Register NFC Token").font(.grotesk(14.5)).foregroundStyle(PW.sage)
+                            Text("No token registered").font(.grotesk(14.5)).foregroundStyle(PW.sage)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 16).padding(.vertical, 13)
                                 .contentShape(Rectangle())
@@ -54,26 +55,26 @@ struct NFCSetupView: View {
                     }
                 }
                 Text("Tap your NFC sticker to register it. Place it on an object you won't carry everywhere.")
-                    .font(.grotesk(11.5)).foregroundStyle(PW.textFaint)
+                    .font(.grotesk(13)).foregroundStyle(PW.textFaint)
                     .padding(.horizontal, 8).padding(.top, 8)
 
-                SectionHeader(text: "Unlock Duration").padding(.top, 22).padding(.bottom, 9)
-                PWSegmented(options: durations, selection: Binding(
-                    get: { vm.config.unlockDuration },
-                    set: { vm.config.unlockDuration = $0; vm.saveSelection() }))
+                Text("Unlock duration").pwScreenLabel()
+                    .padding(.top, 22).padding(.bottom, 10)
+                unlockDurationSelector
 
-                SectionHeader(text: "Recovery Codes").padding(.top, 22).padding(.bottom, 9)
+                Text("Recovery codes").pwScreenLabel()
+                    .padding(.top, 22).padding(.bottom, 10)
                 GroupedCard {
                     if vm.config.recoveryCodes.isEmpty {
                         Button { generateCodes() } label: {
-                            Text("Generate Recovery Codes").font(.grotesk(14.5)).foregroundStyle(PW.sage)
+                            Text("Generate recovery codes").font(.grotesk(14.5)).foregroundStyle(PW.sage)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 16).padding(.vertical, 13).contentShape(Rectangle())
                         }.buttonStyle(.plain)
                     } else {
                         let unused = vm.config.recoveryCodes.filter { !$0.isUsed }.count
                         HStack {
-                            Text("Codes Remaining").font(.grotesk(14.5)).foregroundStyle(PW.textPrimary)
+                            Text("Codes remaining").font(.grotesk(14.5)).foregroundStyle(PW.textPrimary)
                             Spacer()
                             Text("\(unused) of \(RecoveryCodeService.codeCount)")
                                 .font(.grotesk(13)).foregroundStyle(PW.textMuted)
@@ -81,7 +82,7 @@ struct NFCSetupView: View {
                         .padding(.horizontal, 16).padding(.vertical, 13)
                         CardDivider()
                         HStack {
-                            Text("Cool-off if token lost").font(.grotesk(13.5)).foregroundStyle(PW.textFaint)
+                            Text("Cool-off if token lost").font(.grotesk(14.5)).foregroundStyle(PW.textPrimary)
                             Spacer()
                             // While armed, the cool-off can only be lengthened —
                             // shortening it mid-lock would be a way to cheat out.
@@ -103,14 +104,14 @@ struct NFCSetupView: View {
                         .padding(.horizontal, 16).padding(.vertical, 13)
                         CardDivider()
                         Button { generateCodes() } label: {
-                            Text("Regenerate All Codes").font(.grotesk(14.5)).foregroundStyle(PW.clay)
+                            Text("Regenerate all codes").font(.grotesk(14.5)).foregroundStyle(PW.clay)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 16).padding(.vertical, 13).contentShape(Rectangle())
                         }.buttonStyle(.plain)
                     }
                 }
                 Text("Single-use backup codes to disable Paperweight if your token is lost. Shown once — save them somewhere safe.")
-                    .font(.grotesk(11.5)).foregroundStyle(PW.textFaint)
+                    .font(.grotesk(13)).foregroundStyle(PW.textFaint)
                     .padding(.horizontal, 8).padding(.top, 8).padding(.bottom, 24)
             }
             .padding(.horizontal, 18)
@@ -140,6 +141,35 @@ struct NFCSetupView: View {
         .sheet(isPresented: $showingCodes) {
             RecoveryCodesView(codes: generatedCodes)
                 .presentationDragIndicator(.visible)
+        }
+    }
+
+    /// Four-up duration selector. Deliberately not `PWSegmented` — its filled-pill
+    /// selected state is louder than this design wants for a control that governs
+    /// an exit; selection here is a quiet border-and-tint instead.
+    private var unlockDurationSelector: some View {
+        HStack(spacing: 8) {
+            ForEach(durations, id: \.value) { option in
+                let isSelected = option.value == vm.config.unlockDuration
+                Button {
+                    vm.config.unlockDuration = option.value
+                    vm.saveSelection()
+                } label: {
+                    Text(option.label)
+                        .font(.grotesk(14, weight: isSelected ? .semibold : .regular))
+                        .foregroundStyle(isSelected ? PW.dawnGlow : PW.textMuted)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(isSelected ? PW.sage.opacity(0.08) : Color.clear)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(isSelected ? PW.sage : Color.white.opacity(0.16),
+                                        lineWidth: isSelected ? 2 : 1)
+                        )
+                }
+                .buttonStyle(.plain)
+            }
         }
     }
 

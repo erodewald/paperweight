@@ -46,15 +46,15 @@ struct SettingsView: View {
                     CardDivider()
                     NavigationLink { UnlockView(vm: vm) } label: {
                         NavRow(title: "Emergency unlock",
-                               titleColor: vm.config.isEnabled ? PW.textPrimary : PW.textFaint,
-                               value: vm.config.isEnabled ? nil : "Off",
+                               titleColor: showsArmedSections ? PW.textPrimary : PW.textFaint,
+                               value: showsArmedSections ? nil : "Off",
                                valueColor: PW.textFaint,
-                               showsChevron: vm.config.isEnabled)
+                               showsChevron: showsArmedSections)
                     }
-                    .disabled(!vm.config.isEnabled)
+                    .disabled(!showsArmedSections)
                 }
 
-                if vm.config.isEnabled {
+                if showsArmedSections {
                     Text("Deviation").pwScreenLabel()
                         .padding(.top, 22).padding(.bottom, 10)
                     GroupedCard {
@@ -73,6 +73,23 @@ struct SettingsView: View {
                 Text("Developer").pwScreenLabel()
                     .padding(.top, 22).padding(.bottom, 10)
                 GroupedCard {
+                    Toggle(isOn: $debug.forceArmed) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Show armed-only screens")
+                                .font(.grotesk(15))
+                                .foregroundStyle(PW.textPrimary)
+                            Text("Reveals Emergency unlock and Turn off. Nothing is armed and nothing is blocked.")
+                                .font(.grotesk(13))
+                                .foregroundStyle(PW.textMuted)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    .toggleStyle(PWToggleStyle())
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+
+                    CardDivider()
+
                     Toggle(isOn: $debug.forceQuiet) {
                         VStack(alignment: .leading, spacing: 3) {
                             Text("Force quiet screen")
@@ -114,6 +131,14 @@ struct SettingsView: View {
         .pwScreen()
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    /// Whether to show the sections that only exist once Paperweight is armed.
+    private var showsArmedSections: Bool {
+        #if DEBUG
+        if debug.forceArmed { return true }
+        #endif
+        return vm.config.isEnabled
     }
 
     private var scheduleStatusText: String {

@@ -128,7 +128,12 @@ struct ProgressRing: View {
 /// Concentric rings expanding outward behind the dim orb.
 struct NFCWaves: View {
     var size: CGFloat
+    /// Defaults to sage, matching the original scan prompt. The unlock screen
+    /// is an all-clay exit, so it passes `PW.clay` instead — no new ripple
+    /// drawing code, just a tint the caller controls.
+    var tint: Color = PW.sage
     @State private var animate = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
@@ -136,12 +141,15 @@ struct NFCWaves: View {
             wave(delay: 1.3)
         }
         .frame(width: size, height: size)
-        .onAppear { animate = true }
+        // Reduce Motion: never flip `animate`, so the rings render once at
+        // their resting scale/opacity and stay put — same pattern as the
+        // perpetual timelines in HomeView/QuietThemePicker.
+        .onAppear { if !reduceMotion { animate = true } }
     }
 
     private func wave(delay: Double) -> some View {
         Circle()
-            .stroke(PW.sage.opacity(0.5), lineWidth: 1.5)
+            .stroke(tint.opacity(0.5), lineWidth: 1.5)
             .frame(width: size, height: size)
             .scaleEffect(animate ? 1.9 : 0.6)
             .opacity(animate ? 0 : 0.7)
