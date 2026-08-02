@@ -16,24 +16,59 @@ struct DisablePaperweightSheet: View {
             VStack(spacing: 0) {
                 Spacer(minLength: 24)
 
+                // Broken padlock — "turn off entirely" — distinct from the
+                // closed padlock the Emergency-unlock screen carries.
                 GlyphOrb(size: 76, systemName: "lock.slash", tint: PW.clay)
                     .padding(.bottom, 20)
                 Text("Turn off Paperweight")
                     .font(.spectral(25)).foregroundStyle(PW.textPrimary)
-                Text("Scan your NFC token to permanently remove all restrictions.")
+                Text("Scan your NFC token to remove all restrictions. The forest stops growing.")
                     .font(.grotesk(13.5)).foregroundStyle(PW.textMuted)
                     .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 10).padding(.horizontal, 20)
 
                 Spacer(minLength: 24)
 
-                AccentButton(title: "Scan NFC token", systemImage: "wave.3.right",
-                             enabled: vm.config.registeredNFCTagUID != nil) {
-                    Task { await scanAndDisable() }
+                // Three actions, descending in visual weight: filled clay,
+                // then outlined, then plain text. All clay, never sage —
+                // this whole screen is an exit. AccentButton is sage-filled
+                // and doesn't belong here.
+                let canScan = vm.config.registeredNFCTagUID != nil
+                Button { Task { await scanAndDisable() } } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "wave.3.right").font(.system(size: 17, weight: .medium))
+                        Text("Scan NFC token…").font(.grotesk(15, weight: .semibold))
+                    }
+                    .foregroundStyle(PW.clay)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 48)
+                    .background(PW.clay.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .opacity(canScan ? 1 : 0.4)
                 }
+                .buttonStyle(.plain)
+                .disabled(!canScan)
                 .padding(.bottom, 12)
 
-                GhostButton(title: "Use a recovery code") { showingRecoveryEntry = true }
+                Button { showingRecoveryEntry = true } label: {
+                    Text("Use a recovery code")
+                        .font(.grotesk(14, weight: .semibold))
+                        .foregroundStyle(PW.textMuted)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 46)
+                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.12), lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+                .padding(.bottom, 12)
+
+                Button { dismiss() } label: {
+                    Text("Not now")
+                        .font(.grotesk(15, weight: .semibold))
+                        .foregroundStyle(PW.textMuted)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                }
+                .buttonStyle(.plain)
 
                 Divider().overlay(PW.hairline).padding(.top, 22)
 
@@ -66,6 +101,7 @@ struct DisablePaperweightSheet: View {
             )) { Button("OK", role: .cancel) {} } message: { Text(error?.localizedDescription ?? "") }
         }
         .presentationDragIndicator(.visible)
+        .presentationCornerRadius(30)
     }
 
     @ViewBuilder
@@ -75,7 +111,7 @@ struct DisablePaperweightSheet: View {
                 Label("Timed unlock in progress", systemImage: "hourglass")
                     .font(.grotesk(13.5, weight: .semibold)).foregroundStyle(PW.clay)
                 Text("Lifts \(release.formatted(.relative(presentation: .named))) (\(release.formatted(date: .abbreviated, time: .shortened))).")
-                    .font(.grotesk(11.5)).foregroundStyle(PW.textFaint)
+                    .font(.grotesk(13)).foregroundStyle(PW.textFaint)
                     .multilineTextAlignment(.center)
                 Button("Cancel timed unlock") { vm.cancelCoolOffUnlock() }
                     .font(.grotesk(13)).foregroundStyle(PW.clay)
@@ -86,13 +122,13 @@ struct DisablePaperweightSheet: View {
                 Button { requestingCoolOff = true } label: {
                     HStack(spacing: 7) {
                         Image(systemName: "clock.arrow.circlepath").font(.system(size: 13))
-                        Text("Lost your token? Start timed unlock").font(.grotesk(13.5))
+                        Text("Lost your token? Start timed unlock").font(.grotesk(13))
                     }
                     .foregroundStyle(PW.clay)
                 }
                 .buttonStyle(.plain)
                 Text("Releases on its own after a \(vm.config.coolOffDays)-day cool-off.")
-                    .font(.grotesk(11.5)).foregroundStyle(PW.textFaint)
+                    .font(.grotesk(13)).foregroundStyle(PW.textLabel)
             }
             .frame(maxWidth: .infinity)
         }
