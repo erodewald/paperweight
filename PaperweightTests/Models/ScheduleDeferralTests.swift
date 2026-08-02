@@ -169,4 +169,57 @@ final class ScheduleDeferralTests: XCTestCase {
         XCTAssertNil(config.pendingScheduleEffectiveAt)
         XCTAssertTrue(config.isEnabled)
     }
+
+    /// A wrong-typed value for the new date field must decode to nil, not throw
+    /// — this config's decoder is deliberately tolerant everywhere because a
+    /// thrown decode wipes the user's registered unlock token and strands them.
+    func test_aMalformedPendingScheduleEffectiveAtDecodesToNilRatherThanThrowing() throws {
+        let json = Data(#"{"pendingScheduleEffectiveAt":"not-a-date"}"#.utf8)
+        let config = try JSONDecoder().decode(PaperweightConfig.self, from: json)
+
+        XCTAssertNil(config.pendingScheduleEffectiveAt)
+    }
+
+    // MARK: DST
+
+    /// On a US fall-back day (25 real hours), a fixed 86,400-second offset
+    /// from start-of-day lands at 23:00 of the SAME day — an hour before
+    /// midnight — which would promote a loosening early and open slots before
+    /// the boundary the safety property depends on. The computed boundary must
+    /// be the actual start of the following day instead.
+    ///
+    /// Deterministic regardless of the host machine's time zone: an explicit
+    /// America/New_York calendar is constructed and passed into
+    /// `applyScheduleEdit`, and the fall-back transition date (first Sunday in
+    /// November) is built from that same calendar's components rather than
+    /// from `Date()` math.
+    func test_looseningBoundarySkipsTheFullDSTFallBackDay() throws {
+        var nyCalendar = Calendar(identifier: .gregorian)
+        nyCalendar.timeZone = try XCTUnwrap(TimeZone(identifier: "America/New_York"))
+
+        // 2026-11-01 is the first Sunday in November — the US fall-back date.
+        var startComponents = DateComponents()
+        startComponents.year = 2026; startComponents.month = 11; startComponents.day = 1
+        startComponents.hour = 10
+        let fallBackDay = try XCTUnwrap(nyCalendar.date(from: startComponents))
+
+        var config = PaperweightConfig()
+        config.schedule = schedule(openHours: 9..<12)
+        config.applyScheduleEdit(schedule(openHours: 9..<17), now: fallBackDay, calendar: nyCalendar)
+
+        var expectedComponents = DateComponents()
+        expectedComponents.year = 2026; expectedComponents.month = 11; expectedComponents.day = 2
+        expectedComponents.hour = 0
+        let expectedBoundary = try XCTUnwrap(nyCalendar.date(from: expectedComponents))
+
+        let boundary = try XCTUnwrap(config.pendingScheduleEffectiveAt)
+        XCTAssertEqual(boundary, expectedBoundary)
+
+        // The naive fixed-interval calculation lands an hour early on this
+        // day; confirm the fix actually diverges from it, not just matches
+        // some other coincidentally-equal value.
+        let naiveBoundary = nyCalendar.startOfDay(for: fallBackDay).addingTimeInterval(86_400)
+        XCTAssertNotEqual(boundary, naiveBoundary)
+        XCTAssertGreaterThan(boundary, naiveBoundary)
+    }
 }

@@ -16,6 +16,17 @@ extension PaperweightConfig {
 
     /// Saves a schedule edit under the deferral rule: tightening now, loosening
     /// at the next calendar day boundary.
+    ///
+    /// Caller contract — this method does not enforce either of these, so getting
+    /// them wrong compiles fine and just quietly breaks the safety property:
+    /// - Call `promotePendingScheduleIfDue()` first, before calling this method.
+    /// Applying an edit while a previous loosening is still pending recomputes
+    /// the boundary from the current `now`, pushing that earlier promotion out
+    /// by another day instead of letting it land.
+    /// - Only call this on an already-armed config. It assumes `schedule` is the
+    /// real, active schedule. Routing first-time setup through it will intersect
+    /// the new schedule against an all-quiet default, locking the whole week and
+    /// deferring the user's actual schedule to tomorrow.
     mutating func applyScheduleEdit(_ edit: PaperweightSchedule,
                                     now: Date = Date(),
                                     calendar: Calendar = .current) {
@@ -29,7 +40,17 @@ extension PaperweightConfig {
             pendingScheduleEffectiveAt = nil
         } else {
             pendingSchedule = edit
-            pendingScheduleEffectiveAt = calendar.startOfDay(for: now).addingTimeInterval(86_400)
+            // Ask the calendar for "the next day" rather than adding a fixed
+            // 86,400 seconds: on a fall-back DST day (25 real hours), a fixed
+            // interval lands at 23:00 of the SAME day, promoting the loosening
+            // an hour early. `date(byAdding:)` is essentially infallible for
+            // `.day` on a well-formed calendar, but if it ever does fail, fall
+            // back to `.distantFuture` rather than any same-day guess — the
+            // safety property only breaks if the boundary comes too early, so
+            // an unresolvable boundary must fail closed (later, never earlier).
+            pendingScheduleEffectiveAt = calendar.date(byAdding: .day, value: 1,
+                                                        to: calendar.startOfDay(for: now))
+                ?? .distantFuture
         }
     }
 

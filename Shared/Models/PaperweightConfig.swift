@@ -64,7 +64,7 @@ struct PaperweightConfig: Codable {
         unlockExpiresAt = try c.decodeIfPresent(Date.self, forKey: .unlockExpiresAt)
         quietTheme = (try? c.decodeIfPresent(QuietTheme.self, forKey: .quietTheme)) ?? .diorama
         pendingSchedule = (try? c.decodeIfPresent(PaperweightSchedule.self, forKey: .pendingSchedule)) ?? nil
-        pendingScheduleEffectiveAt = try c.decodeIfPresent(Date.self, forKey: .pendingScheduleEffectiveAt)
+        pendingScheduleEffectiveAt = (try? c.decodeIfPresent(Date.self, forKey: .pendingScheduleEffectiveAt)) ?? nil
         #if os(iOS)
         selection = try c.decodeIfPresent(FamilyActivitySelection.self, forKey: .selection) ?? .init()
         appOverrides = try c.decodeIfPresent([AppScheduleOverride].self, forKey: .appOverrides) ?? []
