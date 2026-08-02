@@ -44,11 +44,13 @@ struct ScheduleView: View {
             if locked {
                 lockedBanner
             } else {
-                VStack(spacing: 2) {
-                    Text("Drag to paint when apps are free.")
-                        .font(.grotesk(12)).foregroundStyle(PW.textMuted)
-                    Text("Green = free · dark = quiet.")
-                        .font(.grotesk(12)).foregroundStyle(PW.textFaint)
+                VStack(spacing: 6) {
+                    Text("Paint your quiet hours.")
+                        .font(.grotesk(13)).foregroundStyle(PW.textMuted)
+                    HStack(spacing: 12) {
+                        legend(color: PW.moss, label: "Locked — quiet")
+                        legend(color: nil, label: "Open")
+                    }
                 }
                 .padding(.top, 4).padding(.horizontal, 18)
 
@@ -70,14 +72,14 @@ struct ScheduleView: View {
             }
             .padding(.horizontal, 18)
 
-            Text(String(format: "%g free hours / week",
-                        PaperweightSchedule(freeSlots: freeSlots).freeHourCount))
-                .font(.grotesk(12)).foregroundStyle(PW.textMuted)
+            Text(String(format: "%g quiet hours this week",
+                        PaperweightSchedule(freeSlots: freeSlots).quietHourCount))
+                .font(.grotesk(13)).foregroundStyle(PW.textMuted)
                 .padding(.top, 2)
 
             if locked {
                 Text("Turn Paperweight off to change your schedule.")
-                    .font(.grotesk(12)).foregroundStyle(PW.textFaint)
+                    .font(.grotesk(13)).foregroundStyle(PW.textFaint)
                     .padding(.horizontal, 24).padding(.top, 4).padding(.bottom, 8)
             } else {
                 AccentButton(title: "Save schedule") { Task { await save() } }
@@ -92,9 +94,9 @@ struct ScheduleView: View {
             if !locked {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
-                        Button("Free: Weekday Evenings") { freeSlots = PaperweightSchedule.weekdayEvenings().freeSlots }
-                        Button("Free: All Week") { freeSlots = PaperweightSchedule.alwaysFree().freeSlots }
-                        Button("Clear (block everything)", role: .destructive) { freeSlots = [] }
+                        Button("Open: Weekday evenings") { freeSlots = PaperweightSchedule.weekdayEvenings().freeSlots }
+                        Button("Open: All week") { freeSlots = PaperweightSchedule.alwaysFree().freeSlots }
+                        Button("Quiet: The whole week", role: .destructive) { freeSlots = [] }
                     } label: {
                         Image(systemName: "wand.and.stars").foregroundStyle(PW.sage)
                     }
@@ -129,7 +131,7 @@ struct ScheduleView: View {
             Image(systemName: "lock.fill")
             Text("Locked while Paperweight is active. This is your schedule right now.")
         }
-        .font(.grotesk(11))
+        .font(.grotesk(13))
         .foregroundStyle(PW.sage)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 10).padding(.vertical, 6)
@@ -143,7 +145,7 @@ struct ScheduleView: View {
             Image(systemName: "exclamationmark.triangle.fill")
             Text("Now is a quiet period — saving locks restricted apps immediately.")
         }
-        .font(.grotesk(11)).foregroundStyle(PW.clay)
+        .font(.grotesk(13)).foregroundStyle(PW.clay)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 10).padding(.vertical, 6)
         .background(PW.clay.opacity(0.12))
@@ -151,12 +153,28 @@ struct ScheduleView: View {
         .padding(.horizontal, 18)
     }
 
+    /// Mirrors `WeekStrip`'s legend swatch styling so the two screens agree.
+    private func legend(color: Color?, label: String) -> some View {
+        HStack(spacing: 6) {
+            RoundedRectangle(cornerRadius: 3)
+                .fill(color ?? Color.white.opacity(0.05))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 3)
+                        .stroke(color == nil ? Color.white.opacity(0.16) : .clear, lineWidth: 1)
+                )
+                .frame(width: 10, height: 10)
+            Text(label)
+                .font(.grotesk(13))
+                .foregroundStyle(PW.textMuted)
+        }
+    }
+
     private func dayHeader(cellW: CGFloat) -> some View {
         HStack(spacing: colGap) {
             Color.clear.frame(width: leftInset, height: 1)
             ForEach(0..<7, id: \.self) { day in
                 Text(dayLabels[day])
-                    .font(.grotesk(11, weight: .semibold))
+                    .font(.grotesk(13, weight: .semibold))
                     .foregroundStyle(PW.textFaint)
                     .frame(width: cellW)
             }
@@ -195,13 +213,13 @@ struct ScheduleView: View {
     }
 
     private func cell(day: Int, hour: Int, w: CGFloat, h: CGFloat, isNow: Bool) -> some View {
-        let free = isHourFree(day: day, hour: hour)
+        let quiet = !isHourFree(day: day, hour: hour)
         return RoundedRectangle(cornerRadius: 4)
-            .fill(free ? PW.moss : PW.deepForest)
+            .fill(quiet ? PW.moss : Color.white.opacity(0.04))
             .overlay(
                 RoundedRectangle(cornerRadius: 4)
                     .strokeBorder(isNow ? PW.dawnGlow
-                                        : (free ? PW.mossLight.opacity(0.6) : Color.white.opacity(0.05)),
+                                        : (quiet ? PW.mossLight.opacity(0.6) : Color.white.opacity(0.12)),
                                   lineWidth: isNow ? 2 : 1)
             )
             .shadow(color: isNow ? PW.sage.opacity(0.5) : .clear, radius: isNow ? 3 : 0)
