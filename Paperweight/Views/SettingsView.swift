@@ -8,6 +8,9 @@ struct SettingsView: View {
     @ObservedObject var vm: HomeViewModel
     @Binding var showingPicker: Bool
     var onTurnOff: () -> Void
+    #if DEBUG
+    @ObservedObject private var debug = DebugSettings.shared
+    #endif
 
     var body: some View {
         ScrollView {
@@ -65,6 +68,44 @@ struct SettingsView: View {
                         .buttonStyle(.plain)
                     }
                 }
+
+                #if DEBUG
+                Text("Developer").pwScreenLabel()
+                    .padding(.top, 22).padding(.bottom, 10)
+                GroupedCard {
+                    Toggle(isOn: $debug.forceQuiet) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Force quiet screen")
+                                .font(.grotesk(15))
+                                .foregroundStyle(PW.textPrimary)
+                            Text("Shows the quiet screen without arming anything. Nothing is actually blocked.")
+                                .font(.grotesk(13))
+                                .foregroundStyle(PW.textMuted)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    .toggleStyle(PWToggleStyle())
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+
+                    CardDivider()
+
+                    Button {
+                        Task { try? await vm.disablePaperweight() }
+                    } label: {
+                        NavRow(title: "Turn off without a token",
+                               titleColor: PW.clay,
+                               showsChevron: false)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                Text("Debug builds only — none of this exists in a release build.")
+                    .font(.grotesk(13))
+                    .foregroundStyle(PW.textFaint)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 10)
+                #endif
             }
             .padding(.horizontal, 18)
             .padding(.bottom, 30)
