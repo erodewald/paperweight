@@ -84,7 +84,7 @@ struct UnlockView: View {
         .padding(.bottom, 30)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .pwScreen()
-        .navigationTitle("Unlock")
+        .navigationTitle("Emergency unlock")
         .navigationBarTitleDisplayMode(.inline)
         // An unlock granted before the app was killed is still running: pick the
         // countdown back up from the persisted expiry instead of showing the
