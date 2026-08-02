@@ -70,6 +70,20 @@ final class HomeViewModel: ObservableObject {
         syncRestrictions()
     }
 
+    /// Saves a schedule edit. While armed this defers loosening to tomorrow;
+    /// while off it simply replaces the schedule, since there is no lock to slip.
+    func saveScheduleEdit(_ edit: PaperweightSchedule) {
+        if config.isEnabled {
+            config.applyScheduleEdit(edit)
+        } else {
+            config.schedule = edit.isEmpty ? nil : edit
+            config.pendingSchedule = nil
+            config.pendingScheduleEffectiveAt = nil
+        }
+        try? configStore.save(config)
+        syncRestrictions()
+    }
+
     /// Persists a change that cannot affect what is restricted or anything the
     /// widget shows — unlike `saveSelection()`, this deliberately does not
     /// resync the shield or republish the widget snapshot.
@@ -116,6 +130,7 @@ final class HomeViewModel: ObservableObject {
     /// mid-unlock, or inside a free window; applied otherwise. Safe to call any
     /// time.
     func syncRestrictions() {
+        config.promotePendingScheduleIfDue()
         enforceCoolOffExpiry()
         enforceUnlockExpiry()
         defer { publishWidgetSnapshot() }
