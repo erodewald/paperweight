@@ -19,6 +19,11 @@ struct HomeView: View {
     /// Selection captured when the picker opens, to detect (and gate) removals.
     @State private var selectionSnapshot: FamilyActivitySelection?
     @State private var selectionRevertMessage: String?
+    /// Fixed origin for the scene clock, so sway and blink phases are stable
+    /// across redraws rather than restarting whenever the body re-evaluates.
+    @State private var sceneEpoch = Date()
+    /// Drives the sprout. Animates 0 → 1 once when the quiet window begins.
+    @State private var sceneLock: Double = 0
 
     /// Quiet: armed and restricting right now (a scheduled blocked period, or
     /// always-blocked when no schedule is set).
@@ -45,6 +50,16 @@ struct HomeView: View {
             // keep this on the Group, not inside the branches, since setupState,
             // lockedState, and openState swap out from under it as config changes.
             .navigationDestination(isPresented: $showingSchedule) { ScheduleView(vm: vm) }
+            .onAppear {
+                // Already quiet at launch: show the grown scene without replaying
+                // the sprout, which would look like the lock just happened.
+                sceneLock = isQuiet ? 1 : 0
+            }
+            .onChange(of: isQuiet) { _, quiet in
+                withAnimation(.easeOut(duration: quiet ? 1.6 : 0.8)) {
+                    sceneLock = quiet ? 1 : 0
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
@@ -150,7 +165,7 @@ struct HomeView: View {
                         .padding(.top, 6)
                 }
 
-                SimpleScene()
+                lockedScene
                     .frame(maxHeight: .infinity)
 
                 AccentButton(title: "View schedule") { showingSchedule = true }
@@ -164,6 +179,34 @@ struct HomeView: View {
             }
             .padding(.horizontal, 22)
             .padding(.bottom, 24)
+        }
+    }
+
+    /// The chosen artwork, driven by its own clock.
+    ///
+    /// `TimelineView(.animation)` is capped at 30fps and stops entirely when the
+    /// app is not active — a scene that sways forever would otherwise redraw at
+    /// display rate behind a locked phone, which is the opposite of the point.
+    @ViewBuilder
+    private var lockedScene: some View {
+        if scenePhase == .active {
+            TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: false)) { context in
+                scene(at: context.date.timeIntervalSince(sceneEpoch))
+            }
+        } else {
+            scene(at: 0)
+        }
+    }
+
+    @ViewBuilder
+    private func scene(at time: Double) -> some View {
+        // The lock has already landed by the time Home is on screen, so the
+        // scene rests at full growth rather than replaying its sprout.
+        let lock = PWMotion.settle(sceneLock)
+        switch vm.config.lockedScene {
+        case .simple:    SimpleScene(lock: lock)
+        case .diorama:   DioramaScene(lock: lock, time: time)
+        case .overgrown: OvergrownScene(lock: lock, time: time)
         }
     }
 
