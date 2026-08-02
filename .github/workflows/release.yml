@@ -27,11 +27,26 @@ env:
 jobs:
   testflight:
     name: Build & upload to TestFlight
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@v4
+
+      # App Store Connect rejects anything built with an older SDK, and it does
+      # so at the very end — after the archive, the signing, and most of the
+      # upload. Checking here turns a six-minute failure into a six-second one.
+      - name: Check the iOS SDK is new enough to upload
+        run: |
+          set -euo pipefail
+          xcodebuild -version
+          sdk=$(xcodebuild -showsdks | grep -oE 'iphoneos[0-9]+' | grep -oE '[0-9]+' | sort -n | tail -1)
+          echo "Newest installed iOS SDK: $sdk"
+          if [ -z "$sdk" ] || [ "$sdk" -lt 26 ]; then
+            echo "::error::This runner's newest iOS SDK is ${sdk:-none}, but App Store Connect requires 26 or later."
+            echo "::error::The runner image needs an Xcode that ships the iOS 26 SDK — see runs-on for this job."
+            exit 1
+          fi
 
       # Fail here, loudly, rather than forty minutes later inside an
       # inscrutable codesign error. Only emptiness is checked — the values
