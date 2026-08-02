@@ -12,6 +12,10 @@ struct DioramaScene: View {
     private static let designSize = CGSize(width: 780, height: 250)
     private static let groundY: CGFloat = 230
 
+    /// How far the scene may grow beyond its width-derived size before the
+    /// outer pines start leaving the frame.
+    private static let maxOverscale: CGFloat = 1.5
+
     /// Pines: x, height, half-width, growth slot.
     private static let pines: [(x: CGFloat, h: CGFloat, w: CGFloat, slot: Int)] = [
         (70, 140, 26, 0), (140, 104, 22, 1), (636, 128, 26, 1), (716, 94, 21, 2),
@@ -47,8 +51,16 @@ struct DioramaScene: View {
 
     var body: some View {
         Canvas { context, size in
-            let scale = size.width / Self.designSize.width
-            context.translateBy(x: 0, y: size.height - Self.designSize.height * scale)
+            // The design was drawn for a 672pt phone. Scaling by width alone
+            // leaves a taller screen mostly empty, so grow with available
+            // height — capped, because past this the outer pines crop away.
+            let widthScale = size.width / Self.designSize.width
+            let heightScale = size.height / Self.designSize.height
+            let scale = min(max(widthScale, heightScale), widthScale * Self.maxOverscale)
+
+            let scaledWidth = Self.designSize.width * scale
+            context.translateBy(x: (size.width - scaledWidth) / 2,
+                                y: size.height - Self.designSize.height * scale)
             context.scaleBy(x: scale, y: scale)
 
             drawGround(&context, y: 256, rx: 470, ry: 50, color: PW.groundBack)
