@@ -70,6 +70,13 @@ final class HomeViewModel: ObservableObject {
         syncRestrictions()
     }
 
+    /// Persists a change that cannot affect what is restricted or anything the
+    /// widget shows — unlike `saveSelection()`, this deliberately does not
+    /// resync the shield or republish the widget snapshot.
+    func saveConfig() {
+        try? configStore.save(config)
+    }
+
     /// True when there's at least one way to unlock — a registered NFC token or
     /// unused recovery codes. Paperweight must not be armed without one, or the
     /// only way back would be the cool-off / deleting the app.

@@ -19,3 +19,9 @@ struct SimpleScene: View {
             .padding(.horizontal, 30)
     }
 }
+
+#Preview("Simple") {
+    SimpleScene(lock: 1)
+        .frame(height: 260)
+        .background(PW.black)
+}

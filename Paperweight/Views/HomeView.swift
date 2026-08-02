@@ -10,6 +10,7 @@ struct HomeView: View {
     )
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showingPicker = false
     @State private var showingDisableSheet = false
     @State private var showNeedsUnlock = false
@@ -19,6 +20,13 @@ struct HomeView: View {
     /// Selection captured when the picker opens, to detect (and gate) removals.
     @State private var selectionSnapshot: FamilyActivitySelection?
     @State private var selectionRevertMessage: String?
+    /// Fixed origin for the scene clock, so sway and blink phases are stable
+    /// across redraws rather than restarting whenever the body re-evaluates.
+    @State private var sceneEpoch = Date()
+    /// When the current quiet window began, or `.distantPast` when it was already
+    /// underway as Home appeared — which is what keeps the sprout from replaying
+    /// on every launch.
+    @State private var quietSince: Date?
 
     /// Quiet: armed and restricting right now (a scheduled blocked period, or
     /// always-blocked when no schedule is set).
@@ -45,6 +53,14 @@ struct HomeView: View {
             // keep this on the Group, not inside the branches, since setupState,
             // lockedState, and openState swap out from under it as config changes.
             .navigationDestination(isPresented: $showingSchedule) { ScheduleView(vm: vm) }
+            .onAppear {
+                // Already quiet at launch: start fully grown rather than replaying
+                // the sprout, which would read as though the lock just happened.
+                quietSince = isQuiet ? .distantPast : nil
+            }
+            .onChange(of: isQuiet) { _, quiet in
+                quietSince = quiet ? Date() : nil
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
@@ -150,7 +166,7 @@ struct HomeView: View {
                         .padding(.top, 6)
                 }
 
-                SimpleScene()
+                quietScene
                     .frame(maxHeight: .infinity)
 
                 AccentButton(title: "View schedule") { showingSchedule = true }
@@ -164,6 +180,41 @@ struct HomeView: View {
             }
             .padding(.horizontal, 22)
             .padding(.bottom, 24)
+        }
+    }
+
+    /// How long the sprout takes once a quiet window begins.
+    private static let sproutDuration: Double = 1.6
+
+    /// Whether the chosen scene has anything that moves. Simple is static type,
+    /// so it must not hold a 30fps clock open for no reason.
+    private var sceneAnimates: Bool {
+        vm.config.quietTheme != .simple && !reduceMotion
+    }
+
+    /// The chosen artwork, driven by one clock.
+    ///
+    /// `lock` is derived from the timeline's own date rather than an animated
+    /// `@State`: a `Canvas` draw closure is not `Animatable`, so `withAnimation`
+    /// on a stored `Double` would never interpolate it. Computing it per frame is
+    /// what actually makes the scene grow in.
+    ///
+    /// Pausing rather than branching means a backgrounded app stops redrawing but
+    /// keeps its last frame, so sway and blink don't snap when it returns.
+    private var quietScene: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: scenePhase != .active || !sceneAnimates)) { context in
+            let elapsed = quietSince.map { context.date.timeIntervalSince($0) } ?? 0
+            scene(lock: PWMotion.settle(PWMotion.ramp(elapsed, 0, Self.sproutDuration)),
+                  time: context.date.timeIntervalSince(sceneEpoch))
+        }
+    }
+
+    @ViewBuilder
+    private func scene(lock: Double, time: Double) -> some View {
+        switch vm.config.quietTheme {
+        case .simple:    SimpleScene(lock: lock)
+        case .diorama:   DioramaScene(lock: lock, time: time)
+        case .overgrown: OvergrownScene(lock: lock, time: time)
         }
     }
 
