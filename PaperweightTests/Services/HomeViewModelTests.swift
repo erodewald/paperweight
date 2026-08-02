@@ -91,5 +91,38 @@ final class HomeViewModelTests: XCTestCase {
         vm.config.recoveryCodes = [RecoveryCode(id: UUID(), codeHash: "abc", isUsed: true)]
         XCTAssertFalse(vm.hasUnlockMethod)
     }
+
+    /// Regression test: `saveScheduleEdit` must promote a due pending schedule
+    /// before applying the new edit. If it applies against the stale active
+    /// schedule instead, the intersection in `applyScheduleEdit` drops the
+    /// half-hour the pending schedule had already opened, silently discarding
+    /// a loosening the user waited a day for.
+    @MainActor
+    func test_saveScheduleEdit_promotesADueChangeBeforeApplying() async {
+        familyService.isAuthorized = true
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService, restrictionService: restrictionService, widgetStore: widgetStore)
+        await vm.setEnabled(true)
+
+        // A slot that's already free today, a slot only the (still-pending)
+        // loosening opened, and a slot the further edit opens on top of that.
+        let alreadyFreeSlot = PaperweightSchedule.slot(day: 0, halfHour: 0)
+        let pendingOnlySlot = PaperweightSchedule.slot(day: 0, halfHour: 5)
+        let furtherEditSlot = PaperweightSchedule.slot(day: 0, halfHour: 10)
+
+        // State after the app sat open past midnight: a loosening is due but
+        // hasn't been promoted onto the active schedule yet.
+        vm.config.schedule = PaperweightSchedule(freeSlots: [alreadyFreeSlot])
+        vm.config.pendingSchedule = PaperweightSchedule(freeSlots: [alreadyFreeSlot, pendingOnlySlot])
+        vm.config.pendingScheduleEffectiveAt = Date(timeIntervalSinceNow: -3600)
+
+        // A further edit that still leaves the pending slot open.
+        let edit = PaperweightSchedule(freeSlots: [alreadyFreeSlot, pendingOnlySlot, furtherEditSlot])
+        vm.saveScheduleEdit(edit)
+
+        XCTAssertTrue(
+            vm.config.schedule?.freeSlots.contains(pendingOnlySlot) ?? false,
+            "the already-due pending loosening should have been promoted before the new edit was applied"
+        )
+    }
 }
 #endif

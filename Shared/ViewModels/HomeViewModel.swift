@@ -73,6 +73,11 @@ final class HomeViewModel: ObservableObject {
     /// Saves a schedule edit. While armed this defers loosening to tomorrow;
     /// while off it simply replaces the schedule, since there is no lock to slip.
     func saveScheduleEdit(_ edit: PaperweightSchedule) {
+        // Promote first. If the app has sat open past midnight with a change
+        // still pending, applying a new edit against the stale active schedule
+        // would overwrite that pending change — silently discarding a loosening
+        // the user already waited a day for.
+        config.promotePendingScheduleIfDue()
         if config.isEnabled {
             config.applyScheduleEdit(edit)
         } else {
