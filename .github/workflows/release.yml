@@ -234,6 +234,10 @@ jobs:
           BUILD: ${{ steps.version.outputs.build }}
         run: |
           set -euo pipefail
+          # Capture the outcome rather than letting `set -e` abort: this step has
+          # one overwhelmingly likely failure and its native error text points at
+          # the wrong thing.
+          set +e
           xcodebuild -exportArchive \
             -archivePath "$RUNNER_TEMP/Paperweight.xcarchive" \
             -exportPath "$RUNNER_TEMP/export" \
@@ -241,7 +245,20 @@ jobs:
             -allowProvisioningUpdates \
             -authenticationKeyPath "$ASC_KEY_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
-            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" 2>&1 | tee "$RUNNER_TEMP/export.log"
+          status=${PIPESTATUS[0]}
+          set -e
+
+          if [ "$status" -ne 0 ]; then
+            # "No profiles were found" is the symptom; a key that cannot create
+            # them is the cause, and only the first line says so.
+            if grep -q "Cloud signing permission error" "$RUNNER_TEMP/export.log"; then
+              echo "::error::Export failed because the App Store Connect API key cannot create provisioning profiles."
+              echo "::error::The key must have **Admin** access. App Manager can upload builds but cannot create profiles,"
+              echo "::error::which is why every step before this one succeeded. See docs/RELEASING.md, step 4."
+            fi
+            exit "$status"
+          fi
           echo "Uploaded $MARKETING ($BUILD) to App Store Connect."
 
       # Only on failure: the archive is large, and on success the build is

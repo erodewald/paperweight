@@ -72,7 +72,18 @@ Delete the `.p12` from Downloads afterwards.
 <https://appstoreconnect.apple.com/access/integrations/api> → **Team Keys** → **+**
 
 - Name: `GitHub Actions`
-- Access: **App Manager** (Developer is not enough to upload builds)
+- Access: **Admin**
+
+**It must be Admin, not App Manager.** App Manager can upload builds, which is enough
+for everything up to the final re-signing step — but it cannot create certificates or
+provisioning profiles. Because this workflow lets Xcode mint the three distribution
+profiles itself (see below), the key needs profile-creation rights, and Admin is the role
+that grants them. An App Manager key fails at export with `Cloud signing permission
+error`, followed by a misleading `No profiles for … were found`.
+
+Be aware this is a broad grant: an Admin key can also manage users and agreements. If you
+would rather not hand CI that much, the alternative is to pin the three provisioning
+profiles as secrets and switch the workflow to manual signing — see the section below.
 
 Download the `.p8`. **Apple only lets you download it once.** Note the **Key ID** shown in
 the row, and the **Issuer ID** shown above the table.
@@ -104,6 +115,22 @@ That is the whole list. Note there are no provisioning-profile secrets — see b
 The first upload lands in App Store Connect needing export-compliance answers before it
 can go to testers. Paperweight uses no encryption beyond Apple's own, so the answer is
 "no" — but you have to say so once, in the build's page under TestFlight.
+
+---
+
+## Troubleshooting
+
+| Error | Cause |
+|---|---|
+| `Cloud signing permission error` / `No profiles for … were found` | The API key is not Admin. See step 4 — App Manager cannot create profiles. |
+| `No signing certificate "iOS Distribution" found` | `DIST_CERT_P12` didn't import, or `DIST_CERT_PASSWORD` doesn't match |
+| `Provisioning profile doesn't include the com.apple.developer.family-controls entitlement` | Family Controls not enabled on that App ID in the portal |
+| Job hangs during codesign | The keychain partition list wasn't set — codesign is waiting on a prompt nobody can answer |
+| `The bundle version must be higher than the previously uploaded version` | Build number reused for that marketing version |
+| `Cannot find app record` | Step 1 wasn't done |
+
+The archive is uploaded as a run artifact on failure, and Xcode's own distribution logs
+are inside it — worth opening when the error text alone isn't enough.
 
 ---
 
