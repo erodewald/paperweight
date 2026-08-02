@@ -123,6 +123,15 @@ struct SettingsView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.top, 10)
                 #endif
+
+                // Quiet, and last on the screen. It exists so a support
+                // conversation can start from "which build?" rather than a guess.
+                Text(Self.versionLine)
+                    .font(.grotesk(13))
+                    .foregroundStyle(PW.textFaint)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 26)
+                    .accessibilityLabel("Version \(Self.versionLine)")
             }
             .padding(.horizontal, 18)
             .padding(.bottom, 30)
@@ -139,6 +148,15 @@ struct SettingsView: View {
         if debug.forceArmed { return true }
         #endif
         return vm.config.isEnabled
+    }
+
+    /// "Paperweight 1.1.0 (1042)" — read from the built bundle, so it always
+    /// reflects what is actually installed rather than anything hardcoded.
+    private static var versionLine: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "—"
+        let build = info?["CFBundleVersion"] as? String ?? "—"
+        return "Paperweight \(version) (\(build))"
     }
 
     private var scheduleStatusText: String {
