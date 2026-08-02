@@ -166,7 +166,7 @@ struct HomeView: View {
                         .padding(.top, 6)
                 }
 
-                lockedScene
+                quietScene
                     .frame(maxHeight: .infinity)
 
                 AccentButton(title: "View schedule") { showingSchedule = true }
@@ -189,7 +189,7 @@ struct HomeView: View {
     /// Whether the chosen scene has anything that moves. Simple is static type,
     /// so it must not hold a 30fps clock open for no reason.
     private var sceneAnimates: Bool {
-        vm.config.lockedScene != .simple && !reduceMotion
+        vm.config.quietTheme != .simple && !reduceMotion
     }
 
     /// The chosen artwork, driven by one clock.
@@ -201,7 +201,7 @@ struct HomeView: View {
     ///
     /// Pausing rather than branching means a backgrounded app stops redrawing but
     /// keeps its last frame, so sway and blink don't snap when it returns.
-    private var lockedScene: some View {
+    private var quietScene: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: scenePhase != .active || !sceneAnimates)) { context in
             let elapsed = quietSince.map { context.date.timeIntervalSince($0) } ?? 0
             scene(lock: PWMotion.settle(PWMotion.ramp(elapsed, 0, Self.sproutDuration)),
@@ -211,7 +211,7 @@ struct HomeView: View {
 
     @ViewBuilder
     private func scene(lock: Double, time: Double) -> some View {
-        switch vm.config.lockedScene {
+        switch vm.config.quietTheme {
         case .simple:    SimpleScene(lock: lock)
         case .diorama:   DioramaScene(lock: lock, time: time)
         case .overgrown: OvergrownScene(lock: lock, time: time)

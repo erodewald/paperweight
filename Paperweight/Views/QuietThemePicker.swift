@@ -1,12 +1,12 @@
 import SwiftUI
 
-/// Picks the artwork the locked Home draws, showing each style actually running.
+/// Picks the artwork the quiet screen draws, showing each theme actually running.
 ///
 /// The live preview earns its keep twice: choosing a look from a written
 /// description was never a good way to choose a look, and Screen Time doesn't
-/// exist in the simulator — so this is the only place the scenes can be seen
-/// without a real device and an armed schedule.
-struct LockedScenePicker: View {
+/// exist in the simulator — so this is the only place these can be seen without
+/// a real device and an armed schedule.
+struct QuietThemePicker: View {
     @ObservedObject var vm: HomeViewModel
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -19,53 +19,55 @@ struct LockedScenePicker: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Style").pwScreenLabel().padding(.top, 6)
+                Text("Changes only what you see while apps are quiet. It never changes what's blocked.")
+                    .font(.grotesk(13))
+                    .foregroundStyle(PW.textMuted)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 6)
 
                 TimelineView(.animation(minimumInterval: 1.0 / 30.0,
                                         paused: scenePhase != .active || reduceMotion)) { context in
                     let time = context.date.timeIntervalSince(epoch)
                     VStack(spacing: 14) {
-                        ForEach(LockedScene.allCases) { style in
-                            card(for: style, time: time)
+                        ForEach(QuietTheme.allCases) { theme in
+                            card(for: theme, time: time)
                         }
                     }
                 }
-
-                Text("Shown only while apps are quiet.")
-                    .font(.grotesk(13))
-                    .foregroundStyle(PW.textFaint)
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 4)
             }
             .padding(.horizontal, 18)
             .padding(.bottom, 30)
         }
         .scrollContentBackground(.hidden)
         .pwScreen()
-        .navigationTitle("Locked screen")
+        .navigationTitle("Theme")
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func card(for style: LockedScene, time: Double) -> some View {
-        let selected = vm.config.lockedScene == style
+    private func card(for theme: QuietTheme, time: Double) -> some View {
+        let selected = vm.config.quietTheme == theme
         return Button {
-            vm.config.lockedScene = style
+            vm.config.quietTheme = theme
             vm.saveConfig()
         } label: {
             VStack(alignment: .leading, spacing: 0) {
-                ZStack {
-                    PW.black
-                    scene(style, time: time)
+                // Simple draws nothing, so it gets a row rather than a preview
+                // box full of black, which read as a failed render.
+                if theme.hasArtwork {
+                    ZStack {
+                        PW.black
+                        scene(theme, time: time)
+                    }
+                    .frame(height: Self.previewHeight)
+                    .clipped()
                 }
-                .frame(height: Self.previewHeight)
-                .clipped()
 
                 HStack(spacing: 12) {
                     VStack(alignment: .leading, spacing: 3) {
-                        Text(style.title)
+                        Text(theme.title)
                             .font(.grotesk(15))
                             .foregroundStyle(PW.textPrimary)
-                        Text(style.blurb)
+                        Text(theme.blurb)
                             .font(.grotesk(13))
                             .foregroundStyle(PW.textMuted)
                             .fixedSize(horizontal: false, vertical: true)
@@ -87,16 +89,16 @@ struct LockedScenePicker: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(style.title). \(style.blurb)")
+        .accessibilityLabel("\(theme.title). \(theme.blurb)")
         .accessibilityAddTraits(selected ? [.isSelected] : [])
     }
 
-    /// Previews always show the scene fully grown — a card that re-sprouted on
+    /// Previews always show the artwork fully grown — a card that re-sprouted on
     /// every redraw would be noise, not information.
     @ViewBuilder
-    private func scene(_ style: LockedScene, time: Double) -> some View {
-        switch style {
-        case .simple:    SimpleScene(lock: 1)
+    private func scene(_ theme: QuietTheme, time: Double) -> some View {
+        switch theme {
+        case .simple:    EmptyView()
         case .diorama:   DioramaScene(lock: 1, time: time)
         case .overgrown: OvergrownScene(lock: 1, time: time)
         }

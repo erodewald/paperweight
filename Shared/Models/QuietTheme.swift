@@ -1,8 +1,9 @@
 import Foundation
 
-/// What the locked Home draws behind its words. The wording comes from the
-/// motion study, which names each style by what it does rather than how it looks.
-enum LockedScene: String, Codable, CaseIterable, Identifiable {
+/// The artwork shown while apps are quiet. Purely cosmetic — it never affects
+/// what is restricted. The wording comes from the motion study, which names
+/// each style by what it does rather than how it looks.
+enum QuietTheme: String, Codable, CaseIterable, Identifiable {
     case simple
     case diorama
     case overgrown
@@ -24,4 +25,8 @@ enum LockedScene: String, Codable, CaseIterable, Identifiable {
         case .overgrown: return "The screen is claimed at its corners."
         }
     }
+
+    /// Whether this theme draws anything. Simple is a line of type and nothing
+    /// else, so the picker gives it a plain row rather than an empty preview.
+    var hasArtwork: Bool { self != .simple }
 }

@@ -37,8 +37,8 @@ struct SettingsView: View {
                         NavRow(title: "NFC Token & Recovery")
                     }
                     CardDivider()
-                    NavigationLink { LockedScenePicker(vm: vm) } label: {
-                        NavRow(title: "Locked screen", value: vm.config.lockedScene.title)
+                    NavigationLink { QuietThemePicker(vm: vm) } label: {
+                        NavRow(title: "Theme", value: vm.config.quietTheme.title)
                     }
                     CardDivider()
                     NavigationLink { UnlockView(vm: vm) } label: {
