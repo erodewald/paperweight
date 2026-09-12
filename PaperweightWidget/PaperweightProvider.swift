@@ -6,7 +6,7 @@ struct PaperweightEntry: TimelineEntry {
     let state: WidgetState
     /// Carried on the entry rather than re-read at render time, so the medium
     /// ribbon draws the same week the state was derived from.
-    let schedule: PaperweightSchedule?
+    let resolver: ScheduleResolver?
 
     var copy: WidgetCopy { state.copy(at: date) }
 
@@ -17,7 +17,7 @@ struct PaperweightEntry: TimelineEntry {
         PaperweightEntry(
             date: date,
             state: .quietBounded(ends: date.addingTimeInterval(2.5 * 3600), fraction: 0.72),
-            schedule: .weekdayEvenings())
+            resolver: ScheduleResolver(schedule: .weekdayEvenings(), exceptions: []))
     }
 }
 
@@ -56,6 +56,6 @@ struct PaperweightProvider: TimelineProvider {
     private func entry(at date: Date, from snapshot: WidgetSnapshot?) -> PaperweightEntry {
         PaperweightEntry(date: date,
                          state: snapshot?.state(at: date) ?? .unwritten,
-                         schedule: snapshot?.schedule)
+                         resolver: snapshot?.resolver())
     }
 }

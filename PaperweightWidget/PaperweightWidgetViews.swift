@@ -137,24 +137,26 @@ struct RibbonWidgetView: View {
     private var copy: WidgetCopy { entry.copy }
     private var state: WidgetState { entry.state }
 
-    /// The ribbon is only meaningful when there's a schedule to draw and
-    /// something running. Dormant states get a wide version of the small layout
-    /// instead of a strip of empty cells.
-    private var schedule: PaperweightSchedule? {
-        guard !state.isDormant, let s = entry.schedule, !s.isEmpty else { return nil }
-        return s
+    /// Today's open half-hours, or nil when there is nothing to draw: dormant
+    /// states, or no schedule and no exception covering today. Dormant states
+    /// get a wide version of the small layout instead of a strip of empty cells.
+    private var todaySlots: Set<Int>? {
+        guard !state.isDormant, let resolver = entry.resolver else { return nil }
+        let today = DayKey(entry.date)
+        let hasWeekly = !(resolver.schedule?.isEmpty ?? true)
+        guard hasWeekly || resolver.exception(on: today) != nil else { return nil }
+        return resolver.openSlots(on: today)
     }
 
     var body: some View {
-        if let schedule {
-            ribbon(schedule)
+        if let todaySlots {
+            ribbon(openSlots: todaySlots)
         } else {
             dormant
         }
     }
 
-    private func ribbon(_ schedule: PaperweightSchedule) -> some View {
-        let day = Calendar.current.component(.weekday, from: entry.date) - 1
+    private func ribbon(openSlots: Set<Int>) -> some View {
         return VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .firstTextBaseline) {
                 Text(Self.weekdayName(entry.date)).pwSectionLabel()
@@ -175,7 +177,7 @@ struct RibbonWidgetView: View {
             }
             .padding(.bottom, 3)
 
-            DayRibbon(schedule: schedule, day: day, date: entry.date)
+            DayRibbon(openSlots: openSlots, date: entry.date)
                 .frame(height: 14)
 
             Spacer(minLength: 10)
@@ -221,8 +223,7 @@ struct RibbonWidgetView: View {
 /// Today's 24 hours as 48 half-hour cells, with a marker at now. Free windows
 /// are lit; cells already spent are dimmed, so the day visibly empties out.
 struct DayRibbon: View {
-    let schedule: PaperweightSchedule
-    let day: Int
+    let openSlots: Set<Int>
     let date: Date
 
     private var nowFraction: Double {
@@ -242,7 +243,7 @@ struct DayRibbon: View {
                 HStack(spacing: 0.5) {
                     ForEach(0..<PaperweightSchedule.halfHoursPerDay, id: \.self) { half in
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(schedule.isFreeSlot(day: day, halfHour: half)
+                            .fill(openSlots.contains(half)
                                   ? PW.moss.opacity(0.55) : PW.deepForest)
                             .opacity(half < currentHalfHour ? 0.45 : 1)
                     }
