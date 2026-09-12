@@ -126,7 +126,7 @@ final class UnlockService: ObservableObject {
             restrictionService.removeAll()
             return
         }
-        if let schedule = config.schedule, !schedule.isEmpty, schedule.isFree(at: Date()) {
+        if config.resolver.isFree(at: Date()) {
             restrictionService.removeAll()
         } else {
             restrictionService.apply(selection: config.selection, overrides: config.appOverrides)

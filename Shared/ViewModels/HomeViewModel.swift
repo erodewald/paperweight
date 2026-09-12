@@ -156,11 +156,28 @@ final class HomeViewModel: ObservableObject {
             restrictionService.removeAll()
             return
         }
-        if let schedule = config.schedule, !schedule.isEmpty, schedule.isFree(at: Date()) {
+        if config.resolver.isFree(at: Date()) {
             restrictionService.removeAll()
         } else {
             restrictionService.apply(selection: config.selection, overrides: config.appOverrides)
         }
+    }
+
+    /// Adds a planned day under the deferral rule (see `PaperweightConfig.addDayException`),
+    /// then persists and re-evaluates the shield. Throws `PaperweightConfig.ExceptionError`.
+    func addDayException(_ exception: DayException) throws {
+        try config.addDayException(exception)
+        try configStore.save(config)
+        syncRestrictions()
+    }
+
+    /// Removes a planned day; a quiet day that is today ends tonight instead.
+    @discardableResult
+    func removeDayException(id: UUID) -> PaperweightConfig.ExceptionRemoval {
+        let result = config.removeDayException(id: id)
+        try? configStore.save(config)
+        syncRestrictions()
+        return result
     }
 
     /// If a requested cool-off unlock has elapsed, disable Paperweight.

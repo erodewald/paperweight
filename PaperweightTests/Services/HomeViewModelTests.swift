@@ -151,5 +151,58 @@ final class HomeViewModelTests: XCTestCase {
             "the already-due pending loosening should have been promoted before the new edit was applied"
         )
     }
+
+    /// An open-all-day exception over an all-quiet week must lift the shield —
+    /// the old `!schedule.isEmpty` guard would have kept it applied.
+    @MainActor
+    func test_syncRestrictions_liftsForADayOffOverAnEmptySchedule() throws {
+        familyService.isAuthorized = true
+        var config = PaperweightConfig()
+        config.isEnabled = true
+        config.schedule = PaperweightSchedule()
+        config.dayExceptions = [DayException(firstDay: .today(), lastDay: .today(), treatment: .openAllDay)]
+        try configStore.save(config)
+        let shield = MockManagedSettingsStore()
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService,
+                               restrictionService: RestrictionService(store: shield), widgetStore: widgetStore)
+
+        vm.syncRestrictions()
+
+        XCTAssertTrue(shield.shieldWasCleared)
+        XCTAssertFalse(shield.shieldApplicationsWasSet)
+    }
+
+    @MainActor
+    func test_addDayException_persistsAndResyncs() throws {
+        familyService.isAuthorized = true
+        var config = PaperweightConfig()
+        config.isEnabled = true
+        try configStore.save(config)
+        let shield = MockManagedSettingsStore()
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService,
+                               restrictionService: RestrictionService(store: shield), widgetStore: widgetStore)
+
+        let tomorrow = DayKey.today().next()
+        try vm.addDayException(DayException(firstDay: tomorrow, lastDay: tomorrow, treatment: .openAllDay))
+
+        XCTAssertEqual(configStore.load().dayExceptions.count, 1)
+        XCTAssertTrue(shield.shieldApplicationsWasSet || shield.shieldWasCleared, "the shield was re-evaluated")
+    }
+
+    @MainActor
+    func test_removeDayException_persistsTheResult() throws {
+        familyService.isAuthorized = true
+        var config = PaperweightConfig()
+        config.isEnabled = true
+        let tomorrow = DayKey.today().next()
+        let e = DayException(firstDay: tomorrow, lastDay: tomorrow, treatment: .openAllDay)
+        config.dayExceptions = [e]
+        try configStore.save(config)
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService,
+                               restrictionService: restrictionService, widgetStore: widgetStore)
+
+        XCTAssertEqual(vm.removeDayException(id: e.id), .removed)
+        XCTAssertTrue(configStore.load().dayExceptions.isEmpty)
+    }
 }
 #endif
