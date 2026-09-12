@@ -213,16 +213,16 @@ extension WidgetState {
             return WidgetCopy(eyebrow: "QUIET", value: .word("Quiet"),
                               caption: "until you say otherwise",
                               accessoryValue: "Quiet",
-                              accessoryLine: "no free windows set",
-                              boundaryLine: "Quiet — no free windows set")
+                              accessoryLine: "no open hours set",
+                              boundaryLine: "Quiet — no open hours set")
 
         case .freeWindow(let ends, _):
             let d = WidgetState.compactDuration(ends.timeIntervalSince(date))
-            return WidgetCopy(eyebrow: "FREE WINDOW", value: .word(d),
+            return WidgetCopy(eyebrow: "OPEN", value: .word(d),
                               caption: "before it goes quiet",
                               accessoryValue: d,
                               accessoryLine: "quiet at \(WidgetState.dayClock(ends, from: date, abbreviated: true))",
-                              boundaryLine: "Free until \(WidgetState.dayClock(ends, from: date)), then quiet")
+                              boundaryLine: "Open until \(WidgetState.dayClock(ends, from: date)), then quiet")
 
         case .timedUnlock(let ends, _):
             return WidgetCopy(eyebrow: "UNLOCKED", value: .countdown(to: ends),

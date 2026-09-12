@@ -250,7 +250,7 @@ final class WidgetSnapshotTests: XCTestCase {
     func test_boundaryLaterTodayStaysBareTime() {
         let ends = reference.addingTimeInterval(3 * 3600) // Sunday 17:00
         let copy = WidgetState.freeWindow(ends: ends, fraction: 0.5).copy(at: reference)
-        XCTAssertEqual(copy.boundaryLine, "Free until \(WidgetState.clock(ends)), then quiet")
+        XCTAssertEqual(copy.boundaryLine, "Open until \(WidgetState.clock(ends)), then quiet")
     }
 
     func test_boundaryTomorrowSaysTomorrow() {
