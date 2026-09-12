@@ -333,7 +333,7 @@ struct ScheduleView: View {
             return
         }
         await vm.setEnabled(true)
-        ScheduleService.shared.updateSchedule(vm.config.schedule, enabled: true)
+        ScheduleService.shared.sync(config: vm.config)
         dismiss()
     }
 }

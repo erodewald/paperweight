@@ -10,18 +10,21 @@ final class UnlockService: ObservableObject {
     private let nfcService: NFCServiceProtocol
     private let restrictionService: RestrictionService
     private let widgetStore: WidgetSnapshotStore
+    private let scheduleService: ScheduleService
     private var relockTask: Task<Void, Never>?
 
     init(
         configStore: ConfigStore = ConfigStore(),
         nfcService: NFCServiceProtocol,
         restrictionService: RestrictionService = RestrictionService(),
-        widgetStore: WidgetSnapshotStore = WidgetSnapshotStore()
+        widgetStore: WidgetSnapshotStore = WidgetSnapshotStore(),
+        scheduleService: ScheduleService = .shared
     ) {
         self.configStore = configStore
         self.nfcService = nfcService
         self.restrictionService = restrictionService
         self.widgetStore = widgetStore
+        self.scheduleService = scheduleService
     }
 
     func registerTag() async throws {
@@ -70,6 +73,10 @@ final class UnlockService: ObservableObject {
         try? configStore.save(config)
         widgetStore.write(config: config)
 
+        // The in-process timer below only fires while the app is alive and in
+        // the foreground — and the whole point of an unlock is to go use other
+        // apps. The monitor extension re-shields at the expiry regardless.
+        scheduleService.sync(config: config)
         scheduleRelock(after: duration)
     }
 
@@ -85,6 +92,7 @@ final class UnlockService: ObservableObject {
 
         syncRestrictions()
         widgetStore.write(config: config)
+        scheduleService.sync(config: config)
     }
 
     /// Re-establishes an unlock that outlived the process — call on launch and on

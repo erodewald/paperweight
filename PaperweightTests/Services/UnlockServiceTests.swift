@@ -7,6 +7,7 @@ final class UnlockServiceTests: XCTestCase {
     var nfcService: MockNFCService!
     var restrictionService: RestrictionService!
     var widgetStore: WidgetSnapshotStore!
+    var scheduleService: ScheduleService!
 
     @MainActor
     override func setUp() {
@@ -17,18 +18,56 @@ final class UnlockServiceTests: XCTestCase {
         // Isolated suite: the default store writes to the real App Group, which
         // would leak widget state between tests and into the installed app.
         widgetStore = WidgetSnapshotStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
+        // Never the shared instance: that talks to the real DeviceActivityCenter.
+        scheduleService = ScheduleService(center: MockDeviceActivityCenter())
+    }
+
+    /// The in-process relock timer dies with the app, and the app is suspended
+    /// seconds after the user leaves it to use the unlocked apps. The monitor
+    /// extension has to be told to re-shield at the expiry.
+    @MainActor
+    func test_grantUnlock_registersTheExpiryWithDeviceActivity() throws {
+        var config = PaperweightConfig()
+        config.isEnabled = true
+        try configStore.save(config)
+        let center = MockDeviceActivityCenter()
+        let service = UnlockService(configStore: configStore, nfcService: nfcService,
+                                    restrictionService: restrictionService, widgetStore: widgetStore,
+                                    scheduleService: ScheduleService(center: center))
+
+        service.grantUnlock(duration: 15 * 60)
+
+        XCTAssertNotNil(center.schedule(named: "\(Paperweight.activityName).unlockExpiry"))
+    }
+
+    @MainActor
+    func test_relock_dropsTheExpiryFromDeviceActivity() throws {
+        var config = PaperweightConfig()
+        config.isEnabled = true
+        try configStore.save(config)
+        let center = MockDeviceActivityCenter()
+        let service = UnlockService(configStore: configStore, nfcService: nfcService,
+                                    restrictionService: restrictionService, widgetStore: widgetStore,
+                                    scheduleService: ScheduleService(center: center))
+
+        service.grantUnlock(duration: 15 * 60)
+        service.relock()
+
+        XCTAssertNil(center.schedule(named: "\(Paperweight.activityName).unlockExpiry"))
+        XCTAssertTrue(center.names.contains("\(Paperweight.activityName).heartbeat"),
+                      "relock re-registers the ordinary schedule, it doesn't stop monitoring")
     }
 
     @MainActor
     func test_registerTag_savesUID() async throws {
-        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService, widgetStore: widgetStore)
+        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService, widgetStore: widgetStore, scheduleService: scheduleService)
         try await service.registerTag()
         XCTAssertEqual(configStore.load().registeredNFCTagUID, "AABBCCDD")
     }
 
     @MainActor
     func test_unlock_failsIfNoTagRegistered() async {
-        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService, widgetStore: widgetStore)
+        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService, widgetStore: widgetStore, scheduleService: scheduleService)
         do {
             try await service.unlock()
             XCTFail("Should have thrown")
@@ -46,7 +85,7 @@ final class UnlockServiceTests: XCTestCase {
         try configStore.save(config)
 
         nfcService.mockUID = "FFEEDDCC"
-        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService, widgetStore: widgetStore)
+        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService, widgetStore: widgetStore, scheduleService: scheduleService)
 
         do {
             try await service.unlock()
@@ -65,7 +104,7 @@ final class UnlockServiceTests: XCTestCase {
         config.isEnabled = true
         try configStore.save(config)
 
-        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService, widgetStore: widgetStore)
+        let service = UnlockService(configStore: configStore, nfcService: nfcService, restrictionService: restrictionService, widgetStore: widgetStore, scheduleService: scheduleService)
         try await service.unlock()
 
         XCTAssertTrue(service.isUnlocked)
