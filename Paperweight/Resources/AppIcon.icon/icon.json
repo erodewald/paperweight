@@ -1,0 +1,52 @@
+{
+  "fill": {
+    "solid": "extended-srgb:0.01961,0.02745,0.01961,1.00000"
+  },
+  "supported-platforms": {
+    "squares": "shared"
+  },
+  "groups": [
+    {
+      "name": "Dome",
+      "lighting": "individual",
+      "specular": true,
+      "blur-material": 0.15,
+      "translucency": {
+        "enabled": true,
+        "value": 0.22
+      },
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.55
+      },
+      "layers": [
+        {
+          "name": "Dome",
+          "image-name": "3-dome.svg",
+          "glass": true
+        }
+      ]
+    },
+    {
+      "name": "Desk",
+      "lighting": "individual",
+      "specular": false,
+      "shadow": {
+        "kind": "none",
+        "opacity": 0
+      },
+      "layers": [
+        {
+          "name": "Light pool",
+          "image-name": "2-light-pool.svg",
+          "glass": false
+        },
+        {
+          "name": "Background",
+          "image-name": "1-background.svg",
+          "glass": false
+        }
+      ]
+    }
+  ]
+}

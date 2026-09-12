@@ -1,6 +1,11 @@
 name: Paperweight
 
 options:
+  # Xcode 26 app icons are .icon packages (Icon Composer). Without this XcodeGen
+  # unpacks the package into loose resources and Xcode never sees the icon.
+  fileTypes:
+    icon:
+      file: true
   bundleIdPrefix: media.baltar.paperweight
   deploymentTarget:
     iOS: "17.0"
