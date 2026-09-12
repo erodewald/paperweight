@@ -62,4 +62,20 @@ final class ConfigStoreTests: XCTestCase {
         // the stale, still-pending schedule on their own next load().
         XCTAssertEqual(store.load().schedule, pending)
     }
+
+    func test_loadPrunesPastDayExceptions() throws {
+        var config = PaperweightConfig()
+        let created = Date(timeIntervalSinceReferenceDate: 800_000_000)
+        let past = DayException(firstDay: DayKey(year: 2000, month: 1, day: 1),
+                                lastDay: DayKey(year: 2000, month: 1, day: 2),
+                                treatment: .openAllDay, createdAt: created)
+        let future = DayException(firstDay: DayKey(year: 2999, month: 1, day: 1),
+                                  lastDay: DayKey(year: 2999, month: 1, day: 1),
+                                  treatment: .openAllDay, createdAt: created)
+        config.dayExceptions = [past, future]
+        try store.save(config)
+
+        XCTAssertEqual(store.load().dayExceptions, [future])
+        XCTAssertEqual(store.load().dayExceptions, [future], "pruned on the first load, stable after")
+    }
 }
