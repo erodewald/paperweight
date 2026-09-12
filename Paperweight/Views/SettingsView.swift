@@ -36,6 +36,10 @@ struct SettingsView: View {
                         NavRow(title: "Schedule", value: scheduleStatusText)
                     }
                     CardDivider()
+                    NavigationLink { DayExceptionsView(vm: vm) } label: {
+                        NavRow(title: "Days off & quiet days", value: vm.config.dayExceptionsRowValue())
+                    }
+                    CardDivider()
                     NavigationLink { NFCSetupView(vm: vm) } label: {
                         NavRow(title: "NFC Token & Recovery")
                     }

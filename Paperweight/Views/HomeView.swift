@@ -248,8 +248,8 @@ struct HomeView: View {
                             "Locks at \(WidgetState.dayClock($0.ends, from: context.date)) · in \(WidgetState.compactDuration($0.remaining))"
                         })
 
-                    if let schedule = vm.config.schedule, !schedule.isEmpty {
-                        WeekStrip(schedule: schedule)
+                    if !(vm.config.schedule?.isEmpty ?? true) || !vm.config.dayExceptions.isEmpty {
+                        WeekStrip(resolver: vm.config.resolver, week: DayKey.week(containing: .today()))
                             .padding(.top, 20)
                     }
 
@@ -259,6 +259,14 @@ struct HomeView: View {
                                    systemImage: "lock",
                                    iconColor: PW.textMuted,
                                    value: restrictedCountText)
+                        }
+                        .buttonStyle(.plain)
+                        CardDivider()
+                        NavigationLink { DayExceptionsView(vm: vm) } label: {
+                            NavRow(title: "Days off & quiet days",
+                                   systemImage: "calendar",
+                                   iconColor: PW.textMuted,
+                                   value: vm.config.dayExceptionsRowValue())
                         }
                         .buttonStyle(.plain)
                     }

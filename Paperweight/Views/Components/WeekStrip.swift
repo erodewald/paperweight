@@ -1,11 +1,15 @@
 import SwiftUI
 
 /// Screen 02's "This week": one row per day, each a proportional bar of quiet
-/// (moss) and open (faint) runs. A day with nothing quiet reads as a dashed
-/// outline rather than an empty bar, so "no lock at all" can't be mistaken for
-/// a rendering failure.
+/// (moss) and open (faint) runs, drawn for the actual calendar week so a
+/// planned day shows as it will really be. A day with nothing quiet reads as a
+/// dashed outline rather than an empty bar, so "no lock at all" can't be
+/// mistaken for a rendering failure. A planned day gets a sage dot after its
+/// name — the bar already says *what*, the dot says *why*.
 struct WeekStrip: View {
-    let schedule: PaperweightSchedule
+    let resolver: ScheduleResolver
+    /// Sunday through Saturday; see `DayKey.week(containing:)`.
+    let week: [DayKey]
 
     private static let dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     private static let barHeight: CGFloat = 15
@@ -15,12 +19,17 @@ struct WeekStrip: View {
             Text("This week").pwScreenLabel()
 
             VStack(spacing: 6) {
-                ForEach(0..<7, id: \.self) { day in
+                ForEach(Array(week.enumerated()), id: \.offset) { index, day in
                     HStack(spacing: 8) {
-                        Text(Self.dayNames[day])
-                            .font(.grotesk(13, weight: .semibold))
-                            .foregroundStyle(PW.textMuted)
-                            .frame(width: 32, alignment: .leading)
+                        HStack(spacing: 4) {
+                            Text(Self.dayNames[index])
+                                .font(.grotesk(13, weight: .semibold))
+                                .foregroundStyle(PW.textMuted)
+                            if resolver.exception(on: day) != nil {
+                                Circle().fill(PW.sage).frame(width: 6, height: 6)
+                            }
+                        }
+                        .frame(width: 44, alignment: .leading)
                         row(day: day)
                     }
                 }
@@ -29,13 +38,17 @@ struct WeekStrip: View {
             HStack(spacing: 12) {
                 legend(color: PW.moss, label: "Locked — quiet")
                 legend(color: nil, label: "Open")
+                HStack(spacing: 6) {
+                    Circle().fill(PW.sage).frame(width: 6, height: 6)
+                    Text("Planned").font(.grotesk(13)).foregroundStyle(PW.textMuted)
+                }
             }
         }
     }
 
     @ViewBuilder
-    private func row(day: Int) -> some View {
-        if schedule.isOpenAllDay(day: day) {
+    private func row(day: DayKey) -> some View {
+        if resolver.isOpenAllDay(on: day) {
             Text("OPEN ALL DAY")
                 .font(.grotesk(13, weight: .medium))
                 .tracking(0.8)
@@ -50,7 +63,7 @@ struct WeekStrip: View {
         } else {
             GeometryReader { geo in
                 HStack(spacing: 0) {
-                    ForEach(Array(schedule.daySegments(day: day).enumerated()), id: \.offset) { _, segment in
+                    ForEach(Array(resolver.daySegments(on: day).enumerated()), id: \.offset) { _, segment in
                         Rectangle()
                             .fill(segment.isLocked ? PW.moss : Color.white.opacity(0.04))
                             .frame(width: max(0, geo.size.width * segment.fraction))
