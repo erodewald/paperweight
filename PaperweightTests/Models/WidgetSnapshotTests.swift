@@ -284,5 +284,20 @@ final class WidgetSnapshotTests: XCTestCase {
         XCTAssertNil(decoded.schedule)
         XCTAssertEqual(decoded.unlockDuration, Paperweight.defaultUnlockDuration)
     }
+
+    func test_decodingASnapshotWithoutDayExceptionsGivesAnEmptyList() throws {
+        let data = Data(#"{"isArmed":true}"#.utf8)
+        let s = try JSONDecoder().decode(WidgetSnapshot.self, from: data)
+        XCTAssertEqual(s.dayExceptions, [])
+    }
+
+    func test_snapshotFromConfigCopiesDayExceptions() {
+        var config = PaperweightConfig()
+        config.dayExceptions = [DayException(firstDay: DayKey(year: 2026, month: 9, day: 18),
+                                             lastDay: DayKey(year: 2026, month: 9, day: 18),
+                                             treatment: .quietAllDay)]
+        let s = WidgetSnapshot(config: config, isScreenTimeAuthorized: true)
+        XCTAssertEqual(s.dayExceptions, config.dayExceptions)
+    }
 }
 #endif

@@ -23,6 +23,7 @@ struct WidgetSnapshot: Codable, Equatable {
     var coolOffRequestedAt: Date? = nil
     var unlockExpiresAt: Date? = nil
     var unlockDuration: TimeInterval = Paperweight.defaultUnlockDuration
+    var dayExceptions: [DayException] = []
     var updatedAt: Date = .distantPast
 
     var hasUnlockMethod: Bool { hasNFCToken || hasRecoveryCodes }
@@ -44,6 +45,7 @@ struct WidgetSnapshot: Codable, Equatable {
         unlockExpiresAt = try c.decodeIfPresent(Date.self, forKey: .unlockExpiresAt)
         unlockDuration = try c.decodeIfPresent(TimeInterval.self, forKey: .unlockDuration)
             ?? Paperweight.defaultUnlockDuration
+        dayExceptions = (try? c.decodeIfPresent([DayException].self, forKey: .dayExceptions)) ?? []
         updatedAt = try c.decodeIfPresent(Date.self, forKey: .updatedAt) ?? .distantPast
     }
 }
