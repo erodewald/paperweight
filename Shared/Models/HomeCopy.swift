@@ -7,6 +7,9 @@ enum HomeCopy {
 
     /// A remaining interval as `h:mm`, or `Nm` under an hour.
     static func countdown(_ remaining: TimeInterval) -> String {
+        // Past a day the widget's day-speak applies here too: "51:30" is not a
+        // countdown anyone reads.
+        if remaining >= 24 * 3600 { return WidgetState.compactDuration(remaining) }
         let total = max(0, Int(remaining))
         let hours = total / 3600
         let minutes = (total % 3600) / 60

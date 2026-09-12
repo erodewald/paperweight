@@ -242,6 +242,19 @@ final class WidgetSnapshotTests: XCTestCase {
         XCTAssertEqual(WidgetState.compactDuration(-500), "1m")
     }
 
+    /// Past a day, nobody thinks in hours: "63h 44m" becomes "2½ days". Rounded
+    /// to the nearest half day, because the boundary line beside it carries the
+    /// exact time.
+    func test_compactDuration_speaksInDaysPastTwentyFourHours() {
+        XCTAssertEqual(WidgetState.compactDuration(23 * 3600 + 59 * 60), "23h 59m")
+        XCTAssertEqual(WidgetState.compactDuration(24 * 3600), "1 day")
+        XCTAssertEqual(WidgetState.compactDuration(29 * 3600), "1 day")
+        XCTAssertEqual(WidgetState.compactDuration(36 * 3600), "1½ days")
+        XCTAssertEqual(WidgetState.compactDuration(63 * 3600 + 44 * 60), "2½ days")
+        XCTAssertEqual(WidgetState.compactDuration(70 * 3600), "3 days")
+        XCTAssertEqual(WidgetState.compactDuration(7 * 24 * 3600), "7 days")
+    }
+
     // MARK: Boundaries that aren't today
 
     /// A bare "02:00" reads as *tonight*. That's fine when it is tonight, and

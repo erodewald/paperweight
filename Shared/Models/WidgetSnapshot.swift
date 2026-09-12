@@ -319,6 +319,15 @@ extension WidgetState {
     /// a different state, not a zero-length one.
     static func compactDuration(_ interval: TimeInterval) -> String {
         let total = max(60, interval)
+        // Past a day nobody thinks in hours. Nearest half day is enough — the
+        // boundary line beside the value carries the exact time.
+        if total >= 24 * 3600 {
+            let halves = Int((total / (12 * 3600)).rounded())
+            let whole = halves / 2
+            let half = halves % 2 == 1
+            let unit = (whole == 1 && !half) ? "day" : "days"
+            return "\(whole)\(half ? "½" : "") \(unit)"
+        }
         let hours = Int(total) / 3600
         let minutes = (Int(total) % 3600) / 60
         if hours > 0 { return minutes > 0 ? "\(hours)h \(minutes)m" : "\(hours)h" }
