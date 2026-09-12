@@ -48,6 +48,18 @@ final class ScheduleServiceTests: XCTestCase {
         XCTAssertTrue(center.names.allSatisfy { $0.hasPrefix("\(Paperweight.activityName).heartbeat") })
     }
 
+    /// DeviceActivity does drop callbacks now and then. One heartbeat a day
+    /// means a dropped boundary leaves the wrong state for up to 24 hours;
+    /// several bound the damage to a few hours.
+    func test_registersAHeartbeatSeveralTimesADay() {
+        service.sync(config: armed())
+        let heartbeats = center.names.filter { $0.hasPrefix("\(Paperweight.activityName).heartbeat") }
+        XCTAssertGreaterThanOrEqual(heartbeats.count, 3)
+        let hours = Set(heartbeats.compactMap { center.schedule(named: $0)?.intervalStart.hour })
+        XCTAssertEqual(hours.count, heartbeats.count, "each heartbeat lands at a different hour")
+        XCTAssertTrue(hours.contains(4), "the original 04:00 failsafe stays")
+    }
+
     func test_registersOneActivityPerDistinctFreeWindow() throws {
         var s = PaperweightSchedule()
         for day in 1...5 { for hour in 17..<21 { s.setFree(day: day, hour: hour, true) } }

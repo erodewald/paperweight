@@ -54,7 +54,7 @@ final class UnlockServiceTests: XCTestCase {
         service.relock()
 
         XCTAssertNil(center.schedule(named: "\(Paperweight.activityName).unlockExpiry"))
-        XCTAssertTrue(center.names.contains("\(Paperweight.activityName).heartbeat"),
+        XCTAssertTrue(center.names.contains { $0.hasPrefix("\(Paperweight.activityName).heartbeat") },
                       "relock re-registers the ordinary schedule, it doesn't stop monitoring")
     }
 

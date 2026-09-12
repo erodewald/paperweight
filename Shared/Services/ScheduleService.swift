@@ -41,9 +41,10 @@ final class ScheduleService {
     ///   register anything, so its boundaries have to be on the books up front.
     ///   Extra boundaries are harmless: the monitor re-derives the truth from
     ///   the saved config at every callback.
-    /// - A daily "heartbeat" window, even with no free windows, so the monitor
-    ///   runs at least once a day and can enforce the auto-unlock failsafe — the
-    ///   escape hatch against a permanent lockout.
+    /// - A few "heartbeat" windows a day, even with no free windows, so the
+    ///   monitor runs regularly: it enforces the auto-unlock failsafe — the
+    ///   escape hatch against a permanent lockout — and repairs the shield after
+    ///   a dropped boundary callback.
     /// - While a timed NFC unlock is live, a one-shot activity at its expiry.
     ///   The app is suspended seconds after the user leaves it, so an
     ///   in-process timer can't be trusted to re-shield; the monitor extension
@@ -79,14 +80,22 @@ final class ScheduleService {
         }
     }
 
+    /// Hours at which a heartbeat fires. 04:00 is the original once-a-day
+    /// failsafe; the others exist because DeviceActivity does drop boundary
+    /// callbacks now and then, and a dropped one used to leave the wrong shield
+    /// state for up to a day. Three a day bounds that to eight hours.
+    static let heartbeatHours = [4, 12, 20]
+
     private func registerHeartbeat() {
-        let name = DeviceActivityName("\(Paperweight.activityName).heartbeat")
-        let schedule = DeviceActivitySchedule(
-            intervalStart: DateComponents(hour: 4, minute: 0),
-            intervalEnd: DateComponents(hour: 4, minute: 15),
-            repeats: true
-        )
-        try? center.startMonitoring(name, during: schedule)
+        for hour in Self.heartbeatHours {
+            let name = DeviceActivityName(String(format: "%@.heartbeat%02d", Paperweight.activityName, hour))
+            let schedule = DeviceActivitySchedule(
+                intervalStart: DateComponents(hour: hour, minute: 0),
+                intervalEnd: DateComponents(hour: hour, minute: 15),
+                repeats: true
+            )
+            try? center.startMonitoring(name, during: schedule)
+        }
     }
 
     /// Registers a non-repeating activity whose start is the moment the monitor
