@@ -10,21 +10,16 @@
       "name": "Dome",
       "lighting": "individual",
       "specular": true,
-      "blur-material": 0.25,
+      "blur-material": 0.15,
       "translucency": {
         "enabled": true,
-        "value": 0.4
+        "value": 0.22
       },
       "shadow": {
-        "kind": "neutral",
-        "opacity": 0.6
+        "kind": "layer-color",
+        "opacity": 0.55
       },
       "layers": [
-        {
-          "name": "Gathered light",
-          "image-name": "4-gathered-light.svg",
-          "glass": false
-        },
         {
           "name": "Dome",
           "image-name": "3-dome.svg",
