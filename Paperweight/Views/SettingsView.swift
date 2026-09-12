@@ -165,7 +165,7 @@ struct SettingsView: View {
 
     private var scheduleStatusText: String {
         guard let s = vm.config.schedule, !s.isEmpty else { return "Set up" }
-        if vm.config.isEnabled && !s.isFree(at: Date()) { return "Quiet now" }
+        if vm.config.isEnabled && !vm.config.resolver.isFree(at: Date()) { return "Quiet now" }
         return "Ready"
     }
 }

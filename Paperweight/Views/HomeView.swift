@@ -40,8 +40,7 @@ struct HomeView: View {
         if debug.forceQuiet { return true }
         #endif
         guard vm.config.isEnabled else { return false }
-        if let s = vm.config.schedule, !s.isEmpty { return !s.isFree(at: Date()) }
-        return true
+        return !vm.config.resolver.isFree(at: Date())
     }
 
     var body: some View {
@@ -148,7 +147,7 @@ struct HomeView: View {
 
     private var lockedState: some View {
         TimelineView(.periodic(from: .now, by: 60)) { context in
-            let status = vm.config.schedule?.quietStatus(at: context.date)
+            let status = vm.config.resolver.quietStatus(at: context.date)
             VStack(alignment: .leading, spacing: 0) {
                 banner(
                     eyebrow: "● Locked",
@@ -235,7 +234,7 @@ struct HomeView: View {
 
     private var openState: some View {
         TimelineView(.periodic(from: .now, by: 60)) { context in
-            let status = vm.config.schedule?.freeStatus(at: context.date)
+            let status = vm.config.resolver.freeStatus(at: context.date)
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     banner(

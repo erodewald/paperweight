@@ -21,7 +21,9 @@ struct DayKey: Hashable, Comparable, Codable {
     }
 
     /// The first instant of the day. A well-formed key always resolves; the
-    /// fallback fails closed (far future reads as "not yet").
+    /// `.distantFuture` fallback only matters for a malformed key, since
+    /// `Calendar` normalises out-of-range components (month 13 → next January)
+    /// rather than returning nil for them.
     func date(calendar: Calendar = .current) -> Date {
         calendar.date(from: DateComponents(year: year, month: month, day: day)) ?? .distantFuture
     }

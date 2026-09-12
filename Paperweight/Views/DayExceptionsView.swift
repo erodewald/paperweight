@@ -129,13 +129,14 @@ struct DayExceptionsView: View {
     }
 
     private func secondLine(_ e: DayException) -> String? {
-        if e.lastDay == today, e.treatment != .openAllDay {
+        if e.lastDay == today {
             var line = "Ends tonight"
             if vm.truncatedDayExceptionIDs.contains(e.id) {
                 line += " · the change lands tomorrow"
             } else if !e.note.isEmpty {
                 line += " · \(e.note)"
             }
+            if e.dayCount() > 1 { line += " · \(e.dayCount()) days" }
             return line
         }
         var parts: [String] = []

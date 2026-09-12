@@ -174,6 +174,9 @@ Semantics:
   `schedule.isFree(at: now)` with `config.resolver.isFree(at: now)`. The
   `!schedule.isEmpty` guard goes: an empty weekly schedule with an open-all-day exception
   must lift the shield.
+- **Screens.** Home's locked/open decision and both banners' countdowns, and Settings'
+  "Quiet now" status, read the resolver too — the shield and the screen must never disagree
+  on an exception day.
 - **Registrations.** No per-exception DeviceActivity activities. `likeWeekday` needs nothing:
   free windows are already registered as the union across all seven days and the monitor
   re-derives the truth at callback time. `openAllDay` and `quietAllDay` need a boundary at

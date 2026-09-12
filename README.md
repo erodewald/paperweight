@@ -8,7 +8,7 @@ An iOS focus tool built on Apple's Screen Time (Family Controls) framework. Ever
 
 ## How it works
 
-- **Schedule** — paint a weekly grid of free time. Outside those windows, your selected apps and categories are shielded. Restrictions apply and lift automatically.
+- **Schedule** — paint a weekly grid of free time. Outside those windows, your selected apps and categories are shielded. Restrictions apply and lift automatically, and individual days can be marked as a day off or an extra-quiet day on top of the weekly grid.
 - **NFC unlock** — tap your registered NFC token for a short, timed unlock, or to turn Paperweight off. Tapping the physical tag *is* the confirmation — that small bit of friction is the point.
 - **Never locked out** — single-use recovery codes, an optional timed "cool-off" unlock that releases after a day, and the ultimate failsafe: deleting the app clears every restriction (we never set `denyAppRemoval`).
 

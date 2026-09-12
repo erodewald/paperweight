@@ -118,6 +118,9 @@ extension PaperweightConfig {
             if old.covers(today) {
                 old.lastDay = today
                 result.append(old)
+                // The remnant keeps the identity; the new range gets its own so the
+                // list never holds two rows sharing an id.
+                if replacement.id == old.id { replacement.id = UUID() }
             }
         }
 

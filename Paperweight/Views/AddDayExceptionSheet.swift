@@ -172,7 +172,8 @@ struct AddDayExceptionSheet: View {
     }
 
     private func save() {
-        let new = DayException(firstDay: from, lastDay: to ?? from, treatment: treatment, note: note)
+        let new = DayException(id: editing?.id ?? UUID(), firstDay: from, lastDay: to ?? from,
+                                treatment: treatment, note: note, createdAt: editing?.createdAt ?? Date())
         do {
             if let old = editing {
                 try vm.replaceDayException(id: old.id, with: new)

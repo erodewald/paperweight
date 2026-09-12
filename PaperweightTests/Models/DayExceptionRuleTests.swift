@@ -52,6 +52,15 @@ final class DayExceptionRuleTests: XCTestCase {
         XCTAssertThrowsError(try d.addDayException(exception(5, 5, .likeWeekday(6)), now: now, calendar: cal))
     }
 
+    /// Monday like Monday is a no-op: it changes nothing about today, so it is
+    /// allowed and leaves `isFree` exactly as the weekly schedule already says.
+    func test_likeWeekdayOfItsOwnWeekdayIsANoOpToday() throws {
+        var c = armedConfig()
+        try c.addDayException(exception(5, 5, .likeWeekday(1)), now: now, calendar: cal)
+        let at = cal.date(from: DateComponents(year: 2026, month: 1, day: 5, hour: 18))!
+        XCTAssertEqual(c.resolver.isFree(at: at), c.schedule!.isFree(at: at, calendar: cal))
+    }
+
     func test_pastStartIsRefused() {
         var c = armedConfig()
         XCTAssertThrowsError(try c.addDayException(exception(4, 6, .quietAllDay), now: now, calendar: cal)) {
@@ -88,6 +97,18 @@ final class DayExceptionRuleTests: XCTestCase {
         try c.addDayException(exception(9, 9, .openAllDay), now: now, calendar: cal)
         try c.addDayException(exception(6, 6, .openAllDay), now: now, calendar: cal)
         XCTAssertEqual(c.dayExceptions.map(\.firstDay), [key(6), key(9)])
+    }
+
+    /// A quiet range crossing a month end resolves correctly on the far side.
+    func test_addDayExceptionRangeCrossingAMonthEnd() throws {
+        var c = armedConfig()
+        let e = DayException(firstDay: DayKey(year: 2026, month: 1, day: 30),
+                             lastDay: DayKey(year: 2026, month: 2, day: 2),
+                             treatment: .quietAllDay)
+        try c.addDayException(e, now: now, calendar: cal)
+        // Feb 2, 2026 is a Monday, normally open 17:00–21:00 — quiet here instead.
+        let at = cal.date(from: DateComponents(year: 2026, month: 2, day: 2, hour: 18))!
+        XCTAssertFalse(c.resolver.isFree(at: at))
     }
 
     // MARK: Removing
@@ -234,6 +255,38 @@ final class DayExceptionRuleTests: XCTestCase {
         XCTAssertEqual(c.dayExceptions.count, 1)
         XCTAssertEqual(c.dayExceptions[0].firstDay, key(6))
         XCTAssertEqual(c.dayExceptions[0].lastDay, key(9))
+    }
+
+    /// A split keeps the old exception's id on the truncated remnant and gives the
+    /// edited one a fresh id, so the list never holds two rows with the same id.
+    func test_replaceSplitNeverDuplicatesIDs() throws {
+        var c = armedConfig()
+        let old = exception(4, 9, .quietAllDay)
+        c.dayExceptions = [old]
+        var new = old                       // same id, as the sheet passes it
+        new.treatment = .openAllDay
+        try c.replaceDayException(id: old.id, with: new, now: now, calendar: cal)
+        XCTAssertEqual(Set(c.dayExceptions.map(\.id)).count, c.dayExceptions.count)
+        XCTAssertEqual(c.dayExceptions[0].id, old.id)
+    }
+
+    /// A plain replace keeps the id the caller passed, so identity survives an edit.
+    func test_replaceKeepsTheEditedID() throws {
+        var c = armedConfig()
+        let old = exception(9, 9, .openAllDay)
+        c.dayExceptions = [old]
+        var new = old
+        new.note = "Trip"
+        try c.replaceDayException(id: old.id, with: new, now: now, calendar: cal)
+        XCTAssertEqual(c.dayExceptions.map(\.id), [old.id])
+    }
+
+    /// An unknown id falls back to a plain add rather than failing silently.
+    func test_replaceWithUnknownIDFallsBackToAdd() throws {
+        var c = armedConfig()
+        c.dayExceptions = [exception(9, 9, .openAllDay)]
+        try c.replaceDayException(id: UUID(), with: exception(11, 11, .quietAllDay), now: now, calendar: cal)
+        XCTAssertEqual(c.dayExceptions.count, 2)
     }
 
     // MARK: Pruning and listing

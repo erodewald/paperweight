@@ -101,9 +101,23 @@ final class ScheduleResolverTests: XCTestCase {
         XCTAssertEqual(q.ends, jan(6, 17, 0))
     }
 
-    func test_nilWhenNoBoundaryWithinAWeek() {
+    func test_nilWhenNoBoundaryWithinTheWalk() {
         XCTAssertNil(resolver(schedule: PaperweightSchedule()).quietStatus(at: jan(5, 12, 0)))
         XCTAssertNil(resolver(schedule: .alwaysFree()).freeStatus(at: jan(5, 12, 0)))
+    }
+
+    /// A weekly window that runs right up to the day boundary (Monday 20:00–24:00)
+    /// adjoins a quiet exception the next day: the boundary is still midnight, not
+    /// smeared by the 23:59-vs-24:00 representation.
+    func test_exceptionAdjoiningAWeeklyWindowThatRunsToMidnight() throws {
+        var s = PaperweightSchedule()
+        for hour in 20..<24 { s.setFree(day: 1, hour: hour, true) }  // Monday
+        let r = resolver([DayException(firstDay: key(6), lastDay: key(6), treatment: .quietAllDay)],
+                          schedule: s)
+        XCTAssertTrue(r.isFree(at: jan(5, 23, 45)))
+        XCTAssertFalse(r.isFree(at: jan(6, 0, 0)))
+        let f = try XCTUnwrap(r.freeStatus(at: jan(5, 23, 0)))
+        XCTAssertEqual(f.ends, jan(6, 0, 0))
     }
 
     // MARK: Day drawing
