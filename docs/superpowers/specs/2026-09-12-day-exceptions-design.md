@@ -215,8 +215,11 @@ Decisions from the mockup session; copy follows the house rules (the word is "qu
 
 ### 7b. Week strip marker (chosen: effective bar, dot on the day)
 
-- `WeekStrip` takes a `ScheduleResolver` and the seven `DayKey`s of the current week (the
-  Sunday on or before today through the following Saturday, matching the rows), and paints
+- `WeekStrip` takes a `ScheduleResolver` and the seven `DayKey`s from today onward
+  (`DayKey.weekAhead(from:)`) — an outlook, not the calendar week, which on a Saturday would
+  be six days already gone. Rows are labelled with the weekday and date ("Sat 12") and the
+  label reads **"The week ahead"**; the designed weekly pattern is the Schedule screen's job.
+  It paints
   `daySegments(on:)` / `isOpenAllDay(on:)` for each — so a quiet Sunday is a full moss bar and a
   day off is the existing dashed "OPEN ALL DAY" row.
 - A day with an exception gets a 6pt sage dot after its name (`PW.sage`, `Circle`, 4pt

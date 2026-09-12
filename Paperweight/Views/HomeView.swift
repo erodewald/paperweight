@@ -248,7 +248,7 @@ struct HomeView: View {
                         })
 
                     if !(vm.config.schedule?.isEmpty ?? true) || !vm.config.dayExceptions.isEmpty {
-                        WeekStrip(resolver: vm.config.resolver, week: DayKey.week(containing: .today()))
+                        WeekStrip(resolver: vm.config.resolver, week: DayKey.weekAhead(from: .today()))
                             .padding(.top, 20)
                     }
 

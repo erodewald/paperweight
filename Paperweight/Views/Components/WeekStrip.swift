@@ -1,14 +1,16 @@
 import SwiftUI
 
-/// Screen 02's "This week": one row per day, each a proportional bar of quiet
-/// (moss) and open (faint) runs, drawn for the actual calendar week so a
-/// planned day shows as it will really be. A day with nothing quiet reads as a
+/// Screen 02's "The week ahead": one row per day from today, each a
+/// proportional bar of quiet (moss) and open (faint) runs, drawn for the real
+/// dates so a planned day shows as it will really be. Each row carries its
+/// date so the strip reads as an outlook, not as the weekly pattern — that
+/// lives on the Schedule screen. A day with nothing quiet reads as a
 /// dashed outline rather than an empty bar, so "no lock at all" can't be
 /// mistaken for a rendering failure. A planned day gets a sage dot after its
 /// name — the bar already says *what*, the dot says *why*.
 struct WeekStrip: View {
     let resolver: ScheduleResolver
-    /// Sunday through Saturday; see `DayKey.week(containing:)`.
+    /// Today and the six days after; see `DayKey.weekAhead(from:)`.
     let week: [DayKey]
 
     private static let dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
@@ -16,20 +18,20 @@ struct WeekStrip: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("This week").pwScreenLabel()
+            Text("The week ahead").pwScreenLabel()
 
             VStack(spacing: 6) {
-                ForEach(Array(week.enumerated()), id: \.offset) { index, day in
+                ForEach(week, id: \.self) { day in
                     HStack(spacing: 8) {
                         HStack(spacing: 4) {
-                            Text(Self.dayNames[index])
+                            Text("\(Self.dayNames[day.weekdayIndex()]) \(day.day)")
                                 .font(.grotesk(13, weight: .semibold))
                                 .foregroundStyle(PW.textMuted)
                             if resolver.exception(on: day) != nil {
                                 Circle().fill(PW.sage).frame(width: 6, height: 6)
                             }
                         }
-                        .frame(width: 44, alignment: .leading)
+                        .frame(width: 64, alignment: .leading)
                         row(day: day)
                     }
                 }
