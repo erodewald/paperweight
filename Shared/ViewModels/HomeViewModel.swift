@@ -7,6 +7,13 @@ final class HomeViewModel: ObservableObject {
     @Published var config: PaperweightConfig
     @Published var error: Error?
 
+    /// Session memory of which planned days a removal truncated to "ends
+    /// tonight" rather than deleting outright, so the list screen can explain
+    /// why a row still shows. Not persisted: the model can't tell a truncated
+    /// range apart from one that was always meant to end today, and by
+    /// tomorrow the exception is pruned anyway.
+    @Published private(set) var truncatedDayExceptionIDs: Set<UUID> = []
+
     private let configStore: ConfigStore
     private let familyService: FamilyControlsServiceProtocol
     private let restrictionService: RestrictionService
@@ -175,6 +182,7 @@ final class HomeViewModel: ObservableObject {
     @discardableResult
     func removeDayException(id: UUID) -> PaperweightConfig.ExceptionRemoval {
         let result = config.removeDayException(id: id)
+        if result == .truncatedToToday { truncatedDayExceptionIDs.insert(id) }
         try? configStore.save(config)
         syncRestrictions()
         return result

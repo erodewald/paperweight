@@ -1787,7 +1787,6 @@ struct DayExceptionsView: View {
     @ObservedObject var vm: HomeViewModel
     @State private var editing: DayException?
     @State private var adding = false
-    @State private var truncated: Set<UUID> = []
 
     private var today: DayKey { .today() }
     private var upcoming: [DayException] { vm.config.upcomingDayExceptions() }
@@ -1889,7 +1888,7 @@ struct DayExceptionsView: View {
         .listRowBackground(PW.surface)
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button(role: .destructive) {
-                if vm.removeDayException(id: e.id) == .truncatedToToday { truncated.insert(e.id) }
+                vm.removeDayException(id: e.id)
             } label: { Text("Remove") }
                 .tint(PW.clay)
         }
@@ -1898,7 +1897,7 @@ struct DayExceptionsView: View {
     private func secondLine(_ e: DayException) -> String? {
         if e.lastDay == today, e.treatment != .openAllDay {
             var line = "Ends tonight"
-            if truncated.contains(e.id) {
+            if vm.truncatedDayExceptionIDs.contains(e.id) {
                 line += " · the change lands tomorrow"
             } else if !e.note.isEmpty {
                 line += " · \(e.note)"

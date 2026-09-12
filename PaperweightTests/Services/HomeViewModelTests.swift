@@ -204,5 +204,28 @@ final class HomeViewModelTests: XCTestCase {
         XCTAssertEqual(vm.removeDayException(id: e.id), .removed)
         XCTAssertTrue(configStore.load().dayExceptions.isEmpty)
     }
+
+    /// A removal that only truncates leaves the day in force until midnight;
+    /// the view model remembers which ones so the list can say why.
+    @MainActor
+    func test_removeDayException_remembersATruncation() throws {
+        familyService.isAuthorized = true
+        var config = PaperweightConfig()
+        config.isEnabled = true
+        config.schedule = .weekdayEvenings()
+        let today = DayKey.today()
+        if today.weekdayIndex() == 0 || today.weekdayIndex() == 6 {
+            config.schedule = .alwaysFree()
+        }
+        // Quiet all day over a weekday evening: removing it would open tonight, so it truncates.
+        let e = DayException(firstDay: today, lastDay: today.next(), treatment: .quietAllDay)
+        config.dayExceptions = [e]
+        try configStore.save(config)
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService,
+                               restrictionService: restrictionService, widgetStore: widgetStore)
+
+        XCTAssertEqual(vm.removeDayException(id: e.id), .truncatedToToday)
+        XCTAssertTrue(vm.truncatedDayExceptionIDs.contains(e.id))
+    }
 }
 #endif
