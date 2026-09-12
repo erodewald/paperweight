@@ -156,7 +156,7 @@ Semantics:
   instant of the first slot of the other kind), so callers change nothing but the receiver. Walk
   by `DayKey.next()` rather than adding 86 400 seconds, for the DST reason already documented in
   `applyScheduleEdit`.
-- "Always quiet" / "always open" (no boundary within 7 days) returns nil, as today.
+- "Always quiet" / "always open" (no boundary within the 60-day walk) returns nil, as today.
 - A resolver with `exceptions == []` must give identical answers to the weekly schedule for
   every input; that equivalence is a test.
 
