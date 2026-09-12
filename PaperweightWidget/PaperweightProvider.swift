@@ -27,7 +27,8 @@ struct PaperweightProvider: TimelineProvider {
     private let store = WidgetSnapshotStore()
 
     /// Entries every 5 minutes, so the "3h 20m" headline never drifts by more
-    /// than that, capped at a 4-hour horizon.
+    /// than that, to a 4-hour horizon. `maxEntries` leaves room for the extra
+    /// just-past-boundary entries on top of the 49 stepped ones.
     private let step: TimeInterval = 300
     private let horizon: TimeInterval = 4 * 3600
     private let maxEntries = 60
@@ -41,29 +42,15 @@ struct PaperweightProvider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<PaperweightEntry>) -> Void) {
         let now = Date()
         let snapshot = store.load()
-        let boundary = snapshot?.nextBoundary(at: now)
 
-        var entries: [PaperweightEntry] = []
-        let end = min(boundary ?? now.addingTimeInterval(horizon), now.addingTimeInterval(horizon))
-        var cursor = now
-        while cursor < end && entries.count < maxEntries - 1 {
-            entries.append(entry(at: cursor, from: snapshot))
-            cursor.addTimeInterval(step)
-        }
-
-        // One entry a second past the boundary, pre-rendering the state on the
-        // far side. If the reload is late, the widget is already correct.
-        if let boundary, boundary > now {
-            entries.append(entry(at: boundary.addingTimeInterval(1), from: snapshot))
-        }
-        if entries.isEmpty {
-            entries.append(entry(at: now, from: snapshot))
-        }
-
-        // Dormant states have no boundary of their own; check back hourly in case
-        // the snapshot changed without a reload reaching us.
-        let reload = boundary?.addingTimeInterval(1) ?? now.addingTimeInterval(3600)
-        completion(Timeline(entries: entries, policy: .after(reload)))
+        // Entries run straight through every boundary inside the horizon — see
+        // `WidgetSnapshot.timelineDates`. Each is computed for its own instant,
+        // so the state on the far side is already right whenever the reload
+        // WidgetKit owes us at the end turns out to be late.
+        let dates = snapshot?.timelineDates(from: now, step: step, horizon: horizon, maxEntries: maxEntries)
+            ?? [now]
+        let entries = dates.map { entry(at: $0, from: snapshot) }
+        completion(Timeline(entries: entries, policy: .atEnd))
     }
 
     private func entry(at date: Date, from snapshot: WidgetSnapshot?) -> PaperweightEntry {

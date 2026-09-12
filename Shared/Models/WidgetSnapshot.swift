@@ -126,6 +126,42 @@ extension WidgetSnapshot {
     }
 }
 
+// MARK: - Timeline
+
+extension WidgetSnapshot {
+    /// The instants the widget should render, from `now` to `now + horizon`:
+    /// one every `step`, plus one a second past each boundary in between so the
+    /// state flips sharply rather than up to a step late.
+    ///
+    /// Entries deliberately continue on the far side of every boundary. Each
+    /// one is computed by `state(at:)` for its own instant, so this is pure
+    /// schedule math that stays correct until the snapshot itself changes —
+    /// and a snapshot change triggers its own reload. A timeline that stopped
+    /// at the boundary relied on WidgetKit honouring the reload policy
+    /// promptly, which it does on its own budget; the last entry's "3h 20m"
+    /// then sat frozen on screen for as long as that took.
+    func timelineDates(from now: Date, step: TimeInterval, horizon: TimeInterval,
+                       maxEntries: Int, calendar: Calendar = .current) -> [Date] {
+        let end = now.addingTimeInterval(horizon)
+        var dates = Set<Date>()
+
+        var cursor = now
+        while cursor <= end {
+            dates.insert(cursor)
+            cursor.addTimeInterval(step)
+        }
+
+        var probe = now
+        while let boundary = nextBoundary(at: probe, calendar: calendar), boundary < end {
+            let justPast = boundary.addingTimeInterval(1)
+            dates.insert(justPast)
+            probe = justPast
+        }
+
+        return Array(dates.sorted().prefix(max(1, maxEntries)))
+    }
+}
+
 // MARK: - Value
 
 /// How the widget's headline reads. Only the timed unlock ticks live: at 15
