@@ -22,9 +22,11 @@ final class ConfigStore {
         promoted.promotePendingScheduleIfDue()
         // Only a due promotion clears pendingSchedule here, so this also tells
         // us whether anything actually changed and needs persisting.
-        if config.pendingSchedule != nil && promoted.pendingSchedule == nil {
-            // A failure to persist the promotion must not prevent returning the
-            // promoted config — worst case it's recomputed on the next load.
+        var changed = config.pendingSchedule != nil && promoted.pendingSchedule == nil
+        if promoted.pruneDayExceptions() { changed = true }
+        if changed {
+            // A failure to persist must not prevent returning the promoted,
+            // pruned config — worst case it's recomputed on the next load.
             try? save(promoted)
         }
         return promoted

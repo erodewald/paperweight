@@ -156,6 +156,31 @@ final class WidgetSnapshotTests: XCTestCase {
         XCTAssertNil(readySnapshot().nextBoundary(at: reference))
     }
 
+    /// Sunday 14:00 inside a quiet-all-day exception over a schedule that has a
+    /// Sunday 13–17 open window: quiet, and the boundary is Monday's first open slot.
+    func test_stateAndBoundaryAcrossAnExceptionEdge() throws {
+        var schedule = PaperweightSchedule()
+        for hour in 13..<17 { schedule.setFree(day: 0, hour: hour, true) }
+        for hour in 9..<12 { schedule.setFree(day: 1, hour: hour, true) }
+        var s = readySnapshot(schedule: schedule)
+        let sunday = DayKey(year: 2026, month: 1, day: 4)
+        s.dayExceptions = [DayException(firstDay: sunday, lastDay: sunday, treatment: .quietAllDay)]
+
+        let monday9 = Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 5, hour: 9))!
+        guard case .quietBounded(let ends, _) = s.state(at: reference) else { return XCTFail("expected quietBounded") }
+        XCTAssertEqual(ends, monday9)
+        XCTAssertEqual(s.nextBoundary(at: reference), monday9)
+    }
+
+    func test_dayOffOverAnEmptyScheduleIsOff() {
+        var s = readySnapshot(schedule: PaperweightSchedule())
+        let sunday = DayKey(year: 2026, month: 1, day: 4)
+        s.dayExceptions = [DayException(firstDay: sunday, lastDay: sunday, treatment: .openAllDay)]
+        // Open, and the next quiet slot is Monday 00:00 — a bounded open window.
+        guard case .freeWindow(let ends, _) = s.state(at: reference) else { return XCTFail("expected freeWindow") }
+        XCTAssertEqual(ends, Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 5))!)
+    }
+
     // MARK: Copy
 
     func test_copyNeverSaysBlocked() {
@@ -283,6 +308,21 @@ final class WidgetSnapshotTests: XCTestCase {
         XCTAssertFalse(decoded.hasSelection)
         XCTAssertNil(decoded.schedule)
         XCTAssertEqual(decoded.unlockDuration, Paperweight.defaultUnlockDuration)
+    }
+
+    func test_decodingASnapshotWithoutDayExceptionsGivesAnEmptyList() throws {
+        let data = Data(#"{"isArmed":true}"#.utf8)
+        let s = try JSONDecoder().decode(WidgetSnapshot.self, from: data)
+        XCTAssertEqual(s.dayExceptions, [])
+    }
+
+    func test_snapshotFromConfigCopiesDayExceptions() {
+        var config = PaperweightConfig()
+        config.dayExceptions = [DayException(firstDay: DayKey(year: 2026, month: 9, day: 18),
+                                             lastDay: DayKey(year: 2026, month: 9, day: 18),
+                                             treatment: .quietAllDay)]
+        let s = WidgetSnapshot(config: config, isScreenTimeAuthorized: true)
+        XCTAssertEqual(s.dayExceptions, config.dayExceptions)
     }
 }
 #endif

@@ -7,6 +7,13 @@ final class HomeViewModel: ObservableObject {
     @Published var config: PaperweightConfig
     @Published var error: Error?
 
+    /// Session memory of which planned days a removal truncated to "ends
+    /// tonight" rather than deleting outright, so the list screen can explain
+    /// why a row still shows. Not persisted: the model can't tell a truncated
+    /// range apart from one that was always meant to end today, and by
+    /// tomorrow the exception is pruned anyway.
+    @Published private(set) var truncatedDayExceptionIDs: Set<UUID> = []
+
     private let configStore: ConfigStore
     private let familyService: FamilyControlsServiceProtocol
     private let restrictionService: RestrictionService
@@ -156,11 +163,36 @@ final class HomeViewModel: ObservableObject {
             restrictionService.removeAll()
             return
         }
-        if let schedule = config.schedule, !schedule.isEmpty, schedule.isFree(at: Date()) {
+        if config.resolver.isFree(at: Date()) {
             restrictionService.removeAll()
         } else {
             restrictionService.apply(selection: config.selection, overrides: config.appOverrides)
         }
+    }
+
+    /// Adds a planned day under the deferral rule (see `PaperweightConfig.addDayException`),
+    /// then persists and re-evaluates the shield. Throws `PaperweightConfig.ExceptionError`.
+    func addDayException(_ exception: DayException) throws {
+        try config.addDayException(exception)
+        try configStore.save(config)
+        syncRestrictions()
+    }
+
+    /// Removes a planned day; a quiet day that is today ends tonight instead.
+    @discardableResult
+    func removeDayException(id: UUID) -> PaperweightConfig.ExceptionRemoval {
+        let result = config.removeDayException(id: id)
+        if result == .truncatedToToday { truncatedDayExceptionIDs.insert(id) }
+        try? configStore.save(config)
+        syncRestrictions()
+        return result
+    }
+
+    /// Edits a planned day as one validated change (see `PaperweightConfig.replaceDayException`).
+    func replaceDayException(id: UUID, with edited: DayException) throws {
+        try config.replaceDayException(id: id, with: edited)
+        try configStore.save(config)
+        syncRestrictions()
     }
 
     /// If a requested cool-off unlock has elapsed, disable Paperweight.

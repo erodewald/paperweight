@@ -36,6 +36,10 @@ struct SettingsView: View {
                         NavRow(title: "Schedule", value: scheduleStatusText)
                     }
                     CardDivider()
+                    NavigationLink { DayExceptionsView(vm: vm) } label: {
+                        NavRow(title: "Days off & quiet days", value: vm.config.dayExceptionsRowValue())
+                    }
+                    CardDivider()
                     NavigationLink { NFCSetupView(vm: vm) } label: {
                         NavRow(title: "NFC Token & Recovery")
                     }
@@ -161,7 +165,7 @@ struct SettingsView: View {
 
     private var scheduleStatusText: String {
         guard let s = vm.config.schedule, !s.isEmpty else { return "Set up" }
-        if vm.config.isEnabled && !s.isFree(at: Date()) { return "Quiet now" }
+        if vm.config.isEnabled && !vm.config.resolver.isFree(at: Date()) { return "Quiet now" }
         return "Ready"
     }
 }

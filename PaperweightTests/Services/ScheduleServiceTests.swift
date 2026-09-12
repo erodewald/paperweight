@@ -57,7 +57,8 @@ final class ScheduleServiceTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(heartbeats.count, 3)
         let hours = Set(heartbeats.compactMap { center.schedule(named: $0)?.intervalStart.hour })
         XCTAssertEqual(hours.count, heartbeats.count, "each heartbeat lands at a different hour")
-        XCTAssertTrue(hours.contains(4), "the original 04:00 failsafe stays")
+        XCTAssertTrue(hours.contains(0), "a midnight heartbeat, so whole-day exceptions get their boundary")
+        XCTAssertGreaterThanOrEqual(heartbeats.count, 4)
     }
 
     func test_registersOneActivityPerDistinctFreeWindow() throws {

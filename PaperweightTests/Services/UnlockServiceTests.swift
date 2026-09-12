@@ -109,5 +109,22 @@ final class UnlockServiceTests: XCTestCase {
 
         XCTAssertTrue(service.isUnlocked)
     }
+
+    /// After a relock, the shield follows the resolver: a day off keeps it lifted.
+    @MainActor
+    func test_relock_keepsTheShieldLiftedOnADayOff() throws {
+        var config = PaperweightConfig()
+        config.isEnabled = true
+        config.dayExceptions = [DayException(firstDay: .today(), lastDay: .today(), treatment: .openAllDay)]
+        try configStore.save(config)
+        let shield = MockManagedSettingsStore()
+        let service = UnlockService(configStore: configStore, nfcService: nfcService,
+                                    restrictionService: RestrictionService(store: shield),
+                                    widgetStore: widgetStore, scheduleService: scheduleService)
+
+        service.relock()
+
+        XCTAssertFalse(shield.shieldApplicationsWasSet)
+    }
 }
 #endif

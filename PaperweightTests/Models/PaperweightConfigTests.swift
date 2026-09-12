@@ -88,4 +88,21 @@ final class PaperweightConfigTests: XCTestCase {
         XCTAssertEqual(window?.endHour, 23)
         XCTAssertEqual(window?.endMinute, 59)
     }
+
+    func test_decodingAConfigWithoutDayExceptionsGivesAnEmptyList() throws {
+        let data = Data(#"{"isEnabled":true}"#.utf8)
+        let config = try JSONDecoder().decode(PaperweightConfig.self, from: data)
+        XCTAssertTrue(config.isEnabled)
+        XCTAssertEqual(config.dayExceptions, [])
+    }
+
+    func test_dayExceptionsRoundTrip() throws {
+        var config = PaperweightConfig()
+        config.dayExceptions = [DayException(firstDay: DayKey(year: 2026, month: 9, day: 18),
+                                             lastDay: DayKey(year: 2026, month: 9, day: 18),
+                                             treatment: .openAllDay, note: "Company holiday",
+                                             createdAt: Date(timeIntervalSinceReferenceDate: 800_000_000))]
+        let back = try JSONDecoder().decode(PaperweightConfig.self, from: try JSONEncoder().encode(config))
+        XCTAssertEqual(back.dayExceptions, config.dayExceptions)
+    }
 }

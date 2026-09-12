@@ -31,6 +31,9 @@ struct PaperweightConfig: Codable {
     /// When `pendingSchedule` becomes the active one.
     var pendingScheduleEffectiveAt: Date? = nil
 
+    /// Planned days off and quiet days, layered over the weekly schedule.
+    var dayExceptions: [DayException] = []
+
     /// The moment a pending cool-off unlock will release, if one is requested.
     var coolOffReleaseDate: Date? {
         unlockRequestedAt.map { $0.addingTimeInterval(Double(coolOffDays) * 86400) }
@@ -65,6 +68,7 @@ struct PaperweightConfig: Codable {
         quietTheme = (try? c.decodeIfPresent(QuietTheme.self, forKey: .quietTheme)) ?? .diorama
         pendingSchedule = (try? c.decodeIfPresent(PaperweightSchedule.self, forKey: .pendingSchedule)) ?? nil
         pendingScheduleEffectiveAt = (try? c.decodeIfPresent(Date.self, forKey: .pendingScheduleEffectiveAt)) ?? nil
+        dayExceptions = (try? c.decodeIfPresent([DayException].self, forKey: .dayExceptions)) ?? []
         #if os(iOS)
         selection = try c.decodeIfPresent(FamilyActivitySelection.self, forKey: .selection) ?? .init()
         appOverrides = try c.decodeIfPresent([AppScheduleOverride].self, forKey: .appOverrides) ?? []

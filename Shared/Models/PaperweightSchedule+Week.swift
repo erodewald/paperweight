@@ -14,18 +14,19 @@ extension PaperweightSchedule {
     /// The day's runs in clock order from midnight. Always at least one segment,
     /// and the fractions always sum to 1.
     func daySegments(day: Int) -> [DaySegment] {
+        Self.segments(openSlots: Set((0..<Self.halfHoursPerDay).filter { isFreeSlot(day: day, halfHour: $0) }))
+    }
+
+    /// `daySegments(day:)` for an arbitrary day expressed as its open half-hours
+    /// (0…47) — how the resolver draws an exception day.
+    static func segments(openSlots: Set<Int>) -> [DaySegment] {
         var segments: [DaySegment] = []
         var half = 0
-        while half < Self.halfHoursPerDay {
-            let locked = !isFreeSlot(day: day, halfHour: half)
+        while half < halfHoursPerDay {
+            let locked = !openSlots.contains(half)
             var end = half
-            while end < Self.halfHoursPerDay,
-                  (!isFreeSlot(day: day, halfHour: end)) == locked {
-                end += 1
-            }
-            segments.append(DaySegment(
-                isLocked: locked,
-                fraction: Double(end - half) / Double(Self.halfHoursPerDay)))
+            while end < halfHoursPerDay, (!openSlots.contains(end)) == locked { end += 1 }
+            segments.append(DaySegment(isLocked: locked, fraction: Double(end - half) / Double(halfHoursPerDay)))
             half = end
         }
         return segments

@@ -85,11 +85,11 @@ final class ScheduleService {
         }
     }
 
-    /// Hours at which a heartbeat fires. 04:00 is the original once-a-day
-    /// failsafe; the others exist because DeviceActivity does drop boundary
+    /// Hours at which a heartbeat fires. DeviceActivity does drop boundary
     /// callbacks now and then, and a dropped one used to leave the wrong shield
-    /// state for up to a day. Three a day bounds that to eight hours.
-    static let heartbeatHours = [4, 12, 20]
+    /// state for up to a day; four a day bounds that to six hours. Midnight is
+    /// also the only boundary an open-all-day or quiet-all-day exception has.
+    static let heartbeatHours = [0, 6, 12, 18]
 
     private func registerHeartbeat() {
         for hour in Self.heartbeatHours {

@@ -26,6 +26,7 @@ extension WidgetSnapshot {
         coolOffRequestedAt = config.unlockRequestedAt
         unlockExpiresAt = config.unlockExpiresAt
         unlockDuration = config.unlockDuration
+        dayExceptions = config.dayExceptions
     }
 }
 

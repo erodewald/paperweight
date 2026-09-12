@@ -59,7 +59,7 @@ class PaperweightMonitor: DeviceActivityMonitor {
             return
         }
 
-        if let schedule = config.schedule, !schedule.isEmpty, schedule.isFree(at: now) {
+        if config.resolver.isFree(at: now) {
             service.removeAll()
         } else {
             #if os(iOS)

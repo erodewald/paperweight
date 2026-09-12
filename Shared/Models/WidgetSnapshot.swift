@@ -23,6 +23,7 @@ struct WidgetSnapshot: Codable, Equatable {
     var coolOffRequestedAt: Date? = nil
     var unlockExpiresAt: Date? = nil
     var unlockDuration: TimeInterval = Paperweight.defaultUnlockDuration
+    var dayExceptions: [DayException] = []
     var updatedAt: Date = .distantPast
 
     var hasUnlockMethod: Bool { hasNFCToken || hasRecoveryCodes }
@@ -44,6 +45,7 @@ struct WidgetSnapshot: Codable, Equatable {
         unlockExpiresAt = try c.decodeIfPresent(Date.self, forKey: .unlockExpiresAt)
         unlockDuration = try c.decodeIfPresent(TimeInterval.self, forKey: .unlockDuration)
             ?? Paperweight.defaultUnlockDuration
+        dayExceptions = (try? c.decodeIfPresent([DayException].self, forKey: .dayExceptions)) ?? []
         updatedAt = try c.decodeIfPresent(Date.self, forKey: .updatedAt) ?? .distantPast
     }
 }
@@ -70,6 +72,10 @@ enum WidgetState: Equatable {
 }
 
 extension WidgetSnapshot {
+    func resolver(calendar: Calendar = .current) -> ScheduleResolver {
+        ScheduleResolver(schedule: schedule, exceptions: dayExceptions, calendar: calendar)
+    }
+
     /// Resolves the state at a given instant. Precedence is deliberate and
     /// top-down: setup problems outrank running state (there's no point showing
     /// a countdown to someone who hasn't chosen any apps), and a live timed
@@ -93,16 +99,15 @@ extension WidgetSnapshot {
             return .coolOff(ends: release, fraction: max(0, min(1, fraction)))
         }
 
-        guard let schedule, !schedule.isEmpty else { return .quietOpen }
-
-        if let free = schedule.freeStatus(at: date, calendar: calendar) {
+        let resolver = resolver(calendar: calendar)
+        if let free = resolver.freeStatus(at: date) {
             return .freeWindow(ends: free.ends, fraction: free.elapsedFraction)
         }
-        if schedule.isFree(at: date, calendar: calendar) {
-            // Inside a free window with no boundary ahead (always free).
+        if resolver.isFree(at: date) {
+            // Open with no boundary ahead (always open).
             return .off
         }
-        if let quiet = schedule.quietStatus(at: date, calendar: calendar) {
+        if let quiet = resolver.quietStatus(at: date) {
             return .quietBounded(ends: quiet.ends, fraction: quiet.remainingFraction)
         }
         return .quietOpen
@@ -114,14 +119,9 @@ extension WidgetSnapshot {
         var candidates: [Date] = []
         if let expiry = unlockExpiresAt, date < expiry { candidates.append(expiry) }
         if let release = coolOffReleaseDate, date < release { candidates.append(release) }
-        if let schedule, !schedule.isEmpty {
-            if let quiet = schedule.quietStatus(at: date, calendar: calendar) {
-                candidates.append(quiet.ends)
-            }
-            if let free = schedule.freeStatus(at: date, calendar: calendar) {
-                candidates.append(free.ends)
-            }
-        }
+        let resolver = resolver(calendar: calendar)
+        if let quiet = resolver.quietStatus(at: date) { candidates.append(quiet.ends) }
+        if let free = resolver.freeStatus(at: date) { candidates.append(free.ends) }
         return candidates.min()
     }
 }
