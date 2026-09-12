@@ -84,7 +84,16 @@ struct ScheduleResolver {
 
     private struct Cursor { var day: DayKey; var half: Int }
 
-    private static let maxWalk = PaperweightSchedule.slotCount   // one week of half-hours
+    // Day exceptions can make a run longer than a week (a two-week quiet
+    // range, or a vacation range adjoining a weekend), so this walks 60 days
+    // in either direction rather than 7. The per-day cache below means a
+    // 60-day walk is still cheap. Nil still just means "no boundary within
+    // the walk" — an always-quiet or always-open week never finds one. The
+    // backward walk's silent clamp (falling out of the loop and treating the
+    // truncation point as the run's start) is unchanged: at 60 days it can
+    // only bite on a run longer than two months, and accepting a clamped
+    // fraction in that rare case is fine.
+    private static let maxWalk = 60 * PaperweightSchedule.halfHoursPerDay
 
     private func halfHour(of date: Date) -> Int {
         let c = calendar.dateComponents([.hour, .minute], from: date)

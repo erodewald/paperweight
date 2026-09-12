@@ -119,4 +119,28 @@ final class ScheduleResolverTests: XCTestCase {
     func test_daySegmentsWithoutAnExceptionMatchTheWeeklyGrid() {
         XCTAssertEqual(resolver().daySegments(on: key(5)), weekly.daySegments(day: 1))
     }
+
+    // MARK: Runs longer than a week
+
+    /// A ten-day quiet range. Near its far end the ring fraction must reflect
+    /// the whole run, not a seven-day truncation of it.
+    func test_longQuietRangeFractionUsesTheWholeRun() throws {
+        // Quiet Mon Jan 5 … Wed Jan 14; Thursday Jan 15 opens at 17:00.
+        let r = resolver([DayException(firstDay: key(5), lastDay: key(14), treatment: .quietAllDay)])
+        // Sunday Jan 4 is quiet all day in `weekly`, and Saturday Jan 3 was
+        // open 9–12, so the run starts Saturday Jan 3 12:00.
+        let q = try XCTUnwrap(r.quietStatus(at: jan(14, 12, 0)))
+        XCTAssertEqual(q.ends, jan(15, 17, 0))
+        let starts = jan(3, 12, 0)
+        let total = q.ends.timeIntervalSince(starts)
+        XCTAssertEqual(q.remainingFraction, q.remaining / total, accuracy: 1e-9)
+        XCTAssertGreaterThan(total, 7 * 24 * 3600, "the run really is longer than a week")
+    }
+
+    /// Near the start of the same range the countdown must still find the end.
+    func test_longQuietRangeStillHasACountdownAtItsStart() throws {
+        let r = resolver([DayException(firstDay: key(5), lastDay: key(14), treatment: .quietAllDay)])
+        let q = try XCTUnwrap(r.quietStatus(at: jan(5, 12, 0)))
+        XCTAssertEqual(q.ends, jan(15, 17, 0))
+    }
 }

@@ -150,7 +150,8 @@ Semantics:
   grid's day `w`; no exception → the weekly grid's day for that date's weekday. With
   `schedule == nil` or empty the weekly grid contributes nothing (all quiet), exactly as today.
 - `quietStatus` / `freeStatus` walk half-hour slots forward and backward from `date` using
-  `openSlots(on:)` day by day, capped at 7 days ahead and 7 behind. This replaces the weekly
+  `openSlots(on:)` day by day, capped at 60 days ahead and 60 behind, so a planned range longer
+  than a week still gets a countdown and a correct ring fraction. This replaces the weekly
   functions' modular walk over 336 slots. Boundaries are the same shape (`ends` is the first
   instant of the first slot of the other kind), so callers change nothing but the receiver. Walk
   by `DayKey.next()` rather than adding 86 400 seconds, for the DST reason already documented in
