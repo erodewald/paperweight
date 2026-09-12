@@ -78,7 +78,12 @@ struct ScheduleView: View {
             }
             .padding(.top, 4).padding(.horizontal, 18)
 
-            if blockedRightNow { lockWarning }
+            // Always laid out, only sometimes visible: painting across "now"
+            // used to insert this row mid-drag, which shoved the grid down
+            // under the finger and painted cells the user never touched.
+            lockWarning
+                .opacity(blockedRightNow ? 1 : 0)
+                .accessibilityHidden(!blockedRightNow)
 
             GeometryReader { geo in
                 // Clamp to non-negative: during transient layout passes geo.size
