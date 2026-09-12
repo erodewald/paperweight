@@ -26,4 +26,12 @@ final class HomeCopyTests: XCTestCase {
         XCTAssertEqual(HomeCopy.countdown(0), "0m")
         XCTAssertEqual(HomeCopy.countdown(-90), "0m")
     }
+
+    /// The locked screen's big number follows the widget past a day: "51:30"
+    /// is not a countdown anyone reads, "2 days" is.
+    func test_countdown_speaksInDaysPastTwentyFourHours() {
+        XCTAssertEqual(HomeCopy.countdown(24 * 3600), "1 day")
+        XCTAssertEqual(HomeCopy.countdown(63 * 3600 + 44 * 60), "2½ days")
+        XCTAssertEqual(HomeCopy.countdown(23 * 3600 + 59 * 60), "23:59")
+    }
 }
