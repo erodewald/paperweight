@@ -19,9 +19,14 @@ final class ScheduleService {
     static let shared = ScheduleService()
     private let center: DeviceActivityMonitoring
 
-    /// DeviceActivity caps the number of simultaneously monitored activities.
-    /// We stay well under it; complex schedules are merged into distinct windows.
-    private let maxActivities = 18
+    /// DeviceActivity allows this many monitored activities in total and throws
+    /// `MonitoringError.excessiveActivities` for any beyond it.
+    static let activityCap = 20
+
+    /// How many schedule windows fit once the heartbeats and a possible unlock
+    /// expiry have taken their slots. Complex schedules are merged into distinct
+    /// windows first, so a real schedule rarely comes near this.
+    private var maxWindows: Int { Self.activityCap - Self.heartbeatHours.count - 1 }
 
     /// DeviceActivity refuses intervals shorter than this
     /// (`MonitoringError.intervalTooShort`).
@@ -65,7 +70,7 @@ final class ScheduleService {
             ($0.startHour, $0.startMinute, $0.endHour, $0.endMinute)
                 < ($1.startHour, $1.startMinute, $1.endHour, $1.endMinute)
         }
-        for (index, window) in ordered.prefix(maxActivities).enumerated() {
+        for (index, window) in ordered.prefix(maxWindows).enumerated() {
             let name = DeviceActivityName("\(Paperweight.activityName).\(index)")
             let deviceSchedule = DeviceActivitySchedule(
                 intervalStart: window.startComponents,

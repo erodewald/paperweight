@@ -112,7 +112,7 @@ struct HomeView: View {
         .onOpenURL { url in handleWidgetLink(url) }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
-                vm.syncRestrictions()
+                vm.refresh()
                 ScheduleService.shared.sync(config: vm.config)
             }
         }

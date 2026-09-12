@@ -73,6 +73,23 @@ final class ScheduleServiceTests: XCTestCase {
         XCTAssertTrue(first.repeats)
     }
 
+    /// DeviceActivity allows 20 activities in total, and throws
+    /// `excessiveActivities` (silently dropping the window) past that. The
+    /// heartbeats and a possible unlock expiry have to fit inside the cap too.
+    func test_neverExceedsTheDeviceActivityCap() {
+        var s = PaperweightSchedule()
+        // 24 distinct one-hour windows, one per even hour across two days.
+        for hour in stride(from: 0, to: 24, by: 1) { s.setFree(day: hour % 7, halfHour: hour * 2, true) }
+        var c = armed(schedule: s)
+        c.unlockExpiresAt = sunday(10, 18)
+        service.sync(config: c, now: sunday(10, 3))
+
+        XCTAssertLessThanOrEqual(center.names.count, 20)
+        XCTAssertNotNil(center.schedule(named: "\(Paperweight.activityName).unlockExpiry"))
+        XCTAssertEqual(center.names.filter { $0.hasPrefix("\(Paperweight.activityName).heartbeat") }.count,
+                       ScheduleService.heartbeatHours.count)
+    }
+
     // MARK: Pending (deferred-loosening) schedule
 
     /// A loosening lands at the day boundary inside the monitor, which can't
