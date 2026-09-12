@@ -228,8 +228,7 @@ Decisions from the mockup session; copy follows the house rules (the word is "qu
 - Pills: **"Open all day"** (`PW.sage` text, 50% sage border), **"Quiet all day"** (moss fill
   at 18%, `PW.moss` text), **"Like Saturday"** (`PW.textMuted`, 18% white border). Grotesk 13,
   sentence case, no tracking (the mockup's 11pt uppercase is under the text floor).
-- Swipe-to-remove, `PW.clay`, label **"Remove"**. When removal truncates, the row moves to the
-  Today section with the second line **"Ends tonight · removing a quiet day lands tomorrow"**.
+- Swipe-to-remove, `PW.clay`, label **"Remove"**. When removal truncates, the row moves to the Today section with the second line **"Ends tonight · the change lands tomorrow"**; any other exception ending today reads **"Ends tonight"** followed by its note.
 - Footer under the list, grotesk 13 `PW.textFaint`, two lines:
   **"A day off has to be set the day before."** / **"A quiet day can start right now."**
 - `AccentButton` **"Add a day"** at the bottom, same target as `+`.
