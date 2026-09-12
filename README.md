@@ -57,3 +57,7 @@ xcodebuild -project Paperweight.xcodeproj -scheme PaperweightTests \
 Changes go through pull requests against `main`. Work is tracked in Issues, resolved by PRs.
 
 Every PR runs [CI](.github/workflows/ci.yml): XcodeGen generates the project, the app + monitor + widget are built for the Simulator, and the unit tests run. It needs **no secrets** — simulator builds don't sign, so `DEVELOPMENT_TEAM` stays empty there just as it does in a fresh clone. A second job fails the build if a real Team ID is ever committed.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
