@@ -41,11 +41,14 @@ final class DayKeyTests: XCTestCase {
         XCTAssertEqual(DayKey(year: 2026, month: 1, day: 10).weekdayIndex(calendar: cal), 6)
     }
 
-    func test_weekContainingRunsSundayToSaturday() {
-        let week = DayKey.week(containing: DayKey(year: 2026, month: 1, day: 7), calendar: cal)
-        XCTAssertEqual(week.first, DayKey(year: 2026, month: 1, day: 4))
-        XCTAssertEqual(week.last, DayKey(year: 2026, month: 1, day: 10))
+    /// The Home strip is an outlook, not a calendar week: it starts today.
+    func test_weekAheadStartsTodayAndRunsSevenDays() {
+        // 2026-01-10 is a Saturday; the calendar week would be almost all past.
+        let week = DayKey.weekAhead(from: DayKey(year: 2026, month: 1, day: 10), calendar: cal)
+        XCTAssertEqual(week.first, DayKey(year: 2026, month: 1, day: 10))
+        XCTAssertEqual(week.last, DayKey(year: 2026, month: 1, day: 16))
         XCTAssertEqual(week.count, 7)
+        XCTAssertEqual(week.map { $0.weekdayIndex(calendar: cal) }, [6, 0, 1, 2, 3, 4, 5])
     }
 
     func test_codableRoundTripsAsISODateString() throws {

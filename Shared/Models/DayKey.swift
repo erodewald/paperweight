@@ -43,11 +43,10 @@ struct DayKey: Hashable, Comparable, Codable {
         (calendar.component(.weekday, from: date(calendar: calendar)) - 1 + 7) % 7
     }
 
-    /// Sunday through Saturday of the week containing `day`, in that order —
-    /// the rows of the Home week strip.
-    static func week(containing day: DayKey, calendar: Calendar = .current) -> [DayKey] {
-        let sunday = day.advanced(by: -day.weekdayIndex(calendar: calendar), calendar: calendar)
-        return (0..<7).map { sunday.advanced(by: $0, calendar: calendar) }
+    /// `day` and the six days after it — the Home strip's outlook. Deliberately
+    /// not the calendar week: on a Saturday that would be six days already gone.
+    static func weekAhead(from day: DayKey, calendar: Calendar = .current) -> [DayKey] {
+        (0..<7).map { day.advanced(by: $0, calendar: calendar) }
     }
 
     static func < (a: DayKey, b: DayKey) -> Bool {
