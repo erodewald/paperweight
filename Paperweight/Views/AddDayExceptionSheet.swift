@@ -159,12 +159,15 @@ struct AddDayExceptionSheet: View {
         from = e.firstDay
         to = e.lastDay == e.firstDay ? nil : e.lastDay
         note = e.note
+        clampStart()
     }
 
     /// If the treatment changed to one that cannot start today, move a
-    /// today-start to tomorrow rather than leaving an unsaveable form.
+    /// today-start to tomorrow rather than leaving an unsaveable form. A start
+    /// already in the past (a range that is running) is left alone: the replace
+    /// rule keeps today as it is and applies the change from tomorrow.
     private func clampStart() {
-        if editing == nil, from < earliestStart { from = earliestStart }
+        if from >= .today(), from < earliestStart { from = earliestStart }
         errorText = nil
     }
 
