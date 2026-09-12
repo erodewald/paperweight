@@ -131,6 +131,19 @@ final class HomeViewModel: ObservableObject {
         publishWidgetSnapshot()
     }
 
+    /// Reloads the persisted config and brings the shield in line with it.
+    ///
+    /// Call this on foreground rather than `syncRestrictions()` alone. The
+    /// unlock service (its own instance per screen) and the monitor extension
+    /// write to the same persisted config through their own stores, so the
+    /// in-memory copy here can be stale: a timed unlock granted on the unlock
+    /// screen is not in `config` until it is read back. Syncing from the stale
+    /// copy would re-shield a live unlock and drop its DeviceActivity expiry.
+    func refresh() {
+        config = configStore.load()
+        syncRestrictions()
+    }
+
     /// Brings the shield in line with the current config: lifted when disabled,
     /// mid-unlock, or inside a free window; applied otherwise. Safe to call any
     /// time.

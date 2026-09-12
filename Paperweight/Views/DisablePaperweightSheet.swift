@@ -140,7 +140,7 @@ struct DisablePaperweightSheet: View {
             // second "are you sure" prompt.
             try await unlockService.verifyTag()
             try? await vm.disablePaperweight()
-            ScheduleService.shared.updateSchedule(nil, enabled: false)
+            ScheduleService.shared.sync(config: vm.config)
             dismiss()
         } catch is CancellationError {
         } catch { self.error = error }
@@ -250,7 +250,7 @@ struct RecoveryCodeEntryView: View {
         // Invalidate + disable immediately so the code is spent even if the app
         // is killed mid-animation, then play the dissolve and exit.
         vm.disableWithRecoveryCode(codeID)
-        ScheduleService.shared.updateSchedule(nil, enabled: false)
+        ScheduleService.shared.sync(config: vm.config)
         Task { @MainActor in
             withAnimation { dissolving = true }
             try? await Task.sleep(for: .seconds(1.3))

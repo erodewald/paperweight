@@ -112,8 +112,8 @@ struct HomeView: View {
         .onOpenURL { url in handleWidgetLink(url) }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
-                vm.syncRestrictions()
-                ScheduleService.shared.updateSchedule(vm.config.schedule, enabled: vm.config.isEnabled)
+                vm.refresh()
+                ScheduleService.shared.sync(config: vm.config)
             }
         }
         .sheet(isPresented: $showingDisableSheet) {
@@ -412,7 +412,7 @@ struct HomeView: View {
         guard vm.hasAppsSelected else { showNeedsApps = true; return }
         guard vm.hasUnlockMethod else { showNeedsUnlock = true; return }
         await vm.setEnabled(true)
-        ScheduleService.shared.updateSchedule(vm.config.schedule, enabled: true)
+        ScheduleService.shared.sync(config: vm.config)
     }
 
     private func handlePendingShortcut() {

@@ -19,6 +19,33 @@ final class HomeViewModelTests: XCTestCase {
         widgetStore = WidgetSnapshotStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
     }
 
+    /// The unlock service and the monitor extension write to the same persisted
+    /// config through their own stores. On foreground the view model must read
+    /// what they wrote before deciding what the shield and the DeviceActivity
+    /// registrations should be — otherwise a live unlock is re-shielded early
+    /// and its expiry activity is dropped.
+    @MainActor
+    func test_refresh_picksUpAnUnlockGrantedThroughAnotherStore() throws {
+        familyService.isAuthorized = true
+        var config = PaperweightConfig()
+        config.isEnabled = true
+        try configStore.save(config)
+        let shield = MockManagedSettingsStore()
+        let vm = HomeViewModel(configStore: configStore, familyService: familyService,
+                               restrictionService: RestrictionService(store: shield), widgetStore: widgetStore)
+
+        // Another instance — as UnlockService has — grants a timed unlock.
+        var onDisk = configStore.load()
+        onDisk.unlockExpiresAt = Date().addingTimeInterval(600)
+        try configStore.save(onDisk)
+
+        vm.refresh()
+
+        XCTAssertNotNil(vm.config.unlockExpiresAt)
+        XCTAssertTrue(shield.shieldWasCleared)
+        XCTAssertFalse(shield.shieldApplicationsWasSet, "a live unlock must not be re-shielded on foreground")
+    }
+
     @MainActor
     func test_enable_requestsAuthorizationIfNeeded() async {
         familyService.isAuthorized = false
