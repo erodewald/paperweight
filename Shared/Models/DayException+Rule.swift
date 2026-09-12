@@ -80,6 +80,52 @@ extension PaperweightConfig {
         return .removed
     }
 
+    /// Replaces an exception with an edited one as a single validated change —
+    /// nothing is mutated unless every check passes.
+    ///
+    /// The deferral rule for an edit: if the edited exception would open any
+    /// half-hour today that is quiet right now, today keeps the old exception
+    /// (truncated to end tonight) and the new one begins tomorrow. Otherwise the
+    /// edit applies outright. An unknown id falls back to a plain add.
+    mutating func replaceDayException(id: UUID, with edited: DayException,
+                                      now: Date = Date(), calendar: Calendar = .current) throws {
+        guard let index = dayExceptions.firstIndex(where: { $0.id == id }) else {
+            try addDayException(edited, now: now, calendar: calendar)
+            return
+        }
+        guard edited.firstDay <= edited.lastDay else { throw ExceptionError.endsBeforeStart }
+        let others = dayExceptions.filter { $0.id != id }
+        if let other = others.first(where: { $0.overlaps(edited) }) {
+            throw ExceptionError.overlaps(other)
+        }
+        let today = DayKey(now, calendar: calendar)
+        guard edited.lastDay >= today else { throw ExceptionError.loosensToday }
+
+        var replacement = edited
+        replacement.note = String(replacement.note.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    .prefix(Self.dayExceptionNoteLimit))
+        var result = others
+
+        let before = resolver(calendar: calendar).openSlots(on: today)
+        let after = ScheduleResolver(schedule: schedule, exceptions: others + [replacement],
+                                     calendar: calendar).openSlots(on: today)
+        if !after.isSubset(of: before) {
+            // Opening something today has to wait: keep today as it is, start tomorrow.
+            let tomorrow = today.next(calendar: calendar)
+            guard replacement.lastDay >= tomorrow else { throw ExceptionError.loosensToday }
+            replacement.firstDay = max(replacement.firstDay, tomorrow)
+            var old = dayExceptions[index]
+            if old.covers(today) {
+                old.lastDay = today
+                result.append(old)
+            }
+        }
+
+        result.append(replacement)
+        result.sort { $0.firstDay < $1.firstDay }
+        dayExceptions = result
+    }
+
     /// Drops exceptions that ended before today. Returns whether anything changed.
     @discardableResult
     mutating func pruneDayExceptions(now: Date = Date(), calendar: Calendar = .current) -> Bool {

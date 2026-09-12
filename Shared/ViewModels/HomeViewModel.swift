@@ -188,6 +188,13 @@ final class HomeViewModel: ObservableObject {
         return result
     }
 
+    /// Edits a planned day as one validated change (see `PaperweightConfig.replaceDayException`).
+    func replaceDayException(id: UUID, with edited: DayException) throws {
+        try config.replaceDayException(id: id, with: edited)
+        try configStore.save(config)
+        syncRestrictions()
+    }
+
     /// If a requested cool-off unlock has elapsed, disable Paperweight.
     private func enforceCoolOffExpiry() {
         guard config.isEnabled, let release = config.coolOffReleaseDate else { return }

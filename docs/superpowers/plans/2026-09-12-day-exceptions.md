@@ -1091,8 +1091,8 @@ git commit -m "feat: add, remove and prune day exceptions under the deferral rul
 - Test: additions to `PaperweightTests/Services/HomeViewModelTests.swift`, `PaperweightTests/Services/UnlockServiceTests.swift`, `PaperweightTests/Services/ScheduleServiceTests.swift`
 
 **Interfaces:**
-- Consumes: `PaperweightConfig.resolver`, `addDayException`, `removeDayException`, `ExceptionRemoval`.
-- Produces on `HomeViewModel`: `func addDayException(_ e: DayException) throws`, `@discardableResult func removeDayException(id: UUID) -> PaperweightConfig.ExceptionRemoval`. `ScheduleService.heartbeatHours == [0, 6, 12, 18]`.
+- Consumes: `PaperweightConfig.resolver`, `addDayException`, `removeDayException`, `replaceDayException`, `ExceptionRemoval`.
+- Produces on `HomeViewModel`: `func addDayException(_ e: DayException) throws`, `@discardableResult func removeDayException(id: UUID) -> PaperweightConfig.ExceptionRemoval`, `func replaceDayException(id: UUID, with edited: DayException) throws`. `ScheduleService.heartbeatHours == [0, 6, 12, 18]`.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -1963,7 +1963,7 @@ git commit -m "feat: the days off & quiet days list"
 - Modify (replace in full): `Paperweight/Views/AddDayExceptionSheet.swift`
 
 **Interfaces:**
-- Consumes: `HomeViewModel.addDayException(_:)`, `removeDayException(id:)`, `PaperweightConfig.exceptionLoosens(_:on:)`, `ExceptionError`, `DayException.dateLabel`, `PWSegmented`, `DayKey`.
+- Consumes: `HomeViewModel.addDayException(_:)`, `removeDayException(id:)`, `replaceDayException(id:with:)`, `PaperweightConfig.exceptionLoosens(_:on:)`, `ExceptionError`, `DayException.dateLabel`, `PWSegmented`, `DayKey`.
 - Produces: `AddDayExceptionSheet(vm:editing:)`.
 
 No unit test: SwiftUI glue over tested rules. The one piece of logic here — which dates the picker allows — is a direct call to `exceptionLoosens`.
@@ -2016,7 +2016,7 @@ struct AddDayExceptionSheet: View {
     }
 
     private var pickerRange: ClosedRange<Date> {
-        let lower = (field == .from ? earliestStart : from).date()
+        let lower = (field == .from ? min(from, earliestStart) : from).date()
         return lower...Calendar.current.date(byAdding: .year, value: 2, to: lower)!
     }
 
@@ -2129,15 +2129,17 @@ struct AddDayExceptionSheet: View {
         case .quietAllDay: kind = .quiet
         case .likeWeekday(let w): kind = .like; weekday = w
         }
-        from = max(e.firstDay, .today())
+        from = e.firstDay
         to = e.lastDay == e.firstDay ? nil : e.lastDay
         note = e.note
     }
 
     /// If the treatment changed to one that cannot start today, move a
-    /// today-start to tomorrow rather than leaving an unsaveable form.
+    /// today-start to tomorrow rather than leaving an unsaveable form. Not
+    /// applied while editing: `seed()` may have set `from` in the past, and
+    /// `replaceDayException` handles that case on its own.
     private func clampStart() {
-        if from < earliestStart { from = earliestStart }
+        if editing == nil, from < earliestStart { from = earliestStart }
         errorText = nil
     }
 
@@ -2145,9 +2147,10 @@ struct AddDayExceptionSheet: View {
         let new = DayException(firstDay: from, lastDay: to ?? from, treatment: treatment, note: note)
         do {
             if let old = editing {
-                vm.removeDayException(id: old.id)
+                try vm.replaceDayException(id: old.id, with: new)
+            } else {
+                try vm.addDayException(new)
             }
-            try vm.addDayException(new)
             dismiss()
         } catch let error as PaperweightConfig.ExceptionError {
             switch error {

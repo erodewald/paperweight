@@ -84,6 +84,9 @@ extension PaperweightConfig {
     /// Whether `treatment` on `day` would open any slot that is quiet under the schedule in
     /// force that day. Pure; used by the add sheet to grey out today.
     func exceptionLoosens(_ treatment: DayException.Treatment, on day: DayKey) -> Bool
+
+    /// Replaces an exception with an edited one as a single validated change, or throws.
+    mutating func replaceDayException(id: UUID, with edited: DayException, now: Date = Date(), calendar: Calendar = .current) throws
 }
 ```
 
@@ -107,8 +110,10 @@ Precisely:
   deleted but **truncated**: `lastDay = today` (the exception necessarily started on or before
   today, so `firstDay <= lastDay` still holds). Otherwise it is removed outright. In practice:
   removing a day off is immediate; removing a quiet day that is today "ends tonight".
-- **Editing is add + remove.** The UI edits an exception by removing it and adding the edited
-  one; both halves apply their own rule. That keeps one code path.
+- **Editing is one validated change.** `replaceDayException(id:with:)` checks overlap (against
+  the other exceptions), ordering and the deferral rule before mutating anything. If the edit
+  would open a half-hour today that is quiet now, today keeps the old exception (truncated to
+  end tonight) and the edited one begins tomorrow; otherwise it applies outright.
 - **Overlap** is rejected on add with the offending exception, so the sheet can name it.
 - **Pruning.** `ConfigStore.load()` drops exceptions whose `lastDay < today`, next to where it
   promotes a pending schedule, and persists when anything was dropped.
@@ -265,9 +270,9 @@ Decisions from the mockup session; copy follows the house rules (the word is "qu
 
 ### 7f. Edit
 
-- Tapping a row opens the same sheet pre-filled, title **"Edit day"**. Save = remove old +
-  add new under the rule; if the remove truncates and the add starts tomorrow, the user sees
-  both rows (one "ends tonight", one upcoming), which is the honest picture.
+- Tapping a row opens the same sheet pre-filled, title **"Edit day"**. Save calls
+  `replaceDayException`; when the edit loosens today the user sees both rows (the old one
+  "ends tonight", the edited one from tomorrow), which is the honest picture.
 
 ## 8. Testing
 

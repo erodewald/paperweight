@@ -141,6 +141,101 @@ final class DayExceptionRuleTests: XCTestCase {
         XCTAssertEqual(c.removeDayException(id: UUID(), now: now, calendar: cal), .notFound)
     }
 
+    // MARK: Replacing (edit)
+
+    /// Editing only the note of a range that is in force today keeps the range whole.
+    func test_replaceNoteOnlyOnARunningRangeKeepsItWhole() throws {
+        var c = armedConfig()
+        var old = exception(4, 9, .quietAllDay)        // Sun–Fri, today is Mon
+        old.note = "Exams"
+        c.dayExceptions = [old]
+        var new = old
+        new.note = "Finals"
+        try c.replaceDayException(id: old.id, with: new, now: now, calendar: cal)
+        XCTAssertEqual(c.dayExceptions.count, 1)
+        XCTAssertEqual(c.dayExceptions[0].firstDay, key(4))
+        XCTAssertEqual(c.dayExceptions[0].lastDay, key(9))
+        XCTAssertEqual(c.dayExceptions[0].note, "Finals")
+    }
+
+    /// Shortening a running quiet range changes nothing about today: applied outright.
+    func test_replaceShorteningARunningRangeAppliesOutright() throws {
+        var c = armedConfig()
+        let old = exception(4, 9, .quietAllDay)
+        c.dayExceptions = [old]
+        var new = old
+        new.lastDay = key(6)
+        try c.replaceDayException(id: old.id, with: new, now: now, calendar: cal)
+        XCTAssertEqual(c.dayExceptions.map(\.lastDay), [key(6)])
+    }
+
+    /// Turning a running quiet range into a day off would open tonight: today keeps
+    /// the old exception and the new one begins tomorrow.
+    func test_replaceThatLoosensTodayKeepsTodayAndStartsTomorrow() throws {
+        var c = armedConfig()
+        let old = exception(4, 9, .quietAllDay)
+        c.dayExceptions = [old]
+        var new = old
+        new.treatment = .openAllDay
+        try c.replaceDayException(id: old.id, with: new, now: now, calendar: cal)
+        XCTAssertEqual(c.dayExceptions.count, 2)
+        XCTAssertEqual(c.dayExceptions[0].id, old.id)
+        XCTAssertEqual(c.dayExceptions[0].lastDay, key(5), "the old quiet day ends tonight")
+        XCTAssertEqual(c.dayExceptions[1].firstDay, key(6))
+        XCTAssertEqual(c.dayExceptions[1].lastDay, key(9))
+        XCTAssertEqual(c.dayExceptions[1].treatment, .openAllDay)
+    }
+
+    /// A loosening edit that would only ever apply today has nothing left to apply.
+    func test_replaceThatLoosensOnlyTodayIsRefused() {
+        var c = armedConfig()
+        let old = exception(5, 5, .quietAllDay)
+        c.dayExceptions = [old]
+        var new = old
+        new.treatment = .openAllDay
+        XCTAssertThrowsError(try c.replaceDayException(id: old.id, with: new, now: now, calendar: cal)) {
+            XCTAssertEqual($0 as? PaperweightConfig.ExceptionError, .loosensToday)
+        }
+        XCTAssertEqual(c.dayExceptions, [old], "nothing changed")
+    }
+
+    func test_replaceOverlappingAnotherIsRefusedAndChangesNothing() throws {
+        var c = armedConfig()
+        let old = exception(6, 6, .openAllDay)
+        let other = exception(8, 9, .openAllDay)
+        c.dayExceptions = [old, other]
+        var new = old
+        new.lastDay = key(8)
+        XCTAssertThrowsError(try c.replaceDayException(id: old.id, with: new, now: now, calendar: cal)) {
+            XCTAssertEqual($0 as? PaperweightConfig.ExceptionError, .overlaps(other))
+        }
+        XCTAssertEqual(c.dayExceptions, [old, other])
+    }
+
+    func test_replaceAnUpcomingExceptionMovesIt() throws {
+        var c = armedConfig()
+        let old = exception(9, 9, .openAllDay)
+        c.dayExceptions = [old]
+        var new = old
+        new.firstDay = key(10); new.lastDay = key(10)
+        try c.replaceDayException(id: old.id, with: new, now: now, calendar: cal)
+        XCTAssertEqual(c.dayExceptions.map(\.firstDay), [key(10)])
+    }
+
+    /// Editing an upcoming day off into one that starts today is a loosening today:
+    /// it begins tomorrow instead.
+    func test_replacePullingADayOffForwardToTodayStartsTomorrow() throws {
+        var c = armedConfig()
+        let old = exception(9, 9, .openAllDay)
+        c.dayExceptions = [old]
+        var new = old
+        new.firstDay = key(5)
+        try c.replaceDayException(id: old.id, with: new, now: now, calendar: cal)
+        XCTAssertEqual(c.dayExceptions.count, 1)
+        XCTAssertEqual(c.dayExceptions[0].firstDay, key(6))
+        XCTAssertEqual(c.dayExceptions[0].lastDay, key(9))
+    }
+
     // MARK: Pruning and listing
 
     func test_pruneDropsPastKeepsTodayAndLater() {

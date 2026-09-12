@@ -43,7 +43,7 @@ struct AddDayExceptionSheet: View {
     }
 
     private var pickerRange: ClosedRange<Date> {
-        let lower = (field == .from ? earliestStart : from).date()
+        let lower = (field == .from ? min(from, earliestStart) : from).date()
         return lower...Calendar.current.date(byAdding: .year, value: 2, to: lower)!
     }
 
@@ -156,7 +156,7 @@ struct AddDayExceptionSheet: View {
         case .quietAllDay: kind = .quiet
         case .likeWeekday(let w): kind = .like; weekday = w
         }
-        from = max(e.firstDay, .today())
+        from = e.firstDay
         to = e.lastDay == e.firstDay ? nil : e.lastDay
         note = e.note
     }
@@ -164,7 +164,7 @@ struct AddDayExceptionSheet: View {
     /// If the treatment changed to one that cannot start today, move a
     /// today-start to tomorrow rather than leaving an unsaveable form.
     private func clampStart() {
-        if from < earliestStart { from = earliestStart }
+        if editing == nil, from < earliestStart { from = earliestStart }
         errorText = nil
     }
 
@@ -172,9 +172,10 @@ struct AddDayExceptionSheet: View {
         let new = DayException(firstDay: from, lastDay: to ?? from, treatment: treatment, note: note)
         do {
             if let old = editing {
-                vm.removeDayException(id: old.id)
+                try vm.replaceDayException(id: old.id, with: new)
+            } else {
+                try vm.addDayException(new)
             }
-            try vm.addDayException(new)
             dismiss()
         } catch let error as PaperweightConfig.ExceptionError {
             switch error {
