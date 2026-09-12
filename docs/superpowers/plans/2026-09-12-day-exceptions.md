@@ -1785,8 +1785,20 @@ import SwiftUI
 /// swipe-to-remove comes for free; styled to sit with the grouped cards.
 struct DayExceptionsView: View {
     @ObservedObject var vm: HomeViewModel
-    @State private var editing: DayException?
-    @State private var adding = false
+
+    /// One sheet, one presentation target: SwiftUI honours only one `.sheet`
+    /// per view, so add and edit share it.
+    private enum SheetTarget: Identifiable {
+        case add
+        case edit(DayException)
+        var id: String {
+            switch self {
+            case .add: return "add"
+            case .edit(let e): return e.id.uuidString
+            }
+        }
+    }
+    @State private var sheet: SheetTarget?
 
     private var today: DayKey { .today() }
     private var upcoming: [DayException] { vm.config.upcomingDayExceptions() }
@@ -1824,7 +1836,7 @@ struct DayExceptionsView: View {
         .scrollContentBackground(.hidden)
         .pwScreen()
         .safeAreaInset(edge: .bottom) {
-            AccentButton(title: "Add a day") { adding = true }
+            AccentButton(title: "Add a day") { sheet = .add }
                 .padding(.horizontal, 20).padding(.bottom, 12)
                 .background(PW.black.opacity(0.9))
         }
@@ -1832,18 +1844,20 @@ struct DayExceptionsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button { adding = true } label: {
+                Button { sheet = .add } label: {
                     Image(systemName: "plus").foregroundStyle(PW.sage)
                 }
             }
         }
-        .sheet(isPresented: $adding) {
-            AddDayExceptionSheet(vm: vm, editing: nil)
-                .presentationDragIndicator(.visible)
-        }
-        .sheet(item: $editing) { e in
-            AddDayExceptionSheet(vm: vm, editing: e)
-                .presentationDragIndicator(.visible)
+        .sheet(item: $sheet) { target in
+            switch target {
+            case .add:
+                AddDayExceptionSheet(vm: vm, editing: nil)
+                    .presentationDragIndicator(.visible)
+            case .edit(let e):
+                AddDayExceptionSheet(vm: vm, editing: e)
+                    .presentationDragIndicator(.visible)
+            }
         }
     }
 
@@ -1869,7 +1883,7 @@ struct DayExceptionsView: View {
     }
 
     private func row(_ e: DayException) -> some View {
-        Button { editing = e } label: {
+        Button { sheet = .edit(e) } label: {
             VStack(alignment: .leading, spacing: 3) {
                 HStack(alignment: .firstTextBaseline) {
                     Text(e.dateLabel())
