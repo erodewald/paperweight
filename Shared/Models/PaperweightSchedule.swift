@@ -53,6 +53,31 @@ struct PaperweightSchedule: Codable, Equatable {
         return isFreeSlot(day: weekday - 1, halfHour: half)
     }
 
+    /// How close to a half-hour mark a boundary callback may run and still be
+    /// read as that mark. DeviceActivity fires on time or a little late, never
+    /// minutes early, so this only ever catches the deliberate 23:59 end and
+    /// clock jitter.
+    static let boundarySnapTolerance: TimeInterval = 3 * 60
+
+    /// The instant a DeviceActivity boundary callback should evaluate the
+    /// schedule at.
+    ///
+    /// Callbacks arrive at the literal boundary time, and a free window that
+    /// runs to midnight ends at 23:59 because DeviceActivity can't express
+    /// 24:00. Evaluating `isFree(at:)` at 23:59 lands in the still-free 23:30
+    /// slot, so the shield never came back until the next callback. When `now`
+    /// sits within `boundarySnapTolerance` before a half-hour mark, this returns
+    /// the mark itself — the far side of the boundary the callback is for.
+    static func boundaryInstant(near now: Date, calendar: Calendar = .current) -> Date {
+        let comps = calendar.dateComponents([.hour, .minute, .second], from: now)
+        let minute = comps.minute ?? 0
+        let second = comps.second ?? 0
+        let secondsIntoHalfHour = Double((minute % 30) * 60 + second)
+        let untilMark = 30 * 60 - secondsIntoHalfHour
+        guard untilMark <= boundarySnapTolerance else { return now }
+        return now.addingTimeInterval(untilMark)
+    }
+
     /// Distinct daily time windows during which apps are free, derived from the
     /// grid. Each window is a contiguous run of free half-hours within a single
     /// day, de-duplicated across days (DeviceActivity schedules repeat daily and

@@ -23,7 +23,12 @@ class PaperweightMonitor: DeviceActivityMonitor {
     /// window registers a daily-repeating schedule, this runs at each boundary;
     /// the weekday check inside `isFree(at:)` makes days with no free window a
     /// no-op (shield stays applied).
+    ///
+    /// Evaluated at the boundary the callback stands for, not the raw clock:
+    /// a window ending at 23:59 must be read as midnight, or the shield never
+    /// returns. See `PaperweightSchedule.boundaryInstant(near:)`.
     private func syncShield() {
+        let now = PaperweightSchedule.boundaryInstant(near: Date())
         var config = configStore.load()
         let service = RestrictionService(store: managedStore)
         defer { widgetStore.write(config: config) }
@@ -32,7 +37,7 @@ class PaperweightMonitor: DeviceActivityMonitor {
         // elapsed, disable everything. This runs in the extension — which is
         // never shielded — so it releases even if the app itself was blocked.
         // The daily heartbeat guarantees it runs.
-        if config.isEnabled, let release = config.coolOffReleaseDate, Date() >= release {
+        if config.isEnabled, let release = config.coolOffReleaseDate, now >= release {
             config.isEnabled = false
             config.unlockRequestedAt = nil
             config.unlockExpiresAt = nil
@@ -44,17 +49,17 @@ class PaperweightMonitor: DeviceActivityMonitor {
         // A timed NFC unlock that outlived the app: clear it once it has closed,
         // so the boundary we're handling re-applies the shield instead of the
         // stale expiry keeping it lifted.
-        if let expiry = config.unlockExpiresAt, Date() >= expiry {
+        if let expiry = config.unlockExpiresAt, now >= expiry {
             config.unlockExpiresAt = nil
             try? configStore.save(config)
         }
 
-        guard config.isEnabled, !config.isUnlocked() else {
+        guard config.isEnabled, !config.isUnlocked(at: now) else {
             service.removeAll()
             return
         }
 
-        if let schedule = config.schedule, !schedule.isEmpty, schedule.isFree(at: Date()) {
+        if let schedule = config.schedule, !schedule.isEmpty, schedule.isFree(at: now) {
             service.removeAll()
         } else {
             #if os(iOS)
