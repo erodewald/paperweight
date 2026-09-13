@@ -176,25 +176,54 @@ full before/after list is in the Phase 1 plan; each is a one-line change.
 
 ## 7. Translator (Phase 2)
 
-`Scripts/translate.py`, Python 3 standard library, reads `ANTHROPIC_API_KEY` from the
-environment. It never runs in CI and the key is never in the repo.
+`Scripts/translate.py`, Python 3 standard library, with two interchangeable backends
+behind `--provider`:
+
+- `github` (default in CI): GitHub Models' chat-completions endpoint at
+  `https://models.github.ai/inference/chat/completions`, authenticated with the
+  workflow's `GITHUB_TOKEN` under `permissions: models: read`. Free tier; no secret to
+  create. Default model `openai/gpt-4.1`, overridable with `--model`. Batches are sized to
+  the Actions gateway's 8k-in / 4k-out cap (about 40 short units).
+- `anthropic` (local option): the Messages API with `ANTHROPIC_API_KEY` from the
+  environment, model `claude-sonnet-5`. For tone work on a language a reviewer flags.
+  Never runs in CI; the key is never in the repo.
+
+Both backends share everything else:
 
 - Reads the catalog; for each language in `Scripts/languages.txt`, collects keys with no
   localization or with state `new`. Plural variations are sent as separate units and
   written back as variations.
-- Sends batches of about 40 units as JSON with the §3 rules, the glossary, each key's
-  comment, and any layout budget. Asks for JSON back keyed by source string; validates
-  placeholder parity before writing; writes with state `needs_review`.
-- Idempotent: re-running translates only what is missing. `--retranslate KEY` and
-  `--language ja` narrow the run. `--dry-run` prints the batches.
-- `--verify LANG` back-translates existing translations to English in a separate call and
-  prints source, back-translation and a one-line judgement per key, so the languages you
-  cannot read get a review pass. It changes nothing.
-- Model: `claude-sonnet-5`. Temperature 0. Cost at 250 keys × 4 languages is negligible.
+- Sends batches as JSON with the §3 rules, the glossary, each key's comment, and any
+  layout budget; temperature 0. Asks for JSON back keyed by source string; validates
+  placeholder parity and rejects any unit containing "!" before writing; writes with
+  state `needs_review`.
+- Idempotent: re-running translates only what is missing. `--retranslate KEY`,
+  `--language ja` and `--dry-run` narrow or preview the run.
+- Writes `Shared/Resources/TranslationStatus.json` (§8) after every run.
+- `--verify LANG` back-translates existing translations to English in a separate call
+  and prints source, back-translation and a one-line judgement per key, so the languages
+  you cannot read get a review pass. It changes nothing.
+
+**Translate workflow.** `.github/workflows/translate.yml`, `permissions: models: read,
+contents: write, pull-requests: write`:
+
+- Triggers: `workflow_dispatch` with an optional `language` input, and `push` to `main`
+  when `Shared/Resources/Localizable.xcstrings` or `Scripts/languages.txt` changed.
+- Runs on `ubuntu-latest`: `python3 Scripts/translate.py --provider github`, then
+  `Scripts/strings-check.py`. If the catalog or status file changed, opens (or updates)
+  a pull request on a fixed branch `translations/auto`, labelled `translation`, with a
+  body listing the languages and unit counts. It never pushes to `main`.
+- A pull request created by `GITHUB_TOKEN` does not trigger the CI workflow on its own;
+  the workflow closes and reopens the PR once, which does, so the catalog lint runs on it.
+
+**Adding a language.** A "Request a language" issue (§8) is answered by a one-line PR
+adding the code to `Scripts/languages.txt`; the next run of the Translate workflow fills
+it in and opens the translation PR.
 
 `docs/LOCALIZATION.md` documents the loop: change copy → `Scripts/strings-sync.sh` →
-commit the catalog → `Scripts/translate.py` → review (Xcode's catalog editor shows
-`needs_review` rows) → mark reviewed → CI keeps it honest.
+commit the catalog → merge → the Translate workflow opens a PR → review (Xcode's catalog
+editor shows `needs_review` rows; `--verify` for languages you cannot read) → mark
+reviewed → CI keeps it honest.
 
 ## 8. Translation feedback from Settings (Phase 2)
 
@@ -240,7 +269,7 @@ Phase 1 creates `Shared/Resources/Localizable.xcstrings`, `Paperweight/InfoPlist
 `Scripts/strings-sync.sh`, `Scripts/strings-check.py`, `docs/LOCALIZATION.md`; modifies
 `project.yml`, `.github/workflows/ci.yml`, `.gitignore` (`.build/`), and the source files
 named in §2 plus their tests. Phase 2 creates `Scripts/translate.py`,
-`Scripts/languages.txt`, `Shared/Resources/TranslationStatus.json`,
+`Scripts/languages.txt`, `.github/workflows/translate.yml`, `Shared/Resources/TranslationStatus.json`,
 `Shared/TranslationFeedback.swift`, `Paperweight/Views/TranslationsView.swift`, the two
 issue forms under `.github/ISSUE_TEMPLATE/`, adds four languages to the catalog, and adds
 the Settings row.
