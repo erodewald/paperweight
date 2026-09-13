@@ -45,6 +45,22 @@ class Findings(unittest.TestCase):
             "nl": {"variations": {"plural": {"one": unit("dag"), "other": unit("%lld dagen")}}}}}}, ["nl"])
         self.assertIn("placeholders differ in nl: '%lld days'", p)
 
+    def test_plural_forms_are_compared_form_for_form(self):
+        # "one" legitimately has no placeholder while "other" does; matching
+        # forms (nl mirrors en's one/other) must not be flagged.
+        matching = {"%lld items": {"localizations": {
+            "en": {"variations": {"plural": {"one": unit("1 item"), "other": unit("%lld items")}}},
+            "nl": {"variations": {"plural": {"one": unit("1 item"), "other": unit("%lld items")}}}}}}
+        self.assertEqual(self.check(matching, ["nl"]), [])
+
+        # nl's "many" form has no counterpart in the English source, so it
+        # falls back to comparing against source "other" rather than failing.
+        extra_form = {"%lld items": {"localizations": {
+            "en": {"variations": {"plural": {"one": unit("1 item"), "other": unit("%lld items")}}},
+            "nl": {"variations": {"plural": {
+                "one": unit("1 item"), "other": unit("%lld items"), "many": unit("%lld items")}}}}}}
+        self.assertEqual(self.check(extra_form, ["nl"]), [])
+
     def test_budget_comment_warns_but_does_not_fail(self):
         strings = {"until %@": {"comment": "Lock Screen; keep under 24 characters",
                                 "localizations": {"en": unit("until %@"),
@@ -57,9 +73,11 @@ class Cli(unittest.TestCase):
     def test_exit_code_reflects_problems(self):
         with tempfile.TemporaryDirectory() as d:
             path = os.path.join(d, "c.xcstrings")
-            json.dump(catalog({"Old": {"extractionState": "stale", "localizations": {"en": unit("Old")}}}), open(path, "w"))
+            with open(path, "w") as f:
+                json.dump(catalog({"Old": {"extractionState": "stale", "localizations": {"en": unit("Old")}}}), f)
             self.assertEqual(strings_check.main(["--catalog", path]), 1)
-            json.dump(catalog({"Ok": {"localizations": {"en": unit("Ok")}}}), open(path, "w"))
+            with open(path, "w") as f:
+                json.dump(catalog({"Ok": {"localizations": {"en": unit("Ok")}}}), f)
             self.assertEqual(strings_check.main(["--catalog", path]), 0)
 
 

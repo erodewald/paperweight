@@ -40,29 +40,43 @@ def problems(catalog, languages):
             out.append(f"stale: {key!r}")
         locs = entry.get("localizations", {})
         source_units = list(_units(locs.get(source, {}))) or [("", key, "translated")]
-        source_ph = _placeholders(source_units[0][1])
+        # Placeholders keyed by form ("" for a flat unit, "plural.one", etc.):
+        # a plural's "one" form legitimately carries no %lld while "other"
+        # does, so each translation unit is compared against its own form,
+        # not the first source unit found.
+        source_ph = {form: _placeholders(value) for form, value, _ in source_units}
+        key_ph = _placeholders(key)
         for lang in languages:
             if lang not in locs:
                 out.append(f"missing {lang}: {key!r}")
         for lang, loc in locs.items():
             if lang == source:
                 continue
-            for _, value, _ in _units(loc):
+            for form, value, _ in _units(loc):
                 if "!" in value:
                     out.append(f"exclamation mark in {lang}: {key!r}")
-                if _placeholders(value) != source_ph:
+                # A form absent from the source (e.g. a language with its own
+                # "few"/"many" plural category) falls back to the source's
+                # "other" form, then the flat unit, then the key itself.
+                expected = source_ph.get(
+                    form, source_ph.get("plural.other", source_ph.get("", key_ph))
+                )
+                if _placeholders(value) != expected:
                     out.append(f"placeholders differ in {lang}: {key!r}")
     return sorted(set(out))
 
 
 def warnings(catalog, languages):
     out = []
+    source = catalog.get("sourceLanguage", "en")
     for key, entry in catalog.get("strings", {}).items():
         m = BUDGET.search(entry.get("comment", "") or "")
         if not m:
             continue
         budget = int(m.group(1))
         for lang, loc in entry.get("localizations", {}).items():
+            if lang == source:
+                continue
             for _, value, _ in _units(loc):
                 if len(value) > budget:
                     out.append(f"over {budget} characters in {lang}: {key!r}")
@@ -74,7 +88,8 @@ def main(argv=None):
     p.add_argument("--catalog", default="Shared/Resources/Localizable.xcstrings")
     p.add_argument("--languages", default="", help="space-separated codes that must be fully translated")
     a = p.parse_args(argv)
-    catalog = json.load(open(a.catalog, encoding="utf-8"))
+    with open(a.catalog, encoding="utf-8") as f:
+        catalog = json.load(f)
     languages = a.languages.split()
     for w in warnings(catalog, languages):
         print(f"::warning::{w}")
