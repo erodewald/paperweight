@@ -208,8 +208,8 @@ Claude API in both places it runs:
   `other`; the rest `one` and `other`).
 - Sends batches of about 40 units as JSON with the §3 rules and glossary
   (`Scripts/translation-rules.md`), the register for the language, each key's comment,
-  and any layout budget; temperature 0; model `claude-sonnet-5` unless `--model` says
-  otherwise. Asks for a JSON object keyed by unit id; validates placeholder parity (the
+  and any layout budget; model `claude-sonnet-5` unless `--model` says otherwise (Claude 5
+  models take no `temperature` parameter). Asks for a JSON object keyed by unit id; validates placeholder parity (the
   same rule as the lint) and rejects any unit containing "!" before writing; writes with
   state `needs_review`.
 - Idempotent: re-running translates only what is missing. `--retranslate KEY`,

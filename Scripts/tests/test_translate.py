@@ -118,5 +118,58 @@ class Run(unittest.TestCase):
         self.assertNotIn("localizations", data["strings"]["Open"])
 
 
+class Cli(unittest.TestCase):
+    def _files(self, d):
+        cat_path = os.path.join(d, "c.xcstrings"); st = os.path.join(d, "s.json"); langs = os.path.join(d, "l.txt")
+        with open(cat_path, "w") as f:
+            json.dump(cat({"Open": {}, "Ready": {}}), f)
+        with open(langs, "w") as f:
+            f.write("nl\nja\n")
+        return cat_path, st, langs
+
+    def test_main_translates_every_language_and_writes_status(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            cat_path, st, langs = self._files(d)
+
+            def factory(model, key):
+                def send(system, user):
+                    ids = [u["id"] for u in json.loads(user[user.index("["):])]
+                    return json.dumps({i: "x" for i in ids})
+                return send
+
+            rc = translate.main(["--catalog", cat_path, "--status", st, "--languages-file", langs, "--rules", os.path.join(os.path.dirname(__file__), "..", "translation-rules.md")],
+                                send_factory=factory, env={"CLAUDE_PLATFORM_API_KEY": "k"}, log=lambda *_: None)
+            self.assertEqual(rc, 0)
+            with open(st) as f:
+                self.assertEqual(json.load(f), {"languages": {"nl": {"keys": 2, "needsReview": 2}, "ja": {"keys": 2, "needsReview": 2}}})
+            with open(cat_path) as f:
+                self.assertEqual(json.load(f)["strings"]["Open"]["localizations"]["nl"]["stringUnit"]["state"], "needs_review")
+
+    def test_main_without_key_exits_2_and_writes_nothing(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            cat_path, st, langs = self._files(d)
+            rc = translate.main(["--catalog", cat_path, "--status", st, "--languages-file", langs], env={}, log=lambda *_: None)
+            self.assertEqual(rc, 2)
+            self.assertFalse(os.path.exists(st))
+
+    def test_rejections_make_the_run_fail_but_keep_good_units(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            cat_path, st, langs = self._files(d)
+
+            def factory(model, key):
+                return lambda system, user: json.dumps({translate.unit_id("Open", ""): "Open!", translate.unit_id("Ready", ""): "Klaar"})
+
+            rc = translate.main(["--catalog", cat_path, "--status", st, "--languages-file", langs, "--language", "nl"],
+                                send_factory=factory, env={"CLAUDE_PLATFORM_API_KEY": "k"}, log=lambda *_: None)
+            self.assertEqual(rc, 1)
+            with open(cat_path) as f:
+                strings = json.load(f)["strings"]
+            self.assertNotIn("nl", strings["Open"].get("localizations", {}))
+            self.assertEqual(strings["Ready"]["localizations"]["nl"]["stringUnit"]["value"], "Klaar")
+
+
 if __name__ == "__main__":
     unittest.main()

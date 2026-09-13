@@ -970,7 +970,9 @@ def anthropic_send(model, key, max_tokens=8192, attempts=4):
     """A send(system, user) -> text callable over the Messages API, retrying
     on rate limits and server errors with a growing pause."""
     def send(system, user):
-        body = json.dumps({"model": model, "max_tokens": max_tokens, "temperature": 0,
+        # Claude 5 models reject `temperature`; determinism comes from the
+        # rules and the JSON-only reply format.
+        body = json.dumps({"model": model, "max_tokens": max_tokens,
                            "system": system, "messages": [{"role": "user", "content": user}]}).encode("utf-8")
         for attempt in range(1, attempts + 1):
             req = urllib.request.Request(API, data=body, headers={
