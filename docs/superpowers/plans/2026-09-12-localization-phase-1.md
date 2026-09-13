@@ -189,6 +189,12 @@ In the `PaperweightWidget` target's `sources`, after `- path: Shared/Store/Widge
       - path: Shared/Resources/Localizable.xcstrings
 ```
 
+and after `- path: Shared/Constants.swift` (the widget compiles `WidgetSnapshot.swift`, which reads `L10n.bundle`; `Localization.swift` is Foundation-only):
+
+```yaml
+      - path: Shared/Localization.swift
+```
+
 - [ ] **Step 6: Write the sync script**
 
 Create `Scripts/strings-sync.sh` and `chmod +x` it:
