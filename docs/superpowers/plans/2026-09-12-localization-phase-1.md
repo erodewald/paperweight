@@ -678,15 +678,17 @@ final class ScheduleLabelTests: XCTestCase {
     private let en = TestLocale.en
     private let cal = TestLocale.calendar
 
+    /// iOS separates the hour from AM/PM with a narrow no-break space
+    /// (U+202F); Dutch pads to two digits.
     func test_hourLabels_useTheLocalesClock() {
-        XCTAssertEqual(PaperweightSchedule.hourLabel(0, calendar: cal, locale: en), "12 AM")
-        XCTAssertEqual(PaperweightSchedule.hourLabel(6, calendar: cal, locale: en), "6 AM")
-        XCTAssertEqual(PaperweightSchedule.hourLabel(12, calendar: cal, locale: en), "12 PM")
-        XCTAssertEqual(PaperweightSchedule.hourLabel(18, calendar: cal, locale: en), "6 PM")
-        XCTAssertEqual(PaperweightSchedule.hourLabel(24, calendar: cal, locale: en), "12 AM")
+        XCTAssertEqual(PaperweightSchedule.hourLabel(0, calendar: cal, locale: en), "12\u{202F}AM")
+        XCTAssertEqual(PaperweightSchedule.hourLabel(6, calendar: cal, locale: en), "6\u{202F}AM")
+        XCTAssertEqual(PaperweightSchedule.hourLabel(12, calendar: cal, locale: en), "12\u{202F}PM")
+        XCTAssertEqual(PaperweightSchedule.hourLabel(18, calendar: cal, locale: en), "6\u{202F}PM")
+        XCTAssertEqual(PaperweightSchedule.hourLabel(24, calendar: cal, locale: en), "12\u{202F}AM")
         let nl = Locale(identifier: "nl_NL")
         XCTAssertEqual(PaperweightSchedule.hourLabel(18, calendar: cal, locale: nl), "18")
-        XCTAssertEqual(PaperweightSchedule.hourLabel(6, calendar: cal, locale: nl), "6")
+        XCTAssertEqual(PaperweightSchedule.hourLabel(6, calendar: cal, locale: nl), "06")
     }
 
     /// Display order follows the calendar's first weekday; the indexes
