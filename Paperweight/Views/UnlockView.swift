@@ -36,9 +36,8 @@ struct UnlockView: View {
             } else {
                 Text("A way out, briefly.")
                     .font(.spectral(26)).foregroundStyle(PW.textPrimary)
-                (Text("Tap your NFC token to lift restrictions for ").foregroundStyle(PW.textMuted)
-                 + Text("\(unlockMinutes) minutes").foregroundStyle(PW.textPrimary)
-                 + Text(". The quiet returns on its own.").foregroundStyle(PW.textMuted))
+                Text("Tap your NFC token to lift restrictions for **\(unlockMinutes) minutes**. The quiet returns on its own.")
+                    .foregroundStyle(PW.textMuted)
                     .font(.grotesk(14))
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)

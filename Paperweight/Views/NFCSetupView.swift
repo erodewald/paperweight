@@ -12,9 +12,12 @@ struct NFCSetupView: View {
     @State private var generatedCodes: [String] = []
     @State private var showingCodes = false
 
-    private let durations: [(value: TimeInterval, label: String)] =
-        [(300, "5m"), (900, "15m"), (1800, "30m"), (3600, "1h")]
-    private let coolOffs: [(value: Int, label: String)] = [(1, "1 day"), (2, "2 days"), (3, "3 days")]
+    private let durations: [(value: TimeInterval, label: String)] = [300, 900, 1800, 3600].map {
+        ($0, Duration.seconds($0).formatted(.units(allowed: [.hours, .minutes], width: .narrow)))
+    }
+    private let coolOffs: [(value: Int, label: String)] = [1, 2, 3].map {
+        ($0, String(localized: "\($0) days", bundle: L10n.bundle, comment: "Duration in whole days; has a plural rule"))
+    }
 
     var body: some View {
         ScrollView {
@@ -174,7 +177,7 @@ struct NFCSetupView: View {
     }
 
     private var coolOffLabel: String {
-        "\(vm.config.coolOffDays) day\(vm.config.coolOffDays == 1 ? "" : "s")"
+        String(localized: "\(vm.config.coolOffDays) days", bundle: L10n.bundle, comment: "Duration in whole days; has a plural rule")
     }
 
     private func scan() {

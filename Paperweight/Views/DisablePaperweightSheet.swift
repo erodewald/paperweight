@@ -90,7 +90,7 @@ struct DisablePaperweightSheet: View {
                 Button("Start \(vm.config.coolOffDays)-day Cool-off") { vm.requestCoolOffUnlock() }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("Paperweight stays on and keeps enforcing your schedule. After \(vm.config.coolOffDays) day\(vm.config.coolOffDays == 1 ? "" : "s") it lifts automatically. Use this only if your token is lost — scanning it or a recovery code unlocks immediately.")
+                Text("Paperweight stays on and keeps enforcing your schedule. After \(coolOffLabel) it lifts automatically. Use this only if your token is lost — scanning it or a recovery code unlocks immediately.")
             }
             .sheet(isPresented: $showingRecoveryEntry) {
                 RecoveryCodeEntryView(vm: vm, onSuccess: { dismiss() })
@@ -102,6 +102,10 @@ struct DisablePaperweightSheet: View {
         }
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(30)
+    }
+
+    private var coolOffLabel: String {
+        String(localized: "\(vm.config.coolOffDays) days", bundle: L10n.bundle, comment: "Duration in whole days; has a plural rule")
     }
 
     @ViewBuilder
@@ -206,7 +210,7 @@ struct RecoveryCodeEntryView: View {
                         }
                         .padding(.horizontal, 24).padding(.top, 28)
 
-                    AccentButton(title: "Verify & disable Paperweight",
+                    AccentButton(title: String(localized: "Verify & disable Paperweight", bundle: L10n.bundle),
                                  enabled: !codeInput.trimmingCharacters(in: .whitespaces).isEmpty) {
                         verifyAndDisable()
                     }

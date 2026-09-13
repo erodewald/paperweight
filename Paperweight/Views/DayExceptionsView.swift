@@ -56,7 +56,7 @@ struct DayExceptionsView: View {
         .scrollContentBackground(.hidden)
         .pwScreen()
         .safeAreaInset(edge: .bottom) {
-            AccentButton(title: "Add a day") { sheet = .add }
+            AccentButton(title: String(localized: "Add a day", bundle: L10n.bundle)) { sheet = .add }
                 .padding(.horizontal, 20).padding(.bottom, 12)
                 .background(PW.black.opacity(0.9))
         }

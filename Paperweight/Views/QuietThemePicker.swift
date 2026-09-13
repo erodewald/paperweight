@@ -19,7 +19,7 @@ struct QuietThemePicker: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Changes only what you see while apps are quiet. It never changes what's blocked.")
+                Text("Changes only what you see while apps are quiet. It never changes what goes quiet.")
                     .font(.grotesk(13))
                     .foregroundStyle(PW.textMuted)
                     .fixedSize(horizontal: false, vertical: true)

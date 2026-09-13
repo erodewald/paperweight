@@ -82,7 +82,7 @@ struct SettingsView: View {
                             Text("Show armed-only screens")
                                 .font(.grotesk(15))
                                 .foregroundStyle(PW.textPrimary)
-                            Text("Reveals Emergency unlock and Turn off. Nothing is armed and nothing is blocked.")
+                            Text("Reveals Emergency unlock and Turn off. Nothing is armed and nothing is quiet.")
                                 .font(.grotesk(13))
                                 .foregroundStyle(PW.textMuted)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -99,7 +99,7 @@ struct SettingsView: View {
                             Text("Force quiet screen")
                                 .font(.grotesk(15))
                                 .foregroundStyle(PW.textPrimary)
-                            Text("Shows the quiet screen without arming anything. Nothing is actually blocked.")
+                            Text("Shows the quiet screen without arming anything. Nothing actually goes quiet.")
                                 .font(.grotesk(13))
                                 .foregroundStyle(PW.textMuted)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -164,8 +164,8 @@ struct SettingsView: View {
     }
 
     private var scheduleStatusText: String {
-        guard let s = vm.config.schedule, !s.isEmpty else { return "Set up" }
-        if vm.config.isEnabled && !vm.config.resolver.isFree(at: Date()) { return "Quiet now" }
-        return "Ready"
+        guard let s = vm.config.schedule, !s.isEmpty else { return String(localized: "Set up", bundle: L10n.bundle) }
+        if vm.config.isEnabled && !vm.config.resolver.isFree(at: Date()) { return String(localized: "Quiet now", bundle: L10n.bundle) }
+        return String(localized: "Ready", bundle: L10n.bundle)
     }
 }

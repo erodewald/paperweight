@@ -69,7 +69,7 @@ struct RecoveryCodesView: View {
                     Button { copyAll() } label: {
                         HStack(spacing: 9) {
                             Image(systemName: copiedAll ? "checkmark" : "doc.on.doc").font(.system(size: 14))
-                            Text(copiedAll ? "Copied!" : "Copy all codes").font(.grotesk(14, weight: .semibold))
+                            Text(copiedAll ? "Copied" : "Copy all codes").font(.grotesk(14, weight: .semibold))
                         }
                         .foregroundStyle(PW.dawnGlow)
                         .frame(maxWidth: .infinity)
@@ -117,7 +117,7 @@ struct RecoveryCodesView: View {
         }
     }
 
-    private func exportLabel(systemName: String, title: String) -> some View {
+    private func exportLabel(systemName: String, title: LocalizedStringKey) -> some View {
         HStack(spacing: 8) {
             Image(systemName: systemName).font(.system(size: 14))
             Text(title).font(.grotesk(14))
