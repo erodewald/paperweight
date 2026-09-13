@@ -105,8 +105,10 @@ Rules for source code, enforced by review and by the tests in §4:
   English renders "12 AM" / "6:30 PM"; Dutch, Japanese and Korean render 24-hour forms.
   The grid's label column widens to fit the widest label of the current locale, measured
   once per layout.
-- **Durations.** Under 24 hours, `Duration.UnitsFormatStyle` with hours and minutes,
-  narrow width ("3h 20m", "42m" in English; localized units elsewhere). At and above
+- **Durations.** Under 24 hours, `Duration.UnitsFormatStyle` with hours and minutes at
+  narrow width, localized units everywhere. Plan step: check what English renders; if it
+  is not the house "3h 20m" / "42m", keep those as localized keys `"%lldh %lldm"`,
+  `"%lldh"`, `"%lldm"` instead, and let each language rewrite them. At and above
   24 hours the house style stays: keys `"%lld days"`, `"%lld½ days"` with plural
   variations (the ½ glyph is part of the key and travels untranslated; a language may
   rewrite it). `HomeCopy.countdown`'s "2:14" clock form stays numeric.
