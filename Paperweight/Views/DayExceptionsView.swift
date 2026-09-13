@@ -153,7 +153,7 @@ struct DayExceptionsView: View {
             case .likeWeekday: return (PW.textMuted, .clear, Color.white.opacity(0.18))
             }
         }()
-        return Text(t.title)
+        return Text(t.title())
             .font(.grotesk(13))
             .foregroundStyle(fg)
             .padding(.horizontal, 7).padding(.vertical, 2)

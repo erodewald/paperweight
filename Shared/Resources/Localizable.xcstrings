@@ -29,12 +29,45 @@
     "%@ tomorrow": {
       "comment": "A time, then the word tomorrow"
     },
+    "%@ · %@": {
+      "comment": "Two short phrases joined by a middle dot",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "%@ – %@": {
+      "comment": "A date range across months\nA date range: first day, en dash, last day",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ – %2$@"
+          }
+        }
+      }
+    },
     "%@. %@": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "%1$@. %2$@"
+          }
+        }
+      }
+    },
+    "%@–%lld": {
+      "comment": "A range inside one month: 'Sep 21' then the last day's number",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@–%2$lld"
           }
         }
       }
@@ -69,6 +102,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "%lld upcoming": {
+      "comment": "How many planned days are ahead; has a plural rule",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld upcoming"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld upcoming"
+                }
+              }
+            }
           }
         }
       }
@@ -135,6 +191,9 @@
         }
       }
     },
+    "Like %@": {
+      "comment": "Day treatment: use another weekday's schedule; a weekday name follows"
+    },
     "Lost your token? ": {},
     "Lost your token? Start timed unlock": {},
     "NFC Token & Recovery": {},
@@ -167,6 +226,9 @@
       "comment": "Lock Screen; keep under 24 characters"
     },
     "Open Paperweight to begin": {},
+    "Open all day": {
+      "comment": "Day treatment: apps open the whole day"
+    },
     "Open until %@, then quiet": {},
     "Open: All week": {},
     "Open: Weekday evenings": {},
@@ -198,6 +260,9 @@
     },
     "Quiet": {
       "comment": "Lock Screen; keep under 24 characters"
+    },
+    "Quiet all day": {
+      "comment": "Day treatment: apps quiet the whole day"
     },
     "Quiet until %@": {},
     "Quiet until the cool-off lifts %@": {},
