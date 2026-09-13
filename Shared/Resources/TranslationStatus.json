@@ -1,0 +1,20 @@
+{
+  "languages": {
+    "es": {
+      "keys": 257,
+      "needsReview": 257
+    },
+    "ja": {
+      "keys": 257,
+      "needsReview": 257
+    },
+    "ko": {
+      "keys": 257,
+      "needsReview": 257
+    },
+    "nl": {
+      "keys": 257,
+      "needsReview": 257
+    }
+  }
+}

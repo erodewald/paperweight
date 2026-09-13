@@ -10,22 +10,15 @@ Standard library only; runs on the Ubuntu CI job.
 """
 import argparse
 import json
+import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import catalog
+
 PLACEHOLDER = re.compile(r"%(\d+\$)?(@|lld|ld|d|f|g|s|u|llu|lf)")
 BUDGET = re.compile(r"keep under (\d+) characters")
-
-
-def _units(localization):
-    """Every (form, value, state) in one language: the plain unit, or each plural form."""
-    if "stringUnit" in localization:
-        u = localization["stringUnit"]
-        yield "", u.get("value", ""), u.get("state", "")
-    for kind, forms in localization.get("variations", {}).items():
-        for form, entry in forms.items():
-            u = entry.get("stringUnit", {})
-            yield f"{kind}.{form}", u.get("value", ""), u.get("state", "")
 
 
 def _placeholders(value):
@@ -48,14 +41,14 @@ def _placeholders(value):
     return sorted(result)
 
 
-def problems(catalog, languages):
+def problems(catalog_data, languages):
     out = []
-    source = catalog.get("sourceLanguage", "en")
-    for key, entry in catalog.get("strings", {}).items():
+    source = catalog_data.get("sourceLanguage", "en")
+    for key, entry in catalog_data.get("strings", {}).items():
         if entry.get("extractionState") == "stale":
             out.append(f"stale: {key!r}")
         locs = entry.get("localizations", {})
-        source_units = list(_units(locs.get(source, {}))) or [("", key, "translated")]
+        source_units = [(form, value, "") for form, value in catalog.source_units(key, entry, source)]
         # Placeholders keyed by form ("" for a flat unit, "plural.one", etc.):
         # a plural's "one" form legitimately carries no %lld while "other"
         # does, so each translation unit is compared against its own form,
@@ -65,10 +58,23 @@ def problems(catalog, languages):
         for lang in languages:
             if lang not in locs:
                 out.append(f"missing {lang}: {key!r}")
+                continue
+            # A language present in localizations may still be missing one
+            # plural form (e.g. a partial machine-translation run left "one"
+            # untranslated); check every form the source carries that this
+            # language is required to have, per catalog.forms_for.
+            target_forms = {form for form, _, _ in catalog.units(locs[lang])}
+            required = set(catalog.forms_for(lang))
+            for form, _, _ in source_units:
+                if not form.startswith("plural."):
+                    continue
+                category = form.split(".", 1)[1]
+                if category in required and form not in target_forms:
+                    out.append(f"missing {lang}: {key!r} [{form}]")
         for lang, loc in locs.items():
             if lang == source:
                 continue
-            for form, value, _ in _units(loc):
+            for form, value, _ in catalog.units(loc):
                 if "!" in value:
                     out.append(f"exclamation mark in {lang}: {key!r}")
                 # A form absent from the source (e.g. a language with its own
@@ -82,10 +88,10 @@ def problems(catalog, languages):
     return sorted(set(out))
 
 
-def warnings(catalog, languages):
+def warnings(catalog_data, languages):
     out = []
-    source = catalog.get("sourceLanguage", "en")
-    for key, entry in catalog.get("strings", {}).items():
+    source = catalog_data.get("sourceLanguage", "en")
+    for key, entry in catalog_data.get("strings", {}).items():
         m = BUDGET.search(entry.get("comment", "") or "")
         if not m:
             continue
@@ -93,7 +99,7 @@ def warnings(catalog, languages):
         for lang, loc in entry.get("localizations", {}).items():
             if lang == source:
                 continue
-            for _, value, _ in _units(loc):
+            for _, value, _ in catalog.units(loc):
                 if len(value) > budget:
                     out.append(f"over {budget} characters in {lang}: {key!r}")
     return sorted(set(out))
@@ -103,16 +109,26 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--catalog", default="Shared/Resources/Localizable.xcstrings")
     p.add_argument("--languages", default="", help="space-separated codes that must be fully translated")
+    p.add_argument("--status", default="", help="path of TranslationStatus.json; fails if it disagrees with the catalog")
     a = p.parse_args(argv)
     with open(a.catalog, encoding="utf-8") as f:
-        catalog = json.load(f)
+        catalog_data = json.load(f)
     languages = a.languages.split()
-    for w in warnings(catalog, languages):
+    for w in warnings(catalog_data, languages):
         print(f"::warning::{w}")
-    found = problems(catalog, languages)
+    found = problems(catalog_data, languages)
+    if a.languages and a.status:
+        expected = catalog.dumps_status(catalog.status(catalog_data, languages))
+        try:
+            with open(a.status, encoding="utf-8") as f:
+                actual = f.read()
+        except FileNotFoundError:
+            actual = ""
+        if actual != expected:
+            found.append(f"status file out of date: {a.status} (run: python3 Scripts/translate.py --write-status)")
     for f in found:
         print(f"::error::{f}")
-    print(f"{len(catalog.get('strings', {}))} keys checked, {len(found)} problems, {len(warnings(catalog, languages))} warnings")
+    print(f"{len(catalog_data.get('strings', {}))} keys checked, {len(found)} problems, {len(warnings(catalog_data, languages))} warnings")
     return 1 if found else 0
 
 

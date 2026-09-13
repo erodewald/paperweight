@@ -41,13 +41,30 @@ struct CardDivider: View {
 
 /// A tappable navigation row: optional leading icon · title · trailing value · chevron.
 struct NavRow: View {
-    var title: LocalizedStringKey
+    private let titleText: Text
     var titleColor: Color = PW.textPrimary
     var systemImage: String? = nil
     var iconColor: Color = PW.sage
     var value: String? = nil
     var valueColor: Color = PW.textMuted
     var showsChevron: Bool = true
+
+    init(title: LocalizedStringKey, titleColor: Color = PW.textPrimary, systemImage: String? = nil,
+         iconColor: Color = PW.sage, value: String? = nil, valueColor: Color = PW.textMuted,
+         showsChevron: Bool = true) {
+        self.titleText = Text(title)
+        self.titleColor = titleColor; self.systemImage = systemImage; self.iconColor = iconColor
+        self.value = value; self.valueColor = valueColor; self.showsChevron = showsChevron
+    }
+
+    /// For text that must never enter the catalog (debug-only rows).
+    init(verbatim: String, titleColor: Color = PW.textPrimary, systemImage: String? = nil,
+         iconColor: Color = PW.sage, value: String? = nil, valueColor: Color = PW.textMuted,
+         showsChevron: Bool = true) {
+        self.titleText = Text(verbatim: verbatim)
+        self.titleColor = titleColor; self.systemImage = systemImage; self.iconColor = iconColor
+        self.value = value; self.valueColor = valueColor; self.showsChevron = showsChevron
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -57,7 +74,7 @@ struct NavRow: View {
                     .foregroundStyle(iconColor)
                     .frame(width: 18)
             }
-            Text(title)
+            titleText
                 .font(.grotesk(15))
                 .foregroundStyle(titleColor)
             Spacer(minLength: 8)

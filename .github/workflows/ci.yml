@@ -32,6 +32,14 @@ jobs:
       - name: Generate project
         run: xcodegen generate
 
+      # The formatter must reproduce Xcode's catalog bytes exactly, or every
+      # IDE build dirties the tree. The fixture is a catalog as Xcode wrote it.
+      - name: Check the catalog formatter matches Xcode
+        run: |
+          set -euo pipefail
+          swift Scripts/xcstrings-format.swift Scripts/tests/fixtures/xcode-style.xcstrings "$RUNNER_TEMP/formatted.xcstrings"
+          cmp Scripts/tests/fixtures/xcode-style.xcstrings "$RUNNER_TEMP/formatted.xcstrings"
+
       # Runner images rotate their simulator sets, so pick whatever iPhone is
       # actually installed rather than pinning a model that may vanish.
       - name: Select a simulator
@@ -135,5 +143,5 @@ jobs:
           set -euo pipefail
           languages=""
           [ -f Scripts/languages.txt ] && languages="$(tr '\n' ' ' < Scripts/languages.txt)"
-          python3 -W error -m unittest Scripts/tests/test_strings_check.py
-          python3 Scripts/strings-check.py --languages "$languages"
+          python3 -W error -m unittest Scripts/tests/test_catalog.py Scripts/tests/test_strings_check.py
+          python3 Scripts/strings-check.py --languages "$languages" --status Shared/Resources/TranslationStatus.json

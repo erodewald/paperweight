@@ -39,6 +39,12 @@ class Findings(unittest.TestCase):
         p = self.check({"Open": {"localizations": {"en": unit("Open"), "ja": unit("開放", "needs_review")}}}, ["ja"])
         self.assertEqual(p, [])
 
+    def test_missing_plural_form_is_reported_per_form(self):
+        p = self.check({"%lld days": {"localizations": {
+            "en": {"variations": {"plural": {"one": unit("%lld day"), "other": unit("%lld days")}}},
+            "nl": {"variations": {"plural": {"other": unit("%lld dagen")}}}}}}, ["nl"])
+        self.assertIn("missing nl: '%lld days' [plural.one]", p)
+
     def test_plural_variations_are_checked_per_form(self):
         p = self.check({"%lld days": {"localizations": {
             "en": {"variations": {"plural": {"one": unit("%lld day"), "other": unit("%lld days")}}},
@@ -88,6 +94,20 @@ class Findings(unittest.TestCase):
 
 
 class Cli(unittest.TestCase):
+    def test_status_file_must_match_the_catalog(self):
+        with tempfile.TemporaryDirectory() as d:
+            cat = os.path.join(d, "c.xcstrings"); st = os.path.join(d, "s.json")
+            with open(cat, "w") as f:
+                json.dump(catalog({"Open": {"localizations": {"en": unit("Open"), "nl": unit("Open", "needs_review")}}}), f)
+            with open(st, "w") as f:
+                f.write('{"languages": {"nl": {"keys": 0, "needsReview": 0}}}\n')
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(strings_check.main(["--catalog", cat, "--languages", "nl", "--status", st]), 1)
+            with open(st, "w") as f:
+                f.write('{\n  "languages": {\n    "nl": {\n      "keys": 1,\n      "needsReview": 1\n    }\n  }\n}\n')
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(strings_check.main(["--catalog", cat, "--languages", "nl", "--status", st]), 0)
+
     def test_exit_code_reflects_problems(self):
         with tempfile.TemporaryDirectory() as d:
             path = os.path.join(d, "c.xcstrings")

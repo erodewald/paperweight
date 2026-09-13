@@ -16,6 +16,9 @@ DERIVED=.build/strings-sync
 TOOL="$(xcode-select -p)/usr/bin/xcstringstool"
 MODE="${1:-sync}"
 
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
 [ -d Paperweight.xcodeproj ] || xcodegen generate
 
 sim=$(xcrun simctl list devices available \
@@ -35,7 +38,7 @@ while IFS= read -r f; do files+=("$f"); done < <(
 
 target="$CATALOG"
 if [ "$MODE" = "--check" ]; then
-  target="$(mktemp -d)/Localizable.xcstrings"
+  target="$tmp/Localizable.xcstrings"
   cp "$CATALOG" "$target"
 fi
 
@@ -49,10 +52,8 @@ fi
 # drops any entry that isn't "translated", and with nothing left to compile
 # it emits no table at all (no en.lproj/Localizable.strings). Promote every
 # "new" stringUnit under the source language to "translated", recursively.
-# The Python json.dump below, not xcstringstool's own formatting, is the
-# canonical form that gets committed and that --check compares against — a
-# hand edit made in Xcode's string catalog editor is normalized back to this
-# form the next time this script runs.
+# The Python block below rewrites the file, then xcstrings-format.swift puts it
+# back into Xcode's own formatting, so a later IDE build finds nothing to change.
 promoted=$(python3 - "$target" <<'EOF'
 import json, sys
 
@@ -126,8 +127,19 @@ print(f"{len(d['strings'])} keys, {len(stale)} stale, {promoted} promoted to tra
 for k in stale: print(f"  stale: {k!r}")
 EOF
 
+swift Scripts/xcstrings-format.swift "$target"
+
 if [ "$MODE" = "--check" ]; then
-  if ! diff -u "$CATALOG" "$target"; then
+  if ! python3 - "$CATALOG" "$target" <<'EOF'
+import json, sys
+with open(sys.argv[1], encoding="utf-8") as f: committed = json.load(f)
+with open(sys.argv[2], encoding="utf-8") as f: synced = json.load(f)
+sys.exit(0 if committed == synced else 1)
+EOF
+  then
+    formatted="$tmp/committed.xcstrings"
+    swift Scripts/xcstrings-format.swift "$CATALOG" "$formatted"
+    diff -u "$formatted" "$target" || true
     echo "::error::Localizable.xcstrings is out of date. Run Scripts/strings-sync.sh and commit." >&2
     exit 1
   fi

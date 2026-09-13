@@ -67,6 +67,20 @@ resource of the app, the monitor, and the widget:
 
 The catalog is committed. Running the sync is part of any PR that adds or changes copy.
 
+**Xcode syncs too.** Building in the Xcode IDE runs the same extraction and rewrites the
+catalog in Apple's formatting (`"key" : value`, empty objects on three lines, keys in
+Unicode collation order, no trailing newline). Two rules keep that from producing noise:
+
+- Every script that writes a catalog formats it the way Xcode does, through
+  `Scripts/xcstrings-format.swift` (Apple's `JSONSerialization` with `.prettyPrinted`,
+  `.sortedKeys`, `.withoutEscapingSlashes`, verified byte-identical to Xcode's output).
+  `--check` compares parsed JSON, never bytes.
+- Strings that only exist in `#if DEBUG` code (the Developer section of Settings) are
+  rendered with `Text(verbatim:)` and never enter the catalog: a Release build's sync would
+  otherwise delete them or mark them stale on every device build.
+- Xcode adds `CFBundleName` to each `InfoPlist.xcstrings`; those entries are committed as
+  Xcode writes them.
+
 ## 2. Code conventions
 
 Rules for source code, enforced by review and by the tests in §4:
@@ -177,45 +191,51 @@ full before/after list is in the Phase 1 plan; each is a one-line change.
 
 ## 7. Translator (Phase 2)
 
-`Scripts/translate.py`, Python 3 standard library, with two interchangeable backends
-behind `--provider`:
+GitHub Models, the free backend this section first named, was retired by GitHub on
+30 July 2026 (playground, catalog and inference API all removed). The translator uses the
+Claude API in both places it runs:
 
-- `github` (default in CI): GitHub Models' chat-completions endpoint at
-  `https://models.github.ai/inference/chat/completions`, authenticated with the
-  workflow's `GITHUB_TOKEN` under `permissions: models: read`. Free tier; no secret to
-  create. Default model `openai/gpt-4.1`, overridable with `--model`. Batches are sized to
-  the Actions gateway's 8k-in / 4k-out cap (about 40 short units).
-- `anthropic` (local option): the Messages API with `ANTHROPIC_API_KEY` from the
-  environment, model `claude-sonnet-5`. For tone work on a language a reviewer flags.
-  Never runs in CI; the key is never in the repo.
+- **In CI** (the Translate workflow below): `CLAUDE_PLATFORM_API_KEY` is a repository secret.
+  The cost for the whole catalog in four languages is well under a dollar.
+- **Locally**: the same script with the key in the environment, for tone work on a
+  language a reviewer flags. The key is never in the repo.
 
-Both backends share everything else:
+`Scripts/translate.py`, Python 3 standard library:
 
 - Reads the catalog; for each language in `Scripts/languages.txt`, collects keys with no
-  localization or with state `new`. Plural variations are sent as separate units and
-  written back as variations.
-- Sends batches as JSON with the §3 rules, the glossary, each key's comment, and any
-  layout budget; temperature 0. Asks for JSON back keyed by source string; validates
-  placeholder parity and rejects any unit containing "!" before writing; writes with
+  localization or with a unit in state `new`. Plural keys are sent per form; the target
+  language's plural categories decide which forms are written (`ja`, `ko`, `zh` have only
+  `other`; the rest `one` and `other`).
+- Sends batches of about 40 units as JSON with the §3 rules and glossary
+  (`Scripts/translation-rules.md`), the register for the language, each key's comment,
+  and any layout budget; model `claude-sonnet-5` unless `--model` says otherwise (Claude 5
+  models take no `temperature` parameter). Asks for a JSON object keyed by unit id; validates placeholder parity (the
+  same rule as the lint) and rejects any unit containing "!" before writing; writes with
   state `needs_review`.
 - Idempotent: re-running translates only what is missing. `--retranslate KEY`,
-  `--language ja` and `--dry-run` narrow or preview the run.
-- Writes `Shared/Resources/TranslationStatus.json` (§8) after every run.
+  `--language ja` and `--dry-run` narrow or preview the run. Rejected units are reported
+  and left untranslated, so the lint's missing-language check surfaces them.
+- Writes `Shared/Resources/TranslationStatus.json` (§8) after every run and formats both
+  files through `Scripts/xcstrings-format.swift` when `swift` is available.
 - `--verify LANG` back-translates existing translations to English in a separate call
   and prints source, back-translation and a one-line judgement per key, so the languages
   you cannot read get a review pass. It changes nothing.
 
-**Translate workflow.** `.github/workflows/translate.yml`, `permissions: models: read,
-contents: write, pull-requests: write`:
+**Translate workflow.** `.github/workflows/translate.yml`, `permissions: contents:
+write, pull-requests: write`, runs on `macos-latest` so the catalog can be formatted the
+way Xcode writes it:
 
 - Triggers: `workflow_dispatch` with an optional `language` input, and `push` to `main`
   when `Shared/Resources/Localizable.xcstrings` or `Scripts/languages.txt` changed.
-- Runs on `ubuntu-latest`: `python3 Scripts/translate.py --provider github`, then
-  `Scripts/strings-check.py`. If the catalog or status file changed, opens (or updates)
-  a pull request on a fixed branch `translations/auto`, labelled `translation`, with a
-  body listing the languages and unit counts. It never pushes to `main`.
-- A pull request created by `GITHUB_TOKEN` does not trigger the CI workflow on its own;
-  the workflow closes and reopens the PR once, which does, so the catalog lint runs on it.
+- Steps: `python3 Scripts/translate.py` with the secret, then `Scripts/strings-check.py`
+  with the languages. If the catalog or status file changed, commits to the fixed branch
+  `translations/auto`, force-pushes it, and opens (or updates) a pull request labelled
+  `translation` whose body lists the languages and unit counts. It never pushes to `main`.
+  If the secret is absent the workflow says so and exits green.
+- A pull request opened with `GITHUB_TOKEN` gets no CI run of its own (GitHub never
+  triggers workflows from that token, reopening included). The Translate workflow
+  therefore runs the catalog lint itself and reports it in the PR body; the full CI runs
+  on `main` after the merge.
 
 **Adding a language.** A "Request a language" issue (§8) is answered by a one-line PR
 adding the code to `Scripts/languages.txt`; the next run of the Translate workflow fills
@@ -235,7 +255,10 @@ it talks to a server; the two report actions are prefilled URLs opened in Safari
   (`Bundle.main.preferredLocalizations.first`). If that language still has unreviewed
   machine translations, a one-line notice in the app's voice: "This Korean translation
   was made by a machine and hasn't been checked by a Korean speaker yet. If something
-  reads wrong, say so." It disappears once the language is fully reviewed.
+  reads wrong, say so." It disappears once the language is fully reviewed. That notice
+  text is itself the catalog key `"This %@ translation was made by a machine and
+  hasn't been checked by a %@ speaker yet. If something reads wrong, say so."` added
+  to `Shared/Resources/Localizable.xcstrings` in Task 7.
 - **Report a wrong translation.** Opens
   `https://github.com/erodewald/paperweight/issues/new` with `template=translation-fix.yml`
   and the form's fields prefilled by id: app language, device preferred languages
@@ -269,8 +292,9 @@ Phase 1 creates `Shared/Resources/Localizable.xcstrings`, `Paperweight/InfoPlist
 `PaperweightMonitor/InfoPlist.xcstrings`, `PaperweightWidget/InfoPlist.xcstrings`,
 `Scripts/strings-sync.sh`, `Scripts/strings-check.py`, `docs/LOCALIZATION.md`; modifies
 `project.yml`, `.github/workflows/ci.yml`, `.gitignore` (`.build/`), and the source files
-named in §2 plus their tests. Phase 2 creates `Scripts/translate.py`,
-`Scripts/languages.txt`, `.github/workflows/translate.yml`, `Shared/Resources/TranslationStatus.json`,
+named in §2 plus their tests. Phase 2 creates `Scripts/xcstrings-format.swift`, `Scripts/catalog.py`,
+`Scripts/translate.py`, `Scripts/translation-rules.md`, `Scripts/languages.txt`,
+`.github/workflows/translate.yml`, `Shared/Resources/TranslationStatus.json`,
 `Shared/TranslationFeedback.swift`, `Paperweight/Views/TranslationsView.swift`, the two
 issue forms under `.github/ISSUE_TEMPLATE/`, adds four languages to the catalog, and adds
 the Settings row.
