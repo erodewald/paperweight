@@ -2,16 +2,26 @@ import XCTest
 
 final class DayExceptionLabelTests: XCTestCase {
 
-    private let cal = Calendar.current
-    private let us = Locale(identifier: "en_US")
+    private let cal = TestLocale.calendar
+    private let us = TestLocale.en
     private func key(_ m: Int, _ d: Int) -> DayKey { DayKey(year: 2026, month: m, day: d) }
     /// Saturday 2026-09-12 10:00.
     private var now: Date { cal.date(from: DateComponents(year: 2026, month: 9, day: 12, hour: 10))! }
 
+    override func setUp() { TestLocale.useTestBundle() }
+
     func test_treatmentTitles() {
-        XCTAssertEqual(DayException.Treatment.openAllDay.title, "Open all day")
-        XCTAssertEqual(DayException.Treatment.quietAllDay.title, "Quiet all day")
-        XCTAssertEqual(DayException.Treatment.likeWeekday(6).title, "Like Saturday")
+        XCTAssertEqual(DayException.Treatment.openAllDay.title(calendar: cal, locale: us), "Open all day")
+        XCTAssertEqual(DayException.Treatment.quietAllDay.title(calendar: cal, locale: us), "Quiet all day")
+        XCTAssertEqual(DayException.Treatment.likeWeekday(6).title(calendar: cal, locale: us), "Like Saturday")
+    }
+
+    /// Weekday names come from the calendar, so a Japanese device says 土曜日,
+    /// not Saturday. Proves the English array is gone.
+    func test_weekdayNamesFollowTheLocale() {
+        let ja = Locale(identifier: "ja_JP")
+        XCTAssertEqual(DayException.weekdayName(6, calendar: cal, locale: ja), "土曜日")
+        XCTAssertEqual(DayException.weekdayName(0, calendar: cal, locale: us), "Sunday")
     }
 
     func test_dateLabelSingleDay() {

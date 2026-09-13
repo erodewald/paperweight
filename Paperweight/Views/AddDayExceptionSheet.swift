@@ -20,10 +20,16 @@ struct AddDayExceptionSheet: View {
     @State private var field: Field = .from
     @State private var errorText: String?
 
-    private static let weekdayShort = ["S", "M", "T", "W", "T", "F", "S"]
     private static let kinds: [(value: Kind, label: String)] = [
-        (.open, "Open all day"), (.quiet, "Quiet all day"), (.like, "Like a weekday…")]
-    private static let weekdays: [(value: Int, label: String)] = (0..<7).map { ($0, weekdayShort[$0]) }
+        (.open, String(localized: "Open all day", bundle: L10n.bundle, comment: "Day treatment: apps open the whole day")),
+        (.quiet, String(localized: "Quiet all day", bundle: L10n.bundle, comment: "Day treatment: apps quiet the whole day")),
+        (.like, String(localized: "Like a weekday…", bundle: L10n.bundle, comment: "Day treatment: pick a weekday to copy"))]
+    /// Weekday initials in the locale's week order; the value stays the app's
+    /// Sunday-based index.
+    private static let weekdays: [(value: Int, label: String)] = {
+        let symbols = Calendar.current.veryShortWeekdaySymbols
+        return PaperweightSchedule.displayOrder().map { ($0, symbols[$0]) }
+    }()
 
     private var treatment: DayException.Treatment {
         switch kind {
@@ -72,16 +78,18 @@ struct AddDayExceptionSheet: View {
                     }
 
                     GroupedCard {
-                        fieldRow("From", value: from.date().formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()),
+                        fieldRow(String(localized: "From", bundle: L10n.bundle, comment: "First day of a range"), value: from.date().formatted(Date.FormatStyle(locale: .current, calendar: .current).weekday(.abbreviated).month(.abbreviated).day()),
                                  active: field == .from) { field = .from }
                         CardDivider()
-                        fieldRow("To", value: to.map { $0.date().formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()) } ?? "Same day",
+                        fieldRow(String(localized: "To", bundle: L10n.bundle, comment: "Last day of a range"), value: to.map { $0.date().formatted(Date.FormatStyle(locale: .current, calendar: .current).weekday(.abbreviated).month(.abbreviated).day()) } ?? String(localized: "Same day", bundle: L10n.bundle, comment: "Range end when the range is a single day"),
                                  active: field == .to, muted: to == nil) { field = .to }
                         CardDivider()
                         HStack {
                             Text("Note").font(.grotesk(15)).foregroundStyle(PW.textPrimary)
                             Spacer(minLength: 12)
-                            TextField("Optional", text: $note)
+                            TextField("Note", text: $note,
+                                       prompt: Text("Optional", comment: "Placeholder for the optional note field"))
+                                .labelsHidden()
                                 .font(.grotesk(15))
                                 .multilineTextAlignment(.trailing)
                                 .foregroundStyle(PW.textMuted)
@@ -94,7 +102,9 @@ struct AddDayExceptionSheet: View {
                         .padding(.horizontal, 16).padding(.vertical, 12)
                     }
 
-                    DatePicker("", selection: pickerSelection, in: pickerRange, displayedComponents: .date)
+                    DatePicker(selection: pickerSelection, in: pickerRange, displayedComponents: .date) {
+                        Text("Date", comment: "Accessibility label of the hidden date picker")
+                    }
                         .datePickerStyle(.graphical)
                         .tint(PW.sage)
                         .labelsHidden()
@@ -184,11 +194,12 @@ struct AddDayExceptionSheet: View {
         } catch let error as PaperweightConfig.ExceptionError {
             switch error {
             case .overlaps(let other):
-                errorText = "Overlaps \(other.dateLabel()). Remove that one first."
+                errorText = String(localized: "Overlaps \(other.dateLabel()). Remove that one first.", bundle: L10n.bundle,
+                                   comment: "A date or date range follows 'Overlaps'")
             case .loosensToday:
-                errorText = "Opening up takes effect from tomorrow."
+                errorText = String(localized: "Opening up takes effect from tomorrow.", bundle: L10n.bundle)
             case .endsBeforeStart:
-                errorText = "The last day is before the first."
+                errorText = String(localized: "The last day is before the first.", bundle: L10n.bundle)
             }
         } catch {
             errorText = error.localizedDescription

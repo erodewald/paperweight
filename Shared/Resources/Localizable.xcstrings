@@ -1,0 +1,630 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    " · ": {
+      "comment": "Joins short facts on one line; keep the spaces"
+    },
+    "%@ %@": {
+      "comment": "A time and a weekday name; reorder freely",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ %lld": {
+      "comment": "Short weekday name then day of month: 'Mon 14'; reorder freely",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ %2$lld"
+          }
+        }
+      }
+    },
+    "%@ hours open up at midnight.": {
+      "comment": "A number of hours (may be 2.5) that become open at the day boundary"
+    },
+    "%@ quiet hours this week": {},
+    "%@ tmrw": {
+      "comment": "Lock Screen; a time then 'tomorrow' shortened; keep under 24 characters"
+    },
+    "%@ tomorrow": {
+      "comment": "A time, then the word tomorrow"
+    },
+    "%@ · %@": {
+      "comment": "Two short phrases joined by a middle dot",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "%@ – %@": {
+      "comment": "A date range across months\nA date range: first day, en dash, last day",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ – %2$@"
+          }
+        }
+      }
+    },
+    "%@. %@": {
+      "comment": "Theme title, then its one-line description",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@. %2$@"
+          }
+        }
+      }
+    },
+    "%@–%lld": {
+      "comment": "A range inside one month: 'Sep 21' then the last day's number",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@–%2$lld"
+          }
+        }
+      }
+    },
+    "%lld apps": {
+      "comment": "How many apps are chosen; has a plural rule",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld app"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld apps"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld categories": {
+      "comment": "How many app categories are chosen; has a plural rule",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld category"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld categories"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld days": {
+      "comment": "Duration in whole days; has a plural rule\nLength of a planned range; has a plural rule",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld day"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld days"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld domains": {
+      "comment": "How many web domains are chosen; has a plural rule",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld domain"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld domains"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld of %lld": {
+      "comment": "Recovery codes left: unused of total",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "%lld upcoming": {
+      "comment": "How many planned days are ahead; has a plural rule",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld upcoming"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld upcoming"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lldm": {
+      "comment": "Big countdown under an hour: a number and a one-letter minutes unit"
+    },
+    "%lld½ days": {
+      "comment": "Duration rounded to a half day; ½ is part of the value"
+    },
+    "+%lld more": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "+%lld more"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "+%lld more"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    ", ": {
+      "comment": "List separator"
+    },
+    "125 kHz “RFID” tags": {},
+    "A day off has to be set the day before.": {},
+    "A forest sprouts behind the words.": {
+      "comment": "Quiet theme description"
+    },
+    "A quiet day can start right now.": {},
+    "A scan is already in progress. Try again in a moment.": {},
+    "A way out, briefly.": {},
+    "Add a day": {},
+    "Any cheap NFC tag works. Paperweight reads the chip's built-in ID, so the tag never needs to be programmed — even a blank one is ready out of the pack.": {},
+    "Bare tags on metal": {},
+    "Before Paperweight can turn on, register an NFC token or generate recovery codes so you can always unlock.": {},
+    "Before Paperweight can turn on, register an NFC token or generate recovery codes so you can always unlock. Your schedule is saved — finish setup and save again to arm it.": {},
+    "Buy links may be affiliate links — they cost you nothing extra and help support Paperweight.": {},
+    "Buying a Token": {},
+    "COOL-OFF": {
+      "comment": "Widget eyebrow, emphasis form; the multi-day tokenless unlock"
+    },
+    "Cancel": {},
+    "Cancel timed unlock": {},
+    "Change reverted": {},
+    "Changes only what you see while apps are quiet. It never changes what goes quiet.": {},
+    "Cheapest. Sit flat on wood, plastic, or glass. Best stuck somewhere out of the way.": {},
+    "Choose Apps": {},
+    "Choose apps": {},
+    "Choose apps & categories": {},
+    "Choose apps and categories to make quiet.": {},
+    "Choose apps to quiet first": {},
+    "Choosing a token": {},
+    "Code": {},
+    "Codes remaining": {},
+    "Configure": {},
+    "Cool-off if token lost": {},
+    "Copied": {},
+    "Copy all codes": {},
+    "Could not read the NFC tag.": {},
+    "Couldn't read the token.": {
+      "comment": "System NFC sheet"
+    },
+    "Date": {
+      "comment": "Accessibility label of the hidden date picker"
+    },
+    "Days off & quiet days": {},
+    "Debug builds only — none of this exists in a release build.": {},
+    "Developer": {},
+    "Deviation": {
+      "comment": "Section heading over the options for turning Paperweight off early"
+    },
+    "Diorama": {
+      "comment": "Quiet theme name"
+    },
+    "Discs, fobs & PVC cards": {},
+    "Do not select Paperweight itself — quieting it could lock you out of these controls.": {},
+    "Done": {},
+    "Down until %@": {
+      "comment": "A time (maybe with a day) follows"
+    },
+    "Down until you say otherwise": {},
+    "Each works once. Keep them somewhere you can reach without your phone.": {},
+    "Edit day": {},
+    "Edit schedule": {},
+    "Emergency unlock": {},
+    "Emergency unlock lives in Settings — never here.": {},
+    "Ends tonight": {
+      "comment": "A planned day whose last day is today"
+    },
+    "Enter one of the single-use codes you saved. This will permanently disable Paperweight.": {},
+    "Error": {},
+    "First, choose the apps and categories to quiet.": {},
+    "Force quiet screen": {},
+    "From": {
+      "comment": "First day of a range"
+    },
+    "Generate Recovery Codes Now": {},
+    "Generate recovery codes": {},
+    "Get an NTAG215 (or 213 / 216)": {},
+    "Hold your Paperweight token near the top of your iPhone.": {
+      "comment": "System NFC sheet"
+    },
+    "Holidays, trips, exam days. Add one and the week bends around it.": {},
+    "How long the quiet lasts.": {
+      "comment": "Widget gallery description"
+    },
+    "In your hands.": {},
+    "Invalid Code": {},
+    "Later": {
+      "comment": "Button: postpone this step"
+    },
+    "Lifts %@ (%@).": {
+      "comment": "A relative time ('in 2 days'), then the exact date and time",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lifts %1$@ (%2$@)."
+          }
+        }
+      }
+    },
+    "Like %@": {
+      "comment": "Day treatment: use another weekday's schedule; a weekday name follows"
+    },
+    "Like a weekday…": {
+      "comment": "Day treatment: pick a weekday to copy"
+    },
+    "Locked — quiet": {
+      "comment": "Legend swatch"
+    },
+    "Locks at %@ · in %@": {
+      "comment": "A time, then a duration",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locks at %1$@ · in %2$@"
+          }
+        }
+      }
+    },
+    "Loosening takes effect tomorrow.": {},
+    "Lost your token?": {},
+    "Lost your token? Start timed unlock": {},
+    "Metal detunes the antenna and the phone won't read it. If it must go on a fridge or lockbox, buy an “on-metal” / “anti-metal” tag.": {},
+    "NFC Token & Recovery": {},
+    "NFC is not supported on this device.": {},
+    "NFC session failed: %@": {
+      "comment": "A system error message follows"
+    },
+    "No NFC tag found.": {},
+    "No NFC token registered. Set one up in settings.": {},
+    "No token found.": {
+      "comment": "System NFC sheet"
+    },
+    "No token registered": {},
+    "Not armed": {
+      "comment": "Lock Screen; keep under 24 characters"
+    },
+    "Not now": {},
+    "Not yet": {
+      "comment": "Widget headline: cannot arm until an unlock method exists"
+    },
+    "Note": {},
+    "Nothing": {
+      "comment": "Widget headline: no apps chosen yet"
+    },
+    "Nothing chosen": {
+      "comment": "Lock Screen; keep under 24 characters"
+    },
+    "Nothing chosen yet": {},
+    "Nothing is quiet right now": {},
+    "Nothing is quiet yet.": {},
+    "Nothing more planned.": {},
+    "Nothing planned.": {},
+    "Now is a quiet period — saving makes restricted apps quiet at once.": {},
+    "Now set up a way back — an NFC token or recovery codes.": {},
+    "OK": {},
+    "OPEN": {
+      "comment": "Widget eyebrow, emphasis form"
+    },
+    "OPEN ALL DAY": {},
+    "Off": {
+      "comment": "Lock Screen; keep under 24 characters"
+    },
+    "Open": {
+      "comment": "Legend swatch"
+    },
+    "Open Paperweight to begin": {},
+    "Open all day": {
+      "comment": "Day treatment: apps open the whole day"
+    },
+    "Open until %@, then quiet": {},
+    "Open: All week": {},
+    "Open: Weekday evenings": {},
+    "Opening up takes effect from tomorrow, so today isn't offered.": {},
+    "Opening up takes effect from tomorrow.": {},
+    "Opens tomorrow": {
+      "comment": "Legend swatch"
+    },
+    "Optional": {
+      "comment": "Placeholder for the optional note field"
+    },
+    "Overgrown": {
+      "comment": "Quiet theme name"
+    },
+    "Overlaps %@. Remove that one first.": {
+      "comment": "A date or date range follows 'Overlaps'"
+    },
+    "PAPERWEIGHT": {
+      "comment": "Widget eyebrow; the app name, never translated"
+    },
+    "Paint a schedule and it arms itself. There is no switch to forget.": {},
+    "Paint your quiet hours.": {},
+    "Paperweight": {
+      "comment": "Widget gallery name; the app name, never translated"
+    },
+    "Paperweight Recovery Codes": {
+      "comment": "Default file name when saving recovery codes"
+    },
+    "Paperweight has nothing to quiet yet. Pick the apps or categories to make quiet first.": {},
+    "Paperweight has nothing to quiet yet. Pick the apps or categories to make quiet, then save again to arm.": {},
+    "Paperweight stays on and keeps enforcing your schedule. After %@ it lifts automatically. Use this only if your token is lost — scanning it or a recovery code unlocks immediately.": {},
+    "Password manager": {},
+    "Physical token": {},
+    "Planned": {
+      "comment": "Legend: a day with a planned exception"
+    },
+    "QUIET": {
+      "comment": "Widget eyebrow, emphasis form"
+    },
+    "Quiet": {
+      "comment": "Lock Screen; keep under 24 characters"
+    },
+    "Quiet all day": {
+      "comment": "Day treatment: apps quiet the whole day"
+    },
+    "Quiet now": {},
+    "Quiet until %@": {},
+    "Quiet until the cool-off lifts %@": {},
+    "Quiet — no open hours set": {},
+    "Quiet: The whole week": {},
+    "Re-lock now": {},
+    "Re-locks at %@": {},
+    "Ready": {
+      "comment": "Status: set up and usable"
+    },
+    "Recovery Code": {},
+    "Recovery Codes": {},
+    "Recovery code": {},
+    "Recovery codes": {},
+    "Regenerate all codes": {},
+    "Registered token": {},
+    "Releases on its own after a %lld-day cool-off.": {},
+    "Remove": {},
+    "Removing a quiet app needs your NFC token. Your list is unchanged.": {},
+    "Replace token…": {},
+    "Requires NFC token": {
+      "comment": "Home Screen quick action subtitle"
+    },
+    "Restricted apps": {},
+    "Reveals Emergency unlock and Turn off. Nothing is armed and nothing is quiet.": {},
+    "Same day": {
+      "comment": "Range end when the range is a single day"
+    },
+    "Save": {},
+    "Save schedule": {},
+    "Save to Files": {},
+    "Save your codes": {},
+    "Scan NFC token…": {},
+    "Scan token…": {},
+    "Scan your NFC token to remove all restrictions. The forest stops growing.": {},
+    "Scanning…": {},
+    "Schedule": {},
+    "Screen Time access is off": {},
+    "Screen Time is off": {
+      "comment": "Lock Screen; keep under 24 characters"
+    },
+    "Set It Up": {},
+    "Set a schedule": {},
+    "Set up": {
+      "comment": "Status: this still needs setting up"
+    },
+    "Set up a way back": {},
+    "Set up a way back first": {},
+    "Settings": {},
+    "Show armed-only screens": {},
+    "Shows the quiet screen without arming anything. Nothing actually goes quiet.": {},
+    "Simple": {
+      "comment": "Quiet theme name"
+    },
+    "Single-use backup codes to disable Paperweight if your token is lost. Shown once — save them somewhere safe.": {},
+    "Sometimes MIFARE Classic — usually still readable, but NTAG is the safe bet.": {},
+    "Somewhere, a forest is filling in.": {},
+    "Start %lld-day Cool-off": {},
+    "Start timed unlock?": {},
+    "Stickers (thin, adhesive)": {},
+    "Stickers vs. Hard Tags": {},
+    "Tap your NFC sticker to register it. Place it on an object you won't carry everywhere.": {},
+    "Tap your NFC token to lift restrictions for **%lld minutes**. The quiet returns on its own.": {},
+    "That code is incorrect or has already been used.": {},
+    "That code is spent. Paperweight is off.": {},
+    "That token wasn't recognized.": {},
+    "The Short Version": {},
+    "The last day is before the first.": {},
+    "The most iPhone-compatible chips, a few dollars for a multipack. Memory size doesn't matter here — we only read the ID.": {},
+    "The screen is claimed at its corners.": {
+      "comment": "Quiet theme description"
+    },
+    "The week ahead": {},
+    "The words carry the weight.": {
+      "comment": "Quiet theme description"
+    },
+    "Theme": {},
+    "These aren't NFC and iPhone can't read them at all. Skip anything listing “125 kHz”, “EM4100”, or “proximity card.”": {},
+    "These codes will not be shown again.": {},
+    "Timed unlock in progress": {},
+    "To": {
+      "comment": "Last day of a range"
+    },
+    "Token Registered": {},
+    "Token recognized.": {
+      "comment": "System NFC sheet"
+    },
+    "Tougher and easy to move or hide. Better if you'll tap it daily.": {},
+    "Turn Off Paperweight": {
+      "comment": "Home Screen quick action"
+    },
+    "Turn On Paperweight": {
+      "comment": "Home Screen quick action"
+    },
+    "Turn off Paperweight": {},
+    "Turn off without a token": {},
+    "UNLOCKED": {
+      "comment": "Widget eyebrow, emphasis form"
+    },
+    "Unbranded “NFC cards”": {},
+    "Unlock duration": {},
+    "Unlocked": {},
+    "Unlocked — re-locks at %@": {},
+    "Unlocks at %@": {},
+    "Unsupported token.": {
+      "comment": "System NFC sheet"
+    },
+    "Use a recovery code": {},
+    "Verify & disable Paperweight": {},
+    "Version %@": {},
+    "View schedule": {},
+    "Waiting": {
+      "comment": "Lock Screen; keep under 24 characters\nWidget headline: Screen Time permission missing"
+    },
+    "What to Avoid": {},
+    "Where to Buy": {},
+    "Where to buy a token": {},
+    "XXXXX-XXXXX": {
+      "comment": "Recovery code shape; do not translate"
+    },
+    "Your NFC token has been saved. Generate recovery codes now in case you ever lose it.": {},
+    "before it goes quiet": {},
+    "left": {
+      "comment": "Unit after the countdown: '2:14 left'"
+    },
+    "no open hours set": {
+      "comment": "Lock Screen; keep under 24 characters"
+    },
+    "nothing is quiet": {
+      "comment": "Lock Screen; keep under 24 characters"
+    },
+    "of quiet left": {
+      "comment": "Follows a duration: '3h 20m of quiet left'"
+    },
+    "open Paperweight": {
+      "comment": "Lock Screen; keep under 24 characters"
+    },
+    "open Paperweight to begin": {},
+    "pick what to quiet": {
+      "comment": "Lock Screen; keep under 24 characters"
+    },
+    "quiet at %@": {
+      "comment": "Lock Screen; keep under 24 characters"
+    },
+    "re-locks %@": {
+      "comment": "Lock Screen; keep under 24 characters"
+    },
+    "set it down when you're ready": {},
+    "set up a way back": {
+      "comment": "Lock Screen; keep under 24 characters"
+    },
+    "set up a way back first": {},
+    "still quiet until then": {},
+    "the change lands tomorrow": {
+      "comment": "After 'Ends tonight': an edit or removal applies from tomorrow"
+    },
+    "then it closes on its own": {},
+    "unlocks %@": {
+      "comment": "Lock Screen; keep under 24 characters; a relative time follows ('in 2 days')"
+    },
+    "until %@": {
+      "comment": "Lock Screen; keep under 24 characters"
+    },
+    "until you say otherwise": {},
+    "○ Off": {
+      "comment": "Banner eyebrow; keep the dot"
+    },
+    "○ Open": {
+      "comment": "Banner eyebrow; keep the dot"
+    },
+    "● Locked": {
+      "comment": "Banner eyebrow; keep the dot"
+    }
+  },
+  "version": "1.0"
+}

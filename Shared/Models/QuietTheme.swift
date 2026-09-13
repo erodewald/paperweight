@@ -12,17 +12,17 @@ enum QuietTheme: String, Codable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .simple: return "Simple"
-        case .diorama: return "Diorama"
-        case .overgrown: return "Overgrown"
+        case .simple: return String(localized: "Simple", bundle: L10n.bundle, comment: "Quiet theme name")
+        case .diorama: return String(localized: "Diorama", bundle: L10n.bundle, comment: "Quiet theme name")
+        case .overgrown: return String(localized: "Overgrown", bundle: L10n.bundle, comment: "Quiet theme name")
         }
     }
 
     var blurb: String {
         switch self {
-        case .simple: return "The words carry the weight."
-        case .diorama: return "A forest sprouts behind the words."
-        case .overgrown: return "The screen is claimed at its corners."
+        case .simple: return String(localized: "The words carry the weight.", bundle: L10n.bundle, comment: "Quiet theme description")
+        case .diorama: return String(localized: "A forest sprouts behind the words.", bundle: L10n.bundle, comment: "Quiet theme description")
+        case .overgrown: return String(localized: "The screen is claimed at its corners.", bundle: L10n.bundle, comment: "Quiet theme description")
         }
     }
 

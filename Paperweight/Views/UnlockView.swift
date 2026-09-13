@@ -36,9 +36,8 @@ struct UnlockView: View {
             } else {
                 Text("A way out, briefly.")
                     .font(.spectral(26)).foregroundStyle(PW.textPrimary)
-                (Text("Tap your NFC token to lift restrictions for ").foregroundStyle(PW.textMuted)
-                 + Text("\(unlockMinutes) minutes").foregroundStyle(PW.textPrimary)
-                 + Text(". The quiet returns on its own.").foregroundStyle(PW.textMuted))
+                Text("Tap your NFC token to lift restrictions for **\(unlockMinutes) minutes**. The quiet returns on its own.")
+                    .foregroundStyle(PW.textMuted)
                     .font(.grotesk(14))
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
@@ -72,9 +71,12 @@ struct UnlockView: View {
 
                 if !vm.config.recoveryCodes.filter({ !$0.isUsed }).isEmpty {
                     Button { showingRecoveryEntry = true } label: {
-                        (Text("Lost your token? ").foregroundStyle(PW.textMuted)
-                         + Text("Use a recovery code").foregroundStyle(PW.textMuted).underline())
-                            .font(.grotesk(13))
+                        HStack(spacing: 4) {
+                            Text("Lost your token?")
+                            Text("Use a recovery code").underline()
+                        }
+                        .foregroundStyle(PW.textMuted)
+                        .font(.grotesk(13))
                     }
                     .buttonStyle(.plain)
                     .padding(.top, 18)

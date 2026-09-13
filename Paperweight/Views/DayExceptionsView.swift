@@ -56,7 +56,7 @@ struct DayExceptionsView: View {
         .scrollContentBackground(.hidden)
         .pwScreen()
         .safeAreaInset(edge: .bottom) {
-            AccentButton(title: "Add a day") { sheet = .add }
+            AccentButton(title: String(localized: "Add a day", bundle: L10n.bundle)) { sheet = .add }
                 .padding(.horizontal, 20).padding(.bottom, 12)
                 .background(PW.black.opacity(0.9))
         }
@@ -128,21 +128,29 @@ struct DayExceptionsView: View {
         }
     }
 
+    /// Short facts under the date, joined by a middle dot. Each fact is its own
+    /// key so nothing is glued from fragments.
     private func secondLine(_ e: DayException) -> String? {
-        if e.lastDay == today {
-            var line = "Ends tonight"
-            if vm.truncatedDayExceptionIDs.contains(e.id) {
-                line += " · the change lands tomorrow"
-            } else if !e.note.isEmpty {
-                line += " · \(e.note)"
-            }
-            if e.dayCount() > 1 { line += " · \(e.dayCount()) days" }
-            return line
-        }
+        let b = L10n.bundle
         var parts: [String] = []
-        if !e.note.isEmpty { parts.append(e.note) }
-        if e.dayCount() > 1 { parts.append("\(e.dayCount()) days") }
-        return parts.isEmpty ? nil : parts.joined(separator: " · ")
+        if e.lastDay == today {
+            parts.append(String(localized: "Ends tonight", bundle: b, comment: "A planned day whose last day is today"))
+            if vm.truncatedDayExceptionIDs.contains(e.id) {
+                parts.append(String(localized: "the change lands tomorrow", bundle: b,
+                                    comment: "After 'Ends tonight': an edit or removal applies from tomorrow"))
+            } else if !e.note.isEmpty {
+                parts.append(e.note)
+            }
+        } else if !e.note.isEmpty {
+            parts.append(e.note)
+        }
+        if e.dayCount() > 1 {
+            parts.append(String(localized: "\(e.dayCount()) days", bundle: b,
+                                comment: "Length of a planned range; has a plural rule"))
+        }
+        guard !parts.isEmpty else { return nil }
+        let separator = String(localized: " · ", bundle: b, comment: "Joins short facts on one line; keep the spaces")
+        return parts.joined(separator: separator)
     }
 
     private func pill(_ t: DayException.Treatment) -> some View {
@@ -153,7 +161,7 @@ struct DayExceptionsView: View {
             case .likeWeekday: return (PW.textMuted, .clear, Color.white.opacity(0.18))
             }
         }()
-        return Text(t.title)
+        return Text(t.title())
             .font(.grotesk(13))
             .foregroundStyle(fg)
             .padding(.horizontal, 7).padding(.vertical, 2)

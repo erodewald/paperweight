@@ -7,10 +7,10 @@ extension FamilyActivitySelection {
         let domainCount = webDomainTokens.count
 
         var parts: [String] = []
-        if appCount > 0 { parts.append("\(appCount) app\(appCount == 1 ? "" : "s")") }
-        if catCount > 0 { parts.append("\(catCount) categor\(catCount == 1 ? "y" : "ies")") }
-        if domainCount > 0 { parts.append("\(domainCount) domain\(domainCount == 1 ? "" : "s")") }
-        return parts.joined(separator: ", ")
+        if appCount > 0 { parts.append(String(localized: "\(appCount) apps", bundle: L10n.bundle, comment: "How many apps are chosen; has a plural rule")) }
+        if catCount > 0 { parts.append(String(localized: "\(catCount) categories", bundle: L10n.bundle, comment: "How many app categories are chosen; has a plural rule")) }
+        if domainCount > 0 { parts.append(String(localized: "\(domainCount) domains", bundle: L10n.bundle, comment: "How many web domains are chosen; has a plural rule")) }
+        return parts.joined(separator: String(localized: ", ", bundle: L10n.bundle, comment: "List separator"))
     }
 
     var isEmpty: Bool {

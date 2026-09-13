@@ -85,7 +85,7 @@ struct NFCBuyingGuideView: View {
 
     // MARK: - Rows
 
-    private func infoRow(icon: String, iconColor: Color, title: String, body: String) -> some View {
+    private func infoRow(icon: String, iconColor: Color, title: LocalizedStringKey, body: LocalizedStringKey) -> some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: icon)
                 .font(.system(size: 16)).foregroundStyle(iconColor)

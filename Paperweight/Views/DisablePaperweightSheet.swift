@@ -90,7 +90,7 @@ struct DisablePaperweightSheet: View {
                 Button("Start \(vm.config.coolOffDays)-day Cool-off") { vm.requestCoolOffUnlock() }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("Paperweight stays on and keeps enforcing your schedule. After \(vm.config.coolOffDays) day\(vm.config.coolOffDays == 1 ? "" : "s") it lifts automatically. Use this only if your token is lost — scanning it or a recovery code unlocks immediately.")
+                Text("Paperweight stays on and keeps enforcing your schedule. After \(coolOffLabel) it lifts automatically. Use this only if your token is lost — scanning it or a recovery code unlocks immediately.")
             }
             .sheet(isPresented: $showingRecoveryEntry) {
                 RecoveryCodeEntryView(vm: vm, onSuccess: { dismiss() })
@@ -104,13 +104,18 @@ struct DisablePaperweightSheet: View {
         .presentationCornerRadius(30)
     }
 
+    private var coolOffLabel: String {
+        String(localized: "\(vm.config.coolOffDays) days", bundle: L10n.bundle, comment: "Duration in whole days; has a plural rule")
+    }
+
     @ViewBuilder
     private var coolOffSection: some View {
         if vm.isCoolOffPending, let release = vm.config.coolOffReleaseDate {
             VStack(spacing: 8) {
                 Label("Timed unlock in progress", systemImage: "hourglass")
                     .font(.grotesk(13.5, weight: .semibold)).foregroundStyle(PW.clay)
-                Text("Lifts \(release.formatted(.relative(presentation: .named))) (\(release.formatted(date: .abbreviated, time: .shortened))).")
+                Text("Lifts \(release.formatted(.relative(presentation: .named))) (\(release.formatted(date: .abbreviated, time: .shortened))).",
+                     comment: "A relative time ('in 2 days'), then the exact date and time")
                     .font(.grotesk(13)).foregroundStyle(PW.textFaint)
                     .multilineTextAlignment(.center)
                 Button("Cancel timed unlock") { vm.cancelCoolOffUnlock() }
@@ -177,7 +182,9 @@ struct RecoveryCodeEntryView: View {
                         .frame(height: 56)
                         .padding(.horizontal, 24).padding(.top, 28)
                 } else {
-                    TextField("", text: $codeInput, prompt: Text("XXXXX-XXXXX").foregroundColor(PW.textFaint))
+                    TextField("Code", text: $codeInput,
+                              prompt: Text("XXXXX-XXXXX", comment: "Recovery code shape; do not translate").foregroundColor(PW.textFaint))
+                        .labelsHidden()
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.characters)
                         .font(.grotesk(20, weight: .semibold))
@@ -206,7 +213,7 @@ struct RecoveryCodeEntryView: View {
                         }
                         .padding(.horizontal, 24).padding(.top, 28)
 
-                    AccentButton(title: "Verify & disable Paperweight",
+                    AccentButton(title: String(localized: "Verify & disable Paperweight", bundle: L10n.bundle),
                                  enabled: !codeInput.trimmingCharacters(in: .whitespaces).isEmpty) {
                         verifyAndDisable()
                     }

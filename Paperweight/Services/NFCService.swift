@@ -22,7 +22,7 @@ final class NFCService: NSObject, NFCServiceProtocol {
             self.continuation = continuation
             let session = NFCTagReaderSession(pollingOption: [.iso14443, .iso15693], delegate: self, queue: .main)
             self.session = session
-            session?.alertMessage = "Hold your Paperweight token near the top of your iPhone."
+            session?.alertMessage = String(localized: "Hold your Paperweight token near the top of your iPhone.", bundle: L10n.bundle, comment: "System NFC sheet")
             session?.begin()
         }
     }
@@ -54,13 +54,13 @@ extension NFCService: NFCTagReaderSessionDelegate {
 
     func tagReaderSession(_ session: NFCTagReaderSession, didDetect tags: [NFCTag]) {
         guard let tag = tags.first else {
-            session.invalidate(errorMessage: "No token found.")
+            session.invalidate(errorMessage: String(localized: "No token found.", bundle: L10n.bundle, comment: "System NFC sheet"))
             finish(.failure(NFCError.noTagFound))
             return
         }
         session.connect(to: tag) { [weak self] error in
             if let error {
-                session.invalidate(errorMessage: "Couldn't read the token.")
+                session.invalidate(errorMessage: String(localized: "Couldn't read the token.", bundle: L10n.bundle, comment: "System NFC sheet"))
                 self?.finish(.failure(NFCError.sessionFailed(error)))
                 return
             }
@@ -71,11 +71,11 @@ extension NFCService: NFCTagReaderSessionDelegate {
             case .iso15693(let t):  uid = t.identifier.hexString
             case .feliCa(let t):    uid = t.currentIDm.hexString
             @unknown default:
-                session.invalidate(errorMessage: "Unsupported token.")
+                session.invalidate(errorMessage: String(localized: "Unsupported token.", bundle: L10n.bundle, comment: "System NFC sheet"))
                 self?.finish(.failure(NFCError.readFailed))
                 return
             }
-            session.alertMessage = "Token recognized."
+            session.alertMessage = String(localized: "Token recognized.", bundle: L10n.bundle, comment: "System NFC sheet")
             session.invalidate()
             self?.finish(.success(uid))
         }

@@ -196,83 +196,121 @@ struct WidgetCopy: Equatable {
     var accessoryLine: String
     /// Footer of the medium day-ribbon — a whole sentence, since there's room.
     var boundaryLine: String
+
+    /// The widget gallery's name and one-line description. Kept here, in a file
+    /// the app compiles, so the app target's build extracts them; the widget
+    /// target never extracts.
+    static var displayName: String {
+        String(localized: "Paperweight", bundle: L10n.bundle, comment: "Widget gallery name; the app name, never translated")
+    }
+    static var widgetDescription: String {
+        String(localized: "How long the quiet lasts.", bundle: L10n.bundle, comment: "Widget gallery description")
+    }
 }
 
 extension WidgetState {
-    func copy(at date: Date) -> WidgetCopy {
+    func copy(at date: Date, calendar: Calendar = .current, locale: Locale = .current) -> WidgetCopy {
+        let b = L10n.bundle
         switch self {
         case .quietBounded(let ends, _):
-            let d = WidgetState.compactDuration(ends.timeIntervalSince(date))
-            return WidgetCopy(eyebrow: "QUIET", value: .word(d),
-                              caption: "of quiet left",
-                              accessoryValue: d,
-                              accessoryLine: "until \(WidgetState.dayClock(ends, from: date, abbreviated: true))",
-                              boundaryLine: "Quiet until \(WidgetState.dayClock(ends, from: date))")
+            let d = WidgetState.compactDuration(ends.timeIntervalSince(date), locale: locale)
+            let short = WidgetState.dayClock(ends, from: date, calendar: calendar, locale: locale, abbreviated: true)
+            let long = WidgetState.dayClock(ends, from: date, calendar: calendar, locale: locale)
+            return WidgetCopy(
+                eyebrow: String(localized: "QUIET", bundle: b, locale: locale, comment: "Widget eyebrow, emphasis form"),
+                value: .word(d),
+                caption: String(localized: "of quiet left", bundle: b, locale: locale, comment: "Follows a duration: '3h 20m of quiet left'"),
+                accessoryValue: d,
+                accessoryLine: String(localized: "until \(short)", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                boundaryLine: String(localized: "Quiet until \(long)", bundle: b, locale: locale))
 
         case .quietOpen:
-            return WidgetCopy(eyebrow: "QUIET", value: .word("Quiet"),
-                              caption: "until you say otherwise",
-                              accessoryValue: "Quiet",
-                              accessoryLine: "no open hours set",
-                              boundaryLine: "Quiet — no open hours set")
+            return WidgetCopy(
+                eyebrow: String(localized: "QUIET", bundle: b, locale: locale, comment: "Widget eyebrow, emphasis form"),
+                value: .word(String(localized: "Quiet", bundle: b, locale: locale)),
+                caption: String(localized: "until you say otherwise", bundle: b, locale: locale),
+                accessoryValue: String(localized: "Quiet", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                accessoryLine: String(localized: "no open hours set", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                boundaryLine: String(localized: "Quiet — no open hours set", bundle: b, locale: locale))
 
         case .freeWindow(let ends, _):
-            let d = WidgetState.compactDuration(ends.timeIntervalSince(date))
-            return WidgetCopy(eyebrow: "OPEN", value: .word(d),
-                              caption: "before it goes quiet",
-                              accessoryValue: d,
-                              accessoryLine: "quiet at \(WidgetState.dayClock(ends, from: date, abbreviated: true))",
-                              boundaryLine: "Open until \(WidgetState.dayClock(ends, from: date)), then quiet")
+            let d = WidgetState.compactDuration(ends.timeIntervalSince(date), locale: locale)
+            let short = WidgetState.dayClock(ends, from: date, calendar: calendar, locale: locale, abbreviated: true)
+            let long = WidgetState.dayClock(ends, from: date, calendar: calendar, locale: locale)
+            return WidgetCopy(
+                eyebrow: String(localized: "OPEN", bundle: b, locale: locale, comment: "Widget eyebrow, emphasis form"),
+                value: .word(d),
+                caption: String(localized: "before it goes quiet", bundle: b, locale: locale),
+                accessoryValue: d,
+                accessoryLine: String(localized: "quiet at \(short)", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                boundaryLine: String(localized: "Open until \(long), then quiet", bundle: b, locale: locale))
 
         case .timedUnlock(let ends, _):
-            return WidgetCopy(eyebrow: "UNLOCKED", value: .countdown(to: ends),
-                              caption: "then it closes on its own",
-                              accessoryValue: WidgetState.compactDuration(ends.timeIntervalSince(date)),
-                              accessoryLine: "re-locks \(WidgetState.dayClock(ends, from: date, abbreviated: true))",
-                              boundaryLine: "Unlocked — re-locks at \(WidgetState.dayClock(ends, from: date))")
+            let short = WidgetState.dayClock(ends, from: date, calendar: calendar, locale: locale, abbreviated: true)
+            let long = WidgetState.dayClock(ends, from: date, calendar: calendar, locale: locale)
+            return WidgetCopy(
+                eyebrow: String(localized: "UNLOCKED", bundle: b, locale: locale, comment: "Widget eyebrow, emphasis form"),
+                value: .countdown(to: ends),
+                caption: String(localized: "then it closes on its own", bundle: b, locale: locale),
+                accessoryValue: WidgetState.compactDuration(ends.timeIntervalSince(date), locale: locale),
+                accessoryLine: String(localized: "re-locks \(short)", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                boundaryLine: String(localized: "Unlocked — re-locks at \(long)", bundle: b, locale: locale))
 
         case .coolOff(let ends, _):
-            return WidgetCopy(eyebrow: "COOL-OFF",
-                              value: .word(WidgetState.compactDuration(ends.timeIntervalSince(date))),
-                              caption: "still quiet until then",
-                              accessoryValue: WidgetState.compactDuration(ends.timeIntervalSince(date)),
-                              accessoryLine: "unlocks \(WidgetState.relative(ends, from: date))",
-                              boundaryLine: "Quiet until the cool-off lifts \(WidgetState.relative(ends, from: date))")
+            let d = WidgetState.compactDuration(ends.timeIntervalSince(date), locale: locale)
+            let rel = WidgetState.relative(ends, from: date, locale: locale)
+            return WidgetCopy(
+                eyebrow: String(localized: "COOL-OFF", bundle: b, locale: locale, comment: "Widget eyebrow, emphasis form; the multi-day tokenless unlock"),
+                value: .word(d),
+                caption: String(localized: "still quiet until then", bundle: b, locale: locale),
+                accessoryValue: d,
+                accessoryLine: String(localized: "unlocks \(rel)", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters; a relative time follows ('in 2 days')"),
+                boundaryLine: String(localized: "Quiet until the cool-off lifts \(rel)", bundle: b, locale: locale))
 
         case .off:
-            return WidgetCopy(eyebrow: "PAPERWEIGHT", value: .word("Off"),
-                              caption: "set it down when you're ready",
-                              accessoryValue: "Off",
-                              accessoryLine: "nothing is quiet",
-                              boundaryLine: "Nothing is quiet right now")
+            return WidgetCopy(
+                eyebrow: String(localized: "PAPERWEIGHT", bundle: b, locale: locale, comment: "Widget eyebrow; the app name, never translated"),
+                value: .word(String(localized: "Off", bundle: b, locale: locale)),
+                caption: String(localized: "set it down when you're ready", bundle: b, locale: locale),
+                accessoryValue: String(localized: "Off", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                accessoryLine: String(localized: "nothing is quiet", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                boundaryLine: String(localized: "Nothing is quiet right now", bundle: b, locale: locale))
 
         case .nothingChosen:
-            return WidgetCopy(eyebrow: "PAPERWEIGHT", value: .word("Nothing"),
-                              caption: "pick what to quiet",
-                              accessoryValue: "Nothing chosen",
-                              accessoryLine: "pick what to quiet",
-                              boundaryLine: "Nothing chosen yet")
+            return WidgetCopy(
+                eyebrow: String(localized: "PAPERWEIGHT", bundle: b, locale: locale, comment: "Widget eyebrow; the app name, never translated"),
+                value: .word(String(localized: "Nothing", bundle: b, locale: locale, comment: "Widget headline: no apps chosen yet")),
+                caption: String(localized: "pick what to quiet", bundle: b, locale: locale),
+                accessoryValue: String(localized: "Nothing chosen", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                accessoryLine: String(localized: "pick what to quiet", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                boundaryLine: String(localized: "Nothing chosen yet", bundle: b, locale: locale))
 
         case .noWayBack:
-            return WidgetCopy(eyebrow: "PAPERWEIGHT", value: .word("Not yet"),
-                              caption: "set up a way back first",
-                              accessoryValue: "Not armed",
-                              accessoryLine: "set up a way back",
-                              boundaryLine: "Set up a way back first")
+            return WidgetCopy(
+                eyebrow: String(localized: "PAPERWEIGHT", bundle: b, locale: locale, comment: "Widget eyebrow; the app name, never translated"),
+                value: .word(String(localized: "Not yet", bundle: b, locale: locale, comment: "Widget headline: cannot arm until an unlock method exists")),
+                caption: String(localized: "set up a way back first", bundle: b, locale: locale),
+                accessoryValue: String(localized: "Not armed", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                accessoryLine: String(localized: "set up a way back", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                boundaryLine: String(localized: "Set up a way back first", bundle: b, locale: locale))
 
         case .notAuthorized:
-            return WidgetCopy(eyebrow: "PAPERWEIGHT", value: .word("Waiting"),
-                              caption: "Screen Time access is off",
-                              accessoryValue: "Waiting",
-                              accessoryLine: "Screen Time is off",
-                              boundaryLine: "Screen Time access is off")
+            return WidgetCopy(
+                eyebrow: String(localized: "PAPERWEIGHT", bundle: b, locale: locale, comment: "Widget eyebrow; the app name, never translated"),
+                value: .word(String(localized: "Waiting", bundle: b, locale: locale, comment: "Widget headline: Screen Time permission missing")),
+                caption: String(localized: "Screen Time access is off", bundle: b, locale: locale),
+                accessoryValue: String(localized: "Waiting", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                accessoryLine: String(localized: "Screen Time is off", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                boundaryLine: String(localized: "Screen Time access is off", bundle: b, locale: locale))
 
         case .unwritten:
-            return WidgetCopy(eyebrow: "PAPERWEIGHT", value: .none,
-                              caption: "open Paperweight to begin",
-                              accessoryValue: "—",
-                              accessoryLine: "open Paperweight",
-                              boundaryLine: "Open Paperweight to begin")
+            return WidgetCopy(
+                eyebrow: String(localized: "PAPERWEIGHT", bundle: b, locale: locale, comment: "Widget eyebrow; the app name, never translated"),
+                value: .none,
+                caption: String(localized: "open Paperweight to begin", bundle: b, locale: locale),
+                accessoryValue: "—",
+                accessoryLine: String(localized: "open Paperweight", bundle: b, locale: locale, comment: "Lock Screen; keep under 24 characters"),
+                boundaryLine: String(localized: "Open Paperweight to begin", bundle: b, locale: locale))
         }
     }
 
@@ -316,33 +354,37 @@ extension WidgetState {
     // MARK: Formatting
 
     /// "3h 20m", "3h", "42m" — never zero, since a boundary that has arrived is
-    /// a different state, not a zero-length one.
-    static func compactDuration(_ interval: TimeInterval) -> String {
+    /// a different state, not a zero-length one. Under a day the units come
+    /// from Foundation in the locale's own words; past a day it is the app's
+    /// day-speak, rounded to the nearest half day, with the plural rule in the
+    /// catalog.
+    static func compactDuration(_ interval: TimeInterval, locale: Locale = .current) -> String {
         let total = max(60, interval)
-        // Past a day nobody thinks in hours. Nearest half day is enough — the
-        // boundary line beside the value carries the exact time.
         if total >= 24 * 3600 {
             let halves = Int((total / (12 * 3600)).rounded())
             let whole = halves / 2
-            let half = halves % 2 == 1
-            let unit = (whole == 1 && !half) ? "day" : "days"
-            return "\(whole)\(half ? "½" : "") \(unit)"
+            if halves % 2 == 1 {
+                return String(localized: "\(whole)½ days", bundle: L10n.bundle, locale: locale,
+                              comment: "Duration rounded to a half day; ½ is part of the value")
+            }
+            return String(localized: "\(whole) days", bundle: L10n.bundle, locale: locale,
+                          comment: "Duration in whole days; has a plural rule")
         }
         let hours = Int(total) / 3600
-        let minutes = (Int(total) % 3600) / 60
-        if hours > 0 { return minutes > 0 ? "\(hours)h \(minutes)m" : "\(hours)h" }
-        return "\(max(1, minutes))m"
+        let minutes = max(hours > 0 ? 0 : 1, (Int(total) % 3600) / 60)
+        return Duration.seconds(hours * 3600 + minutes * 60)
+            .formatted(.units(allowed: [.hours, .minutes], width: .narrow).locale(locale))
     }
 
-    static func clock(_ date: Date) -> String {
-        date.formatted(date: .omitted, time: .shortened)
+    static func clock(_ date: Date, calendar: Calendar = .current, locale: Locale = .current) -> String {
+        date.formatted(Date.FormatStyle(locale: locale, calendar: calendar, timeZone: calendar.timeZone).hour().minute())
     }
 
     /// `clock`, qualified by day whenever the boundary isn't today.
     ///
     /// A bare "02:00" is read as *tonight* — which is right most of the time and
     /// wrong in exactly the case that matters: a Friday evening looking down the
-    /// barrel of a free window that runs until Sunday. "Free until 02:00" then
+    /// barrel of a free window that runs until Sunday. "Open until 02:00" then
     /// promises quiet in three hours when it's really two and a half days out.
     ///
     /// The comparison is calendar days, not elapsed hours, so 23:50 → 00:10 is
@@ -351,8 +393,9 @@ extension WidgetState {
     /// about 24 characters and no more.
     static func dayClock(_ date: Date, from now: Date,
                          calendar: Calendar = .current,
+                         locale: Locale = .current,
                          abbreviated: Bool = false) -> String {
-        let time = clock(date)
+        let time = clock(date, calendar: calendar, locale: locale)
         let days = calendar.dateComponents([.day],
                                            from: calendar.startOfDay(for: now),
                                            to: calendar.startOfDay(for: date)).day ?? 0
@@ -360,16 +403,25 @@ extension WidgetState {
         case ..<1:
             return time
         case 1:
-            return abbreviated ? "\(time) tmrw" : "\(time) tomorrow"
+            return abbreviated
+                ? String(localized: "\(time) tmrw", bundle: L10n.bundle, locale: locale,
+                         comment: "Lock Screen; a time then 'tomorrow' shortened; keep under 24 characters")
+                : String(localized: "\(time) tomorrow", bundle: L10n.bundle, locale: locale,
+                         comment: "A time, then the word tomorrow")
         default:
             // A weekly schedule never points more than 7 days out, so the
             // weekday alone is unambiguous.
-            return "\(time) \(date.formatted(.dateTime.weekday(abbreviated ? .abbreviated : .wide)))"
+            let style = Date.FormatStyle(locale: locale, calendar: calendar, timeZone: calendar.timeZone)
+                .weekday(abbreviated ? .abbreviated : .wide)
+            let weekday = date.formatted(style)
+            return String(localized: "\(time) \(weekday)", bundle: L10n.bundle, locale: locale,
+                          comment: "A time and a weekday name; reorder freely")
         }
     }
 
-    static func relative(_ date: Date, from now: Date) -> String {
+    static func relative(_ date: Date, from now: Date, locale: Locale = .current) -> String {
         let formatter = RelativeDateTimeFormatter()
+        formatter.locale = locale
         formatter.dateTimeStyle = .named
         formatter.unitsStyle = .full
         return formatter.localizedString(for: date, relativeTo: now)

@@ -3,6 +3,11 @@ import XCTest
 #if os(iOS)
 final class WidgetSnapshotTests: XCTestCase {
 
+    private let en = TestLocale.en
+    private let cal = TestLocale.calendar
+
+    override func setUp() { TestLocale.useTestBundle() }
+
     /// Sunday 2026-01-04, 14:00 local — day index 0, half-hour 28.
     private var reference: Date {
         var c = DateComponents()
@@ -194,7 +199,7 @@ final class WidgetSnapshotTests: XCTestCase {
         ]
 
         for state in states {
-            let copy = state.copy(at: reference)
+            let copy = state.copy(at: reference, calendar: cal, locale: en)
             for line in [copy.eyebrow, copy.caption, copy.accessoryValue,
                          copy.accessoryLine, copy.boundaryLine] {
                 XCTAssertFalse(line.lowercased().contains("block"),
@@ -227,32 +232,40 @@ final class WidgetSnapshotTests: XCTestCase {
             .freeWindow(ends: reference.addingTimeInterval(51 * 3600), fraction: 0.5),
         ]
         for state in states {
-            let copy = state.copy(at: reference)
+            let copy = state.copy(at: reference, calendar: cal, locale: en)
             XCTAssertLessThanOrEqual(copy.accessoryValue.count, 24, "\(state): \(copy.accessoryValue)")
             XCTAssertLessThanOrEqual(copy.accessoryLine.count, 24, "\(state): \(copy.accessoryLine)")
         }
     }
 
     func test_compactDuration() {
-        XCTAssertEqual(WidgetState.compactDuration(3 * 3600 + 20 * 60), "3h 20m")
-        XCTAssertEqual(WidgetState.compactDuration(3 * 3600), "3h")
-        XCTAssertEqual(WidgetState.compactDuration(42 * 60), "42m")
+        XCTAssertEqual(WidgetState.compactDuration(3 * 3600 + 20 * 60, locale: en), "3h 20m")
+        XCTAssertEqual(WidgetState.compactDuration(3 * 3600, locale: en), "3h")
+        XCTAssertEqual(WidgetState.compactDuration(42 * 60, locale: en), "42m")
         // A boundary that has arrived is a different state, never "0m".
-        XCTAssertEqual(WidgetState.compactDuration(0), "1m")
-        XCTAssertEqual(WidgetState.compactDuration(-500), "1m")
+        XCTAssertEqual(WidgetState.compactDuration(0, locale: en), "1m")
+        XCTAssertEqual(WidgetState.compactDuration(-500, locale: en), "1m")
     }
 
     /// Past a day, nobody thinks in hours: "63h 44m" becomes "2½ days". Rounded
     /// to the nearest half day, because the boundary line beside it carries the
     /// exact time.
     func test_compactDuration_speaksInDaysPastTwentyFourHours() {
-        XCTAssertEqual(WidgetState.compactDuration(23 * 3600 + 59 * 60), "23h 59m")
-        XCTAssertEqual(WidgetState.compactDuration(24 * 3600), "1 day")
-        XCTAssertEqual(WidgetState.compactDuration(29 * 3600), "1 day")
-        XCTAssertEqual(WidgetState.compactDuration(36 * 3600), "1½ days")
-        XCTAssertEqual(WidgetState.compactDuration(63 * 3600 + 44 * 60), "2½ days")
-        XCTAssertEqual(WidgetState.compactDuration(70 * 3600), "3 days")
-        XCTAssertEqual(WidgetState.compactDuration(7 * 24 * 3600), "7 days")
+        XCTAssertEqual(WidgetState.compactDuration(23 * 3600 + 59 * 60, locale: en), "23h 59m")
+        XCTAssertEqual(WidgetState.compactDuration(24 * 3600, locale: en), "1 day")
+        XCTAssertEqual(WidgetState.compactDuration(29 * 3600, locale: en), "1 day")
+        XCTAssertEqual(WidgetState.compactDuration(36 * 3600, locale: en), "1½ days")
+        XCTAssertEqual(WidgetState.compactDuration(63 * 3600 + 44 * 60, locale: en), "2½ days")
+        XCTAssertEqual(WidgetState.compactDuration(70 * 3600, locale: en), "3 days")
+        XCTAssertEqual(WidgetState.compactDuration(7 * 24 * 3600, locale: en), "7 days")
+    }
+
+    /// "1 day" and "2 days" are a catalog plural rule, so other languages can
+    /// have their own. Fails if the variation is missing from the catalog.
+    func test_dayDurations_usePluralRules() {
+        XCTAssertEqual(WidgetState.compactDuration(24 * 3600, locale: en), "1 day")
+        XCTAssertEqual(WidgetState.compactDuration(48 * 3600, locale: en), "2 days")
+        XCTAssertEqual(WidgetState.compactDuration(36 * 3600, locale: en), "1½ days")
     }
 
     // MARK: Boundaries that aren't today
@@ -262,19 +275,19 @@ final class WidgetSnapshotTests: XCTestCase {
     /// was telling people to expect quiet in a few hours.
     func test_boundaryLaterTodayStaysBareTime() {
         let ends = reference.addingTimeInterval(3 * 3600) // Sunday 17:00
-        let copy = WidgetState.freeWindow(ends: ends, fraction: 0.5).copy(at: reference)
-        XCTAssertEqual(copy.boundaryLine, "Open until \(WidgetState.clock(ends)), then quiet")
+        let copy = WidgetState.freeWindow(ends: ends, fraction: 0.5).copy(at: reference, calendar: cal, locale: en)
+        XCTAssertEqual(copy.boundaryLine, "Open until \(WidgetState.clock(ends, calendar: cal, locale: en)), then quiet")
     }
 
     func test_boundaryTomorrowSaysTomorrow() {
         let ends = reference.addingTimeInterval(24 * 3600) // Monday 14:00
-        let copy = WidgetState.freeWindow(ends: ends, fraction: 0.5).copy(at: reference)
+        let copy = WidgetState.freeWindow(ends: ends, fraction: 0.5).copy(at: reference, calendar: cal, locale: en)
         XCTAssertTrue(copy.boundaryLine.contains("tomorrow"), copy.boundaryLine)
     }
 
     func test_boundaryDaysOutNamesTheWeekday() {
         let ends = reference.addingTimeInterval(51 * 3600) // Tuesday 17:00
-        let copy = WidgetState.freeWindow(ends: ends, fraction: 0.5).copy(at: reference)
+        let copy = WidgetState.freeWindow(ends: ends, fraction: 0.5).copy(at: reference, calendar: cal, locale: en)
         XCTAssertTrue(copy.boundaryLine.contains("Tuesday"), copy.boundaryLine)
         XCTAssertFalse(copy.boundaryLine.contains("tomorrow"), copy.boundaryLine)
     }
@@ -284,7 +297,7 @@ final class WidgetSnapshotTests: XCTestCase {
     func test_boundaryJustPastMidnightSaysTomorrow() {
         let lateSunday = reference.addingTimeInterval(9.5 * 3600) // 23:30
         let ends = lateSunday.addingTimeInterval(40 * 60)         // Monday 00:10
-        let copy = WidgetState.quietBounded(ends: ends, fraction: 0.5).copy(at: lateSunday)
+        let copy = WidgetState.quietBounded(ends: ends, fraction: 0.5).copy(at: lateSunday, calendar: cal, locale: en)
         XCTAssertTrue(copy.boundaryLine.contains("tomorrow"), copy.boundaryLine)
     }
 
