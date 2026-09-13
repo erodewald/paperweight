@@ -23,7 +23,7 @@ Spec: `docs/superpowers/specs/2026-09-12-localization-design.md` §1 (Xcode sync
 - Repository URL: `https://github.com/erodewald/paperweight`. Issue forms: `translation-fix.yml` (ids `language`, `device-languages`, `app-version`, `screen`, `wrong-text`, `better-text`) and `translation-request.yml` (ids `device-languages`, `requested-language`, `can-help`), both `labels: [translation]`.
 - Python: standard library only; tests run with `python3 -W error -m unittest …` and must be clean.
 - Tests: `xcodebuild test -project Paperweight.xcodeproj -scheme PaperweightTests -destination "platform=iOS Simulator,name=iPhone 17 Pro" CODE_SIGNING_ALLOWED=NO`; 229 pass at the start. Regenerate with `xcodegen generate` after any `project.yml` change.
-- The translator needs `ANTHROPIC_API_KEY` in the environment for a real run; without it, tasks use `--dry-run` and the fake transport in tests. Task 4 Step 6 is the one real run and reports NEEDS_CONTEXT if the key is absent.
+- The translator reads `CLAUDE_PLATFORM_API_KEY` from the environment. Locally the key lives in 1Password; a real run is launched as `CLAUDE_PLATFORM_API_KEY="$(op read 'op://Private/Paperweight iOS/l10n/claude-platform-api-key')" python3 Scripts/translate.py …`. Never print, log, echo or commit the value; never pass it as a command-line argument. Tests use the fake transport. In CI the same name is a repository secret.
 - Commit messages end with a `Co-Authored-By: … <noreply@anthropic.com>` line.
 
 ---
@@ -920,7 +920,7 @@ class Cli(unittest.TestCase):
                 return send
 
             rc = translate.main(["--catalog", cat_path, "--status", st, "--languages-file", langs, "--rules", os.path.join(os.path.dirname(__file__), "..", "translation-rules.md")],
-                                send_factory=factory, env={"ANTHROPIC_API_KEY": "k"}, log=lambda *_: None)
+                                send_factory=factory, env={"CLAUDE_PLATFORM_API_KEY": "k"}, log=lambda *_: None)
             self.assertEqual(rc, 0)
             with open(st) as f:
                 self.assertEqual(json.load(f), {"languages": {"nl": {"keys": 2, "needsReview": 2}, "ja": {"keys": 2, "needsReview": 2}}})
@@ -944,7 +944,7 @@ class Cli(unittest.TestCase):
                 return lambda system, user: json.dumps({translate.unit_id("Open", ""): "Open!", translate.unit_id("Ready", ""): "Klaar"})
 
             rc = translate.main(["--catalog", cat_path, "--status", st, "--languages-file", langs, "--language", "nl"],
-                                send_factory=factory, env={"ANTHROPIC_API_KEY": "k"}, log=lambda *_: None)
+                                send_factory=factory, env={"CLAUDE_PLATFORM_API_KEY": "k"}, log=lambda *_: None)
             self.assertEqual(rc, 1)
             with open(cat_path) as f:
                 strings = json.load(f)["strings"]
@@ -1042,9 +1042,9 @@ def main(argv=None, send_factory=anthropic_send, env=None, log=print):
     rules = load_rules(a.rules)
 
     if a.verify:
-        key = env.get("ANTHROPIC_API_KEY")
+        key = env.get("CLAUDE_PLATFORM_API_KEY")
         if not key:
-            log("ANTHROPIC_API_KEY is not set"); return 2
+            log("CLAUDE_PLATFORM_API_KEY is not set"); return 2
         verify(data, a.verify, send_factory(a.model, key), log=log)
         return 0
 
@@ -1053,9 +1053,9 @@ def main(argv=None, send_factory=anthropic_send, env=None, log=print):
             run(data, lang, None, rules, size=a.batch_size, retranslate=set(a.retranslate), dry_run=True, log=log)
         return 0
 
-    key = env.get("ANTHROPIC_API_KEY")
+    key = env.get("CLAUDE_PLATFORM_API_KEY")
     if not key:
-        log("ANTHROPIC_API_KEY is not set; nothing translated")
+        log("CLAUDE_PLATFORM_API_KEY is not set; nothing translated")
         return 2
     send = send_factory(a.model, key)
     summary, failed = {}, False
@@ -1090,10 +1090,12 @@ Expected: `nl: 248 units to translate` followed by the first batch's user messag
 
 - [ ] **Step 6: The real run (needs the key)**
 
-If `ANTHROPIC_API_KEY` is not in the environment, stop here and report NEEDS_CONTEXT; the controller will ask for it. Otherwise:
+Run the translator with the key read from 1Password at call time (the value never lands in a shell variable you print or in the report):
 
-Run: `python3 Scripts/translate.py`
-Expected: four languages, about 7 batches each, `applied` counts summing to the unit count, few or no rejections. If any unit was rejected, run `python3 Scripts/translate.py --language CODE --retranslate "KEY"` for each rejected key once; if it is rejected again, leave it and report it.
+Run: `CLAUDE_PLATFORM_API_KEY="$(op read 'op://Private/Paperweight iOS/l10n/claude-platform-api-key')" python3 Scripts/translate.py`
+
+If `op read` fails (not signed in), stop and report NEEDS_CONTEXT.
+Expected: four languages, about 7 batches each, `applied` counts summing to the unit count, few or no rejections. If any unit was rejected, run `CLAUDE_PLATFORM_API_KEY="$(op read 'op://Private/Paperweight iOS/l10n/claude-platform-api-key')" python3 Scripts/translate.py --language CODE --retranslate "KEY"` for each rejected key once; if it is rejected again, leave it and report it.
 
 Then: `python3 Scripts/strings-check.py --languages "$(tr '\n' ' ' < Scripts/languages.txt)" --status Shared/Resources/TranslationStatus.json`
 Expected: `248 keys checked, 0 problems, N warnings` where the warnings are Lock Screen budget overruns. List them in the report; fix each by rerunning `--retranslate` for that key with the budget comment in place (the model sees it), and if a language cannot fit, shorten by hand in the catalog and leave the state `needs_review`.
@@ -1135,7 +1137,7 @@ name: Translate
 
 # Fills in missing translations with Claude and opens a pull request for
 # review. Runs when the catalog or the language list changes on main, or by
-# hand. Never pushes to main. Needs the ANTHROPIC_API_KEY repository secret;
+# hand. Never pushes to main. Needs the CLAUDE_PLATFORM_API_KEY repository secret;
 # without it the run says so and exits green.
 on:
   push:
@@ -1172,12 +1174,12 @@ jobs:
       - name: Translate
         id: translate
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_PLATFORM_API_KEY: ${{ secrets.CLAUDE_PLATFORM_API_KEY }}
           LANGUAGE: ${{ inputs.language }}
         run: |
           set -euo pipefail
-          if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
-            echo "::notice::ANTHROPIC_API_KEY is not set; nothing translated. Add it under Settings → Secrets to enable this workflow."
+          if [ -z "${CLAUDE_PLATFORM_API_KEY:-}" ]; then
+            echo "::notice::CLAUDE_PLATFORM_API_KEY is not set; nothing translated. Add it under Settings → Secrets to enable this workflow."
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -1263,7 +1265,7 @@ In `docs/LOCALIZATION.md`, replace the "## The loop" section with:
 5. Merge. The **Translate** workflow (`.github/workflows/translate.yml`) sees the
    catalog change, asks Claude for every missing unit in the languages listed in
    `Scripts/languages.txt`, and opens a pull request labelled `translation` with
-   the results marked *needs review*. It needs the `ANTHROPIC_API_KEY` repository
+   the results marked *needs review*. It needs the `CLAUDE_PLATFORM_API_KEY` repository
    secret; without it the run says so and does nothing.
 6. Review that PR: Xcode's String Catalog editor filters *Needs review*; for a
    language you cannot read, `python3 Scripts/translate.py --verify ko` prints a
@@ -1273,7 +1275,7 @@ In `docs/LOCALIZATION.md`, replace the "## The loop" section with:
    rows left.
 
 Locally, `python3 Scripts/translate.py --dry-run` shows what would be sent, and
-with `ANTHROPIC_API_KEY` in the environment the same script does the real run;
+with `CLAUDE_PLATFORM_API_KEY` in the environment the same script does the real run;
 `--language ko --retranslate "Open until %@, then quiet"` redoes one key.
 
 ## Adding a language
@@ -1681,7 +1683,7 @@ In `Paperweight/Views/SettingsView.swift`, inside the Configure `GroupedCard`, a
 
 - [ ] **Step 3: Sync, translate the new strings, verify on the simulator**
 
-Run `Scripts/strings-sync.sh` (new keys: "This app", "Language", the notice, "Change language", "Help", "Report a wrong translation", "Request a language", the footer, "Language & translations"). Then `python3 Scripts/translate.py` (needs the key; the new units only) and the lint with `--languages … --status …`. If the key is absent, stop and report NEEDS_CONTEXT.
+Run `Scripts/strings-sync.sh` (new keys: "This app", "Language", the notice, "Change language", "Help", "Report a wrong translation", "Request a language", the footer, "Language & translations"). Then `CLAUDE_PLATFORM_API_KEY="$(op read 'op://Private/Paperweight iOS/l10n/claude-platform-api-key')" python3 Scripts/translate.py` (the new units only) and the lint with `--languages … --status …`. If `op read` fails, stop and report NEEDS_CONTEXT.
 
 Simulator: install, open Settings → Language & translations in English: the row shows "English", no notice, two links, Change language opens the iOS Settings app on Paperweight's page. Then launch with `-AppleLanguages "(ko)"`: the whole app should now read in Korean, the row shows the Korean name for Korean, and the notice appears. Screenshot both to `.superpowers/sdd/shots/` and describe what each shows. Tap "Report a wrong translation" in the simulator: Safari opens the GitHub form; confirm the language and version fields are filled (the simulator has no GitHub session; the form renders for anonymous viewers).
 
@@ -1736,7 +1738,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 git push -u origin feat/localization-phase-2
 ```
 
-PR title: `Localization phase 2: four languages for review, Translate workflow, feedback from Settings`. Body: what landed; that `ANTHROPIC_API_KEY` must be added as a repository secret for the workflow (link to Settings → Secrets); the on-device checks (Korean run, Settings row, both forms); the two screenshots. End with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`.
+PR title: `Localization phase 2: four languages for review, Translate workflow, feedback from Settings`. Body: what landed; that `CLAUDE_PLATFORM_API_KEY` must be added as a repository secret for the workflow (link to Settings → Secrets); the on-device checks (Korean run, Settings row, both forms); the two screenshots. End with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`.
 
 ---
 

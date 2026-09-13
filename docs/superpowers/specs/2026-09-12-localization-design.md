@@ -195,7 +195,7 @@ GitHub Models, the free backend this section first named, was retired by GitHub 
 30 July 2026 (playground, catalog and inference API all removed). The translator uses the
 Claude API in both places it runs:
 
-- **In CI** (the Translate workflow below): `ANTHROPIC_API_KEY` is a repository secret.
+- **In CI** (the Translate workflow below): `CLAUDE_PLATFORM_API_KEY` is a repository secret.
   The cost for the whole catalog in four languages is well under a dollar.
 - **Locally**: the same script with the key in the environment, for tone work on a
   language a reviewer flags. The key is never in the repo.
