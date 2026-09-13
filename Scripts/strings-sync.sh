@@ -16,6 +16,9 @@ DERIVED=.build/strings-sync
 TOOL="$(xcode-select -p)/usr/bin/xcstringstool"
 MODE="${1:-sync}"
 
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
 [ -d Paperweight.xcodeproj ] || xcodegen generate
 
 sim=$(xcrun simctl list devices available \
@@ -35,7 +38,7 @@ while IFS= read -r f; do files+=("$f"); done < <(
 
 target="$CATALOG"
 if [ "$MODE" = "--check" ]; then
-  target="$(mktemp -d)/Localizable.xcstrings"
+  target="$tmp/Localizable.xcstrings"
   cp "$CATALOG" "$target"
 fi
 
@@ -134,7 +137,7 @@ with open(sys.argv[2], encoding="utf-8") as f: synced = json.load(f)
 sys.exit(0 if committed == synced else 1)
 EOF
   then
-    formatted="$(mktemp -d)/committed.xcstrings"
+    formatted="$tmp/committed.xcstrings"
     swift Scripts/xcstrings-format.swift "$CATALOG" "$formatted"
     diff -u "$formatted" "$target" || true
     echo "::error::Localizable.xcstrings is out of date. Run Scripts/strings-sync.sh and commit." >&2

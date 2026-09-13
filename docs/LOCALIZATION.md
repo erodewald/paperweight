@@ -20,17 +20,21 @@ widget. English is the source language.
    catalog change, asks Claude for every missing unit in the languages listed in
    `Scripts/languages.txt`, and opens a pull request labelled `translation` with
    the results marked *needs review*. It needs the `CLAUDE_PLATFORM_API_KEY` repository
-   secret; without it the run says so and does nothing.
+   secret; without it the run says so and does nothing. That PR carries no CI run of
+   its own — the catalog lint ran inside the workflow before it opened the PR; full
+   CI runs on `main` after the merge.
 6. Review that PR: Xcode's String Catalog editor filters *Needs review*; for a
    language you cannot read, `python3 Scripts/translate.py --verify ko` prints a
    back-translation and a one-line judgement per string. Mark rows *Reviewed*
    (state `translated`) as you go, or leave them; the notice in the app's
    Language & translations screen stays until a language has no *needs review*
-   rows left.
+   rows left. After marking rows reviewed, run `python3 Scripts/translate.py
+   --write-status` so the status file matches; no key is needed.
 
-Locally, `python3 Scripts/translate.py --dry-run` shows what would be sent, and
-with `CLAUDE_PLATFORM_API_KEY` in the environment the same script does the real run;
-`--language ko --retranslate "Open until %@, then quiet"` redoes one key.
+Locally, `python3 Scripts/translate.py --dry-run` shows what would be sent. The key
+comes from 1Password: `CLAUDE_PLATFORM_API_KEY="$(op read 'op://Private/Paperweight iOS/l10n/claude-platform-api-key')"
+python3 Scripts/translate.py` does the real run; `--language ko --retranslate "Open
+until %@, then quiet"` redoes one key.
 
 ## Adding a language
 
@@ -69,14 +73,21 @@ to `Scripts/languages.txt`.
 
 ## Checks
 
+- `swift Scripts/xcstrings-format.swift Scripts/tests/fixtures/xcode-style.xcstrings` —
+  the formatter reproduces Xcode's own file byte-for-byte (Ubuntu job's formatter-fixture
+  step).
 - `Scripts/strings-sync.sh --check` — the catalog matches the code (macOS job).
-- `python3 Scripts/strings-check.py` — no stale keys, placeholder parity, no
-  exclamation marks, every language in `Scripts/languages.txt` complete
-  (Ubuntu job). Tests: `python3 -m unittest Scripts/tests/test_strings_check.py`,
-  run with `-W error` in CI.
+- `python3 Scripts/strings-check.py --languages "…" --status Shared/Resources/TranslationStatus.json`
+  — no stale keys, placeholder parity (checked per plural form), no exclamation marks,
+  every required language complete down to each plural form, and the `--status` file
+  matches what `catalog.status` computes from the catalog (Ubuntu job).
+  Tests: `python3 -W error -m unittest Scripts/tests/test_catalog.py
+  Scripts/tests/test_strings_check.py Scripts/tests/test_translate.py`, run with
+  `-W error` in CI.
 
 ## Trying another language
 
 `xcrun simctl launch booted media.baltar.paperweight -AppleLanguages "(nl)"
 -AppleLocale nl_NL` runs the installed build in Dutch: formatting follows the
-locale immediately; copy follows once translations exist (Phase 2).
+locale immediately, and copy now follows too in `es`, `nl`, `ja` and `ko`; every
+other language still shows English.

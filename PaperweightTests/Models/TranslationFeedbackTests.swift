@@ -41,8 +41,8 @@ final class TranslationFeedbackTests: XCTestCase {
         XCTAssertEqual(TranslationFeedback.languageName("nl", locale: Locale(identifier: "nl_NL")), "Nederlands")
     }
 
-    func test_current_context_reads_the_bundle_and_locale() {
-        let c = TranslationFeedback.Context.current(bundle: Bundle(for: Self.self), locale: TestLocale.en)
+    func test_current_context_reads_the_bundle() {
+        let c = TranslationFeedback.Context.current(bundle: Bundle(for: Self.self))
         XCTAssertFalse(c.appLanguage.isEmpty)
         XCTAssertFalse(c.deviceLanguages.isEmpty)
     }

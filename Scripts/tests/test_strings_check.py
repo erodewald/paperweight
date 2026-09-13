@@ -39,6 +39,12 @@ class Findings(unittest.TestCase):
         p = self.check({"Open": {"localizations": {"en": unit("Open"), "ja": unit("開放", "needs_review")}}}, ["ja"])
         self.assertEqual(p, [])
 
+    def test_missing_plural_form_is_reported_per_form(self):
+        p = self.check({"%lld days": {"localizations": {
+            "en": {"variations": {"plural": {"one": unit("%lld day"), "other": unit("%lld days")}}},
+            "nl": {"variations": {"plural": {"other": unit("%lld dagen")}}}}}}, ["nl"])
+        self.assertIn("missing nl: '%lld days' [plural.one]", p)
+
     def test_plural_variations_are_checked_per_form(self):
         p = self.check({"%lld days": {"localizations": {
             "en": {"variations": {"plural": {"one": unit("%lld day"), "other": unit("%lld days")}}},

@@ -1121,11 +1121,16 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 
 - `build_messages` gives each unit a short id, its 1-based position in the batch; `run()` maps the reply's keys back to `unit_id`s before `apply()`. (The `Messages` test expects `"1"`, and the CLI rejection test keys its fake reply by those payload ids.)
 - `anthropic_send` sends no `temperature` (Claude 5 rejects it), uses `max_tokens` 16384, and raises `RuntimeError("reply truncated at max_tokens")` when `stop_reason` says so.
-- `run()` delegates each batch to `_send_batch`, which on `JSONDecodeError`/`ValueError`/`RuntimeError` splits the batch in half and retries each half; a single unit that still fails is rejected as `<label>: reply unusable (<error class>)`. A test drives this with a fake transport that fails on batches larger than two.
+- `run()` delegates each batch to `_send_batch`, which on `JSONDecodeError`/`ValueError`/`TruncatedReply` splits the batch in half and retries each half (a `TransportError` is not caught here and propagates, failing the run); a single unit that still fails is rejected as `<label>: reply unusable (<error class>)`. A test drives this with a fake transport that fails on batches larger than two.
 - `main()` saves the catalog and writes the status file after every language, and again at the end.
 - `main()` line-buffers stdout so a piped log is readable during a run.
 
 The second run applied es 254, nl 254, ja 248, ko 248 units with zero rejections and no splits.
+
+**Amendment after the final whole-branch review (2026-09-13).** Two more deliberate changes:
+
+- `main()` now catches `TransportError` around the per-language loop and returns exit code 3 (0 clean, 1 some units rejected, 2 no key, 3 transport failure — documented in the module docstring). The `finally` save still runs on the way out, wrapped in its own try/except so a save failure never masks the transport error that is already in flight; with nothing in flight, a save failure still propagates as before. The `--summary` file is written either way, with whatever was applied before the failure.
+- `translate.py` gained `--write-status`: it loads the catalog and rewrites `TranslationStatus.json` from `catalog.status()` alone, touching nothing else and needing no key — for after a reviewer marks rows `translated` by hand and wants the status file to match without a real translation run.
 
 ### Task 5: The Translate workflow and the label
 

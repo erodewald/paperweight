@@ -48,6 +48,13 @@ class Collect(unittest.TestCase):
         data = cat({"until %@": {"comment": "Lock Screen; keep under 24 characters"}})
         self.assertEqual(translate.collect(data, "nl")[0]["budget"], 24)
 
+    def test_partial_plural_requests_only_the_missing_form(self):
+        data = cat({"%lld days": {"localizations": {
+            "en": {"variations": {"plural": {"one": unit("%lld day"), "other": unit("%lld days")}}},
+            "nl": {"variations": {"plural": {"other": unit("%lld dagen")}}}}}})
+        got = translate.collect(data, "nl")
+        self.assertEqual([(u["key"], u["form"]) for u in got], [("%lld days", "plural.one")])
+
 
 class Batches(unittest.TestCase):
     def test_batched_by_size(self):
@@ -245,6 +252,35 @@ class Cli(unittest.TestCase):
                 strings = json.load(f)["strings"]
             self.assertNotIn("nl", strings["Open"].get("localizations", {}))
             self.assertEqual(strings["Ready"]["localizations"]["nl"]["stringUnit"]["value"], "Klaar")
+
+    def test_transport_failure_exits_3_and_still_writes_status_and_summary(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            cat_path, st, langs = self._files(d)
+            summary_path = os.path.join(d, "summary.json")
+
+            def factory(model, key):
+                def send(system, user):
+                    raise translate.TransportError("bad key")
+                return send
+
+            rc = translate.main(["--catalog", cat_path, "--status", st, "--languages-file", langs,
+                                 "--summary", summary_path],
+                                send_factory=factory, env={"CLAUDE_PLATFORM_API_KEY": "k"}, log=lambda *_: None)
+            self.assertEqual(rc, 3)
+            self.assertTrue(os.path.exists(st))
+            self.assertTrue(os.path.exists(summary_path))
+
+    def test_write_status_needs_no_key(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            cat_path, st, langs = self._files(d)
+            rc = translate.main(["--catalog", cat_path, "--status", st, "--languages-file", langs, "--write-status"],
+                                env={}, log=lambda *_: None)
+            self.assertEqual(rc, 0)
+            with open(st) as f:
+                self.assertEqual(json.load(f), {"languages": {
+                    "nl": {"keys": 0, "needsReview": 0}, "ja": {"keys": 0, "needsReview": 0}}})
 
 
 if __name__ == "__main__":

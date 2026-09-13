@@ -4,6 +4,13 @@
 Translations are written with state needs_review; only a person marks them
 translated. Placeholder parity and the no-exclamation rule are enforced before
 anything is written. Standard library only.
+
+main() exit codes: 0 clean run, 1 some units were rejected (validated but not
+written; everything else still applied), 2 no CLAUDE_PLATFORM_API_KEY (nothing
+translated; --verify also needs the key and returns 2 without it), 3 a
+TransportError aborted the run partway through (whatever had already been
+applied is still saved). --write-status is the exception: it never touches
+the network, needs no key, and always returns 0.
 """
 import argparse
 import json
@@ -73,6 +80,8 @@ def collect(data, lang, retranslate=()):
     wanted_forms = catalog.forms_for(lang)
     out = []
     for key, entry in data.get("strings", {}).items():
+        if entry.get("extractionState") == "stale":
+            continue
         comment = entry.get("comment", "") or ""
         for form, value in catalog.source_units(key, entry, source):
             if form.startswith("plural.") and form.split(".", 1)[1] not in wanted_forms:
@@ -219,7 +228,11 @@ def anthropic_send(model, key, max_tokens=16384, attempts=4):
                 "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"})
             try:
                 with urllib.request.urlopen(req, timeout=120) as resp:
-                    reply = json.loads(resp.read().decode("utf-8"))
+                    resp_text = resp.read().decode("utf-8")
+                try:
+                    reply = json.loads(resp_text)
+                except json.JSONDecodeError as e:
+                    raise TransportError(f"Claude API: response was not JSON: {e}") from None
                 if reply.get("stop_reason") == "max_tokens":
                     raise TruncatedReply("reply truncated at max_tokens")
                 return "".join(block.get("text", "") for block in reply.get("content", []) if block.get("type") == "text")
@@ -254,9 +267,15 @@ def verify(data, lang, send, log=print):
                   " text back into English literally, then judge in one short line whether it keeps the English meaning, "
                   "tone (calm, no exclamation) and placeholders. Reply with one JSON object mapping id to "
                   "{\"back\": string, \"note\": string}. No code fences.")
-        reply = parse_reply_objects(send(system, json.dumps(b, ensure_ascii=False, indent=1)))
+        try:
+            reply = parse_reply_objects(send(system, json.dumps(b, ensure_ascii=False, indent=1)))
+        except (TruncatedReply, ValueError) as e:
+            log(f"::warning::{lang}: verify batch of {len(b)} failed ({type(e).__name__}); skipping")
+            continue
         for r in b:
             j = reply.get(r["id"], {})
+            if not isinstance(j, dict):
+                j = {}
             log(f"{r['id']}\n  en:   {r['english']}\n  {lang}:   {r['translation']}\n  back: {j.get('back', '?')}\n  note: {j.get('note', '?')}")
 
 
@@ -287,10 +306,19 @@ def main(argv=None, send_factory=anthropic_send, env=None, log=print):
     p.add_argument("--batch-size", type=int, default=40)
     p.add_argument("--verify", metavar="CODE", help="back-translate this language and print judgements; writes nothing")
     p.add_argument("--summary", help="write a JSON summary {lang: {applied, rejected}} here")
+    p.add_argument("--write-status", action="store_true",
+                   help="write --status from the catalog as it stands and exit; no key needed")
     a = p.parse_args(argv)
 
     data = catalog.load(a.catalog)
     languages = a.language or read_languages(a.languages_file)
+
+    if a.write_status:
+        all_languages = read_languages(a.languages_file)
+        with open(a.status, "w", encoding="utf-8") as f:
+            f.write(catalog.dumps_status(catalog.status(data, all_languages)))
+        return 0
+
     rules = load_rules(a.rules)
 
     if a.verify:
@@ -319,7 +347,7 @@ def main(argv=None, send_factory=anthropic_send, env=None, log=print):
         with open(a.status, "w", encoding="utf-8") as f:
             f.write(catalog.dumps_status(catalog.status(data, all_languages)))
 
-    summary, failed = {}, False
+    summary, failed, rc = {}, False, None
     try:
         for lang in languages:
             applied, rejected = run(data, lang, send, rules, size=a.batch_size, retranslate=set(a.retranslate), log=log)
@@ -328,14 +356,32 @@ def main(argv=None, send_factory=anthropic_send, env=None, log=print):
                 log(f"::warning::{lang}: rejected {r}")
             failed = failed or bool(rejected)
             save_progress()
+    except TransportError as e:
+        # Not the batch's fault (see _send_batch): a bad key, wrong model, or
+        # exhausted retries. Abort the run loudly with exit code 3, but keep
+        # whatever earlier languages already applied via the finally below.
+        log(f"::error::{e}")
+        rc = 3
     finally:
         # Runs on a normal finish too (harmless: save_progress() is
-        # idempotent) and, on a crash (e.g. TransportError), saves whatever
-        # the in-flight language had already applied before propagating.
-        save_progress()
+        # idempotent) and, after a TransportError, saves whatever the
+        # in-flight language had already applied. Guarded so a failure here
+        # never masks an exception still propagating (anything other than
+        # the TransportError just handled above); with nothing in flight, a
+        # save failure raises as it always did.
+        try:
+            save_progress()
+        except Exception as save_exc:
+            log(f"::error::{save_exc}")
+            if sys.exc_info()[0] is None:
+                raise
     if a.summary:
+        # Written even on a transport failure, with whatever was applied
+        # before the error.
         with open(a.summary, "w", encoding="utf-8") as f:
             json.dump(summary, f, indent=2)
+    if rc is not None:
+        return rc
     return 1 if failed else 0
 
 

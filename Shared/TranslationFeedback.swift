@@ -9,7 +9,7 @@ enum TranslationFeedback {
         var appVersion: String
         var build: String
 
-        static func current(bundle: Bundle = .main, locale: Locale = .current) -> Context {
+        static func current(bundle: Bundle = .main) -> Context {
             let info = bundle.infoDictionary
             return Context(
                 appLanguage: bundle.preferredLocalizations.first ?? "en",

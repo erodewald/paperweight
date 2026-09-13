@@ -58,6 +58,19 @@ def problems(catalog_data, languages):
         for lang in languages:
             if lang not in locs:
                 out.append(f"missing {lang}: {key!r}")
+                continue
+            # A language present in localizations may still be missing one
+            # plural form (e.g. a partial machine-translation run left "one"
+            # untranslated); check every form the source carries that this
+            # language is required to have, per catalog.forms_for.
+            target_forms = {form for form, _, _ in catalog.units(locs[lang])}
+            required = set(catalog.forms_for(lang))
+            for form, _, _ in source_units:
+                if not form.startswith("plural."):
+                    continue
+                category = form.split(".", 1)[1]
+                if category in required and form not in target_forms:
+                    out.append(f"missing {lang}: {key!r} [{form}]")
         for lang, loc in locs.items():
             if lang == source:
                 continue
@@ -112,7 +125,7 @@ def main(argv=None):
         except FileNotFoundError:
             actual = ""
         if actual != expected:
-            found.append(f"status file out of date: {a.status} (run Scripts/translate.py, or write the recomputed status)")
+            found.append(f"status file out of date: {a.status} (run: python3 Scripts/translate.py --write-status)")
     for f in found:
         print(f"::error::{f}")
     print(f"{len(catalog_data.get('strings', {}))} keys checked, {len(found)} problems, {len(warnings(catalog_data, languages))} warnings")
