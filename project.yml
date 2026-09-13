@@ -124,6 +124,7 @@ targets:
       - path: PaperweightWidget
       - path: Shared/Theme.swift
       - path: Shared/Constants.swift
+      - path: Shared/Localization.swift
       - path: Shared/Models/PaperweightSchedule.swift
       - path: Shared/Models/PaperweightSchedule+Week.swift
       - path: Shared/Models/DayKey.swift
