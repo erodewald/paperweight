@@ -1,4 +1,11 @@
-import json, os, sys, unittest
+import io
+import json
+import os
+import sys
+import unittest
+import urllib.error
+from unittest import mock
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 import translate  # noqa: E402
 
@@ -131,6 +138,56 @@ class Run(unittest.TestCase):
         applied, rejected = translate.run(data, "nl", send, "RULES", log=lambda *_: None)
         self.assertEqual((applied, rejected), (5, []))
         self.assertEqual(calls, [5, 2, 3, 1, 2])
+
+
+class Transport(unittest.TestCase):
+    def test_transport_error_is_not_split(self):
+        data = cat({"Open": {}, "Ready": {}})
+        calls = []
+
+        def send(system, user):
+            calls.append(user)
+            raise translate.TransportError("bad key")
+
+        with self.assertRaises(translate.TransportError):
+            translate.run(data, "nl", send, "RULES", log=lambda *_: None)
+        self.assertEqual(len(calls), 1)
+
+    def test_truncated_reply_is_split(self):
+        data = cat({str(i): {} for i in range(3)})
+
+        def send(system, user):
+            payload = json.loads(user[user.index("["):])
+            if len(payload) > 1:
+                raise translate.TruncatedReply("cut off")
+            return json.dumps({p["id"]: f"t{p['id']}" for p in payload})
+
+        applied, rejected = translate.run(data, "nl", send, "RULES", log=lambda *_: None)
+        self.assertEqual((applied, rejected), (3, []))
+
+    def test_network_errors_are_retried(self):
+        class FakeResponse:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *exc):
+                return False
+
+            def read(self):
+                return json.dumps({"content": [{"type": "text", "text": "{}"}], "stop_reason": "end_turn"}).encode("utf-8")
+
+        with mock.patch("translate.urllib.request.urlopen", side_effect=[urllib.error.URLError("dns"), FakeResponse()]) as m, \
+                mock.patch("translate.time.sleep"):
+            result = translate.anthropic_send("m", "k")("system", "user")
+        self.assertEqual(result, "{}")
+        self.assertEqual(m.call_count, 2)
+
+    def test_non_retryable_http_error_raises_transport_error(self):
+        err = urllib.error.HTTPError(translate.API, 401, "unauthorized", {}, io.BytesIO(b"{}"))
+        with mock.patch("translate.urllib.request.urlopen", side_effect=err) as m:
+            with self.assertRaises(translate.TransportError):
+                translate.anthropic_send("m", "k")("system", "user")
+        self.assertEqual(m.call_count, 1)
 
 
 class Cli(unittest.TestCase):

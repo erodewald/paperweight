@@ -149,11 +149,13 @@ def apply(data, lang, units, mapping):
 def _send_batch(data, lang, units, send, rules, log):
     """Send one batch; on an unparseable or truncated reply, split it in half
     and retry each half (recursively), so one bad sub-batch doesn't cost the
-    rest. A single unit that still fails is rejected, not raised."""
+    rest. A single unit that still fails is rejected, not raised. A
+    TransportError (bad key, wrong model, exhausted retries) is not caught
+    here: it is not the batch's fault, so it propagates and fails the run."""
     system, user = build_messages(units, lang, rules)
     try:
         reply = parse_reply(send(system, user))
-    except (json.JSONDecodeError, ValueError, RuntimeError) as e:
+    except (json.JSONDecodeError, ValueError, TruncatedReply) as e:
         if len(units) == 1:
             return 0, [f"{_label(units[0])}: reply unusable ({type(e).__name__})"]
         mid = len(units) // 2
@@ -193,9 +195,20 @@ API = "https://api.anthropic.com/v1/messages"
 DEFAULT_MODEL = "claude-sonnet-5"
 
 
+class TransportError(RuntimeError):
+    """A non-retryable failure: a bad key, an unknown model, a client error,
+    or retries exhausted. Never worth splitting a batch and retrying half of
+    it — the whole run should fail loudly and cheaply instead."""
+
+
+class TruncatedReply(RuntimeError):
+    """The model's reply was cut off at max_tokens. Worth splitting the batch
+    (a smaller batch needs fewer output tokens) and retrying."""
+
+
 def anthropic_send(model, key, max_tokens=16384, attempts=4):
     """A send(system, user) -> text callable over the Messages API, retrying
-    on rate limits and server errors with a growing pause."""
+    on rate limits, server errors and network failures with a growing pause."""
     def send(system, user):
         # Claude 5 models reject `temperature`; determinism comes from the rules
         # and the JSON-only reply format.
@@ -208,13 +221,19 @@ def anthropic_send(model, key, max_tokens=16384, attempts=4):
                 with urllib.request.urlopen(req, timeout=120) as resp:
                     reply = json.loads(resp.read().decode("utf-8"))
                 if reply.get("stop_reason") == "max_tokens":
-                    raise RuntimeError("reply truncated at max_tokens")
+                    raise TruncatedReply("reply truncated at max_tokens")
                 return "".join(block.get("text", "") for block in reply.get("content", []) if block.get("type") == "text")
             except urllib.error.HTTPError as e:
                 if e.code in (429, 500, 502, 503, 529) and attempt < attempts:
                     time.sleep(5 * attempt)
                     continue
-                raise RuntimeError(f"Claude API HTTP {e.code}: {e.read().decode('utf-8', 'replace')[:300]}") from None
+                raise TransportError(f"Claude API HTTP {e.code}: {e.read().decode('utf-8', 'replace')[:300]}") from None
+            except (urllib.error.URLError, OSError) as e:
+                if attempt < attempts:
+                    time.sleep(5 * attempt)
+                    continue
+                raise TransportError(f"Claude API network error: {e}") from None
+        raise TransportError("Claude API: retries exhausted")
     return send
 
 
@@ -301,14 +320,19 @@ def main(argv=None, send_factory=anthropic_send, env=None, log=print):
             f.write(catalog.dumps_status(catalog.status(data, all_languages)))
 
     summary, failed = {}, False
-    for lang in languages:
-        applied, rejected = run(data, lang, send, rules, size=a.batch_size, retranslate=set(a.retranslate), log=log)
-        summary[lang] = {"applied": applied, "rejected": rejected}
-        for r in rejected:
-            log(f"::warning::{lang}: rejected {r}")
-        failed = failed or bool(rejected)
+    try:
+        for lang in languages:
+            applied, rejected = run(data, lang, send, rules, size=a.batch_size, retranslate=set(a.retranslate), log=log)
+            summary[lang] = {"applied": applied, "rejected": rejected}
+            for r in rejected:
+                log(f"::warning::{lang}: rejected {r}")
+            failed = failed or bool(rejected)
+            save_progress()
+    finally:
+        # Runs on a normal finish too (harmless: save_progress() is
+        # idempotent) and, on a crash (e.g. TransportError), saves whatever
+        # the in-flight language had already applied before propagating.
         save_progress()
-    save_progress()
     if a.summary:
         with open(a.summary, "w", encoding="utf-8") as f:
             json.dump(summary, f, indent=2)
