@@ -1398,6 +1398,34 @@
         }
       }
     },
+    "Both open a form on GitHub with the language and version filled in. Nothing is sent until you post it." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ambos abren un formulario en GitHub con el idioma y la versión ya completados. No se envía nada hasta que lo publiques."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "どちらもGitHub上のフォームを開き、言語とバージョンが入力された状態になります。投稿するまで何も送信されません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "두 링크 모두 언어와 버전이 채워진 GitHub 양식을 열어요. 직접 게시하기 전에는 아무것도 전송되지 않아요."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Beide openen een formulier op GitHub met de taal en versie al ingevuld. Er wordt niets verstuurd totdat je het plaatst."
+          }
+        }
+      }
+    },
     "Buy links may be affiliate links — they cost you nothing extra and help support Paperweight." : {
       "localizations" : {
         "es" : {
@@ -1506,6 +1534,34 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Getimede ontgrendeling annuleren"
+          }
+        }
+      }
+    },
+    "Change language" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cambiar idioma"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "言語を変更"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "언어 변경"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Taal wijzigen"
           }
         }
       }
@@ -2638,6 +2694,35 @@
         }
       }
     },
+    "Help" : {
+      "comment" : "Section heading over the two feedback links",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ayuda"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ヘルプ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "도움말"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Help"
+          }
+        }
+      }
+    },
     "Hold your Paperweight token near the top of your iPhone." : {
       "comment" : "System NFC sheet",
       "localizations" : {
@@ -2776,6 +2861,63 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Ongeldige code"
+          }
+        }
+      }
+    },
+    "Language" : {
+      "comment" : "Row label: the language the app is running in",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Idioma"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "言語"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "언어"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Taal"
+          }
+        }
+      }
+    },
+    "Language & translations" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Idioma y traducciones"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "言語と翻訳"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "언어 및 번역"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Taal & vertalingen"
           }
         }
       }
@@ -5264,6 +5406,62 @@
         }
       }
     },
+    "Report a wrong translation" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Informar de una traducción incorrecta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "誤った翻訳を報告"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "잘못된 번역 신고"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Een verkeerde vertaling melden"
+          }
+        }
+      }
+    },
+    "Request a language" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Solicitar un idioma"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "言語をリクエスト"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "언어 요청"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Een taal aanvragen"
+          }
+        }
+      }
+    },
     "Requires NFC token" : {
       "comment" : "Home Screen quick action subtitle",
       "localizations" : {
@@ -6613,6 +6811,70 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Deze codes worden niet opnieuw getoond."
+          }
+        }
+      }
+    },
+    "This %@ translation was made by a machine and hasn't been checked by a %@ speaker yet. If something reads wrong, say so." : {
+      "comment" : "Notice under the language row; both placeholders are the language name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This %1$@ translation was made by a machine and hasn't been checked by a %2$@ speaker yet. If something reads wrong, say so."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta traducción al %1$@ fue hecha por una máquina y todavía no ha sido revisada por un hablante de %2$@. Si algo no suena bien, dínoslo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "この%1$@の翻訳は機械によって作成されており、%2$@を話す人による確認がまだ行われていません。おかしいと感じる箇所があれば、お知らせください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "이 %1$@ 번역은 기계로 만들어졌으며 아직 %2$@ 사용자의 확인을 거치지 않았어요. 이상한 부분이 있다면 알려주세요."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deze %1$@ vertaling is door een machine gemaakt en is nog niet gecontroleerd door een %2$@ spreker. Als iets niet goed klinkt, laat het weten."
+          }
+        }
+      }
+    },
+    "This app" : {
+      "comment" : "Section heading over the current-language row",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta app"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "このアプリ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "이 앱"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deze app"
           }
         }
       }

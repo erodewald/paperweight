@@ -48,6 +48,11 @@ struct SettingsView: View {
                         NavRow(title: "Theme", value: vm.config.quietTheme.title)
                     }
                     CardDivider()
+                    NavigationLink { TranslationsView() } label: {
+                        NavRow(title: "Language & translations",
+                               value: TranslationFeedback.languageName(TranslationFeedback.Context.current().appLanguage))
+                    }
+                    CardDivider()
                     NavigationLink { UnlockView(vm: vm) } label: {
                         NavRow(title: "Emergency unlock",
                                titleColor: showsArmedSections ? PW.textPrimary : PW.textFaint,

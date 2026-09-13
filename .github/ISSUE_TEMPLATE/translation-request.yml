@@ -1,0 +1,23 @@
+name: Request a language
+description: Ask for Paperweight in another language.
+title: "Language request"
+labels: [translation]
+body:
+  - type: input
+    id: device-languages
+    attributes:
+      label: Device languages
+      description: Filled in by the app; your phone's preferred languages.
+  - type: input
+    id: requested-language
+    attributes:
+      label: Language you would like
+    validations:
+      required: true
+  - type: dropdown
+    id: can-help
+    attributes:
+      label: Could you review a machine translation in that language?
+      options:
+        - "Yes, happy to read it over"
+        - "No, just asking"

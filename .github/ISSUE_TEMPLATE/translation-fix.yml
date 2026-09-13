@@ -1,0 +1,41 @@
+name: Wrong translation
+description: Something in the app reads wrong in your language.
+title: "Wrong translation"
+labels: [translation]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks. The app filled in the first three fields; the last three are yours.
+  - type: input
+    id: language
+    attributes:
+      label: App language
+      description: The language the app was running in (code).
+    validations:
+      required: true
+  - type: input
+    id: device-languages
+    attributes:
+      label: Device languages
+      description: Your phone's preferred languages, most preferred first.
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+  - type: input
+    id: screen
+    attributes:
+      label: Where you saw it
+      placeholder: Home, Schedule, the widget, the Lock Screen…
+  - type: textarea
+    id: wrong-text
+    attributes:
+      label: What it says now
+      description: Copy the text as it appears.
+    validations:
+      required: true
+  - type: textarea
+    id: better-text
+    attributes:
+      label: What it should say
+      description: Optional. A better wording, or what felt wrong about it.
