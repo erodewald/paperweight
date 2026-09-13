@@ -3,12 +3,21 @@
 Cutting a release is one command:
 
 ```bash
-git tag v1.1.0 && git push origin v1.1.0
+git tag v1.2.0 && git push origin v1.2.0
 ```
 
-That triggers `.github/workflows/release.yml`, which runs the tests, archives, signs, and
-uploads the build to TestFlight. The tag's version becomes the marketing version; the build
-number comes from the workflow run number, so it always increases.
+That triggers `.github/workflows/release.yml`, which runs the tests, archives, signs,
+uploads the build to TestFlight, and then publishes a GitHub release for the tag. The tag's
+version becomes the marketing version; the build number comes from the workflow run
+number, so it always increases.
+
+Running the workflow by hand from the Actions tab does the same thing: type the version,
+and on a successful upload the run creates the `v<version>` tag itself and publishes the
+release. Untick **publish** for a TestFlight-only build that leaves no tag behind.
+
+Release notes come from `docs/releases/<version>.md` when that file exists, so write the
+App Store "What's New" text there first and the GitHub release reuses it. Without the file,
+GitHub generates notes from the merged pull requests.
 
 Everything below is the one-time setup behind that.
 
@@ -160,7 +169,8 @@ the cap wondering which of five certs is real.
 `Info.plist` files. They read `$(MARKETING_VERSION)` and `$(CURRENT_PROJECT_VERSION)`,
 which the release workflow sets:
 
-- **Marketing version** comes from the tag: `v1.1.0` → `1.1.0`.
+- **Marketing version** comes from the tag (`v1.2.0` → `1.2.0`), or from the version typed
+  into a by-hand run, which tags `v1.2.0` itself once the upload has succeeded.
 - **Build number** is the GitHub Actions run number plus an offset of `1000`, so the first
   automated build is `1001`. TestFlight rejects a build number it has seen before for the
   same marketing version, and `run_number` restarts at 1 for a newly added workflow — the
@@ -177,18 +187,29 @@ development changes.
 
 ## Cutting a release
 
+1. Write the notes: `docs/releases/<version>.md`, merged to `main`.
+2. Tag, or run the workflow by hand with the version:
+
 ```bash
-git tag v1.1.0 && git push origin v1.1.0
+git tag v1.2.0 && git push origin v1.2.0
 ```
 
 Watch it at <https://github.com/erodewald/paperweight/actions>. On success the build shows
 up in App Store Connect under TestFlight within a few minutes, then takes Apple another
-few to finish processing before it can be sent to testers.
+few to finish processing before it can be sent to testers. The GitHub release appears at
+<https://github.com/erodewald/paperweight/releases> at the same time.
 
-To re-run a failed release, delete the tag and push it again — the run number will have
-moved on, so the build number stays unique:
+A by-hand run refuses to start if `v<version>` already exists at a different commit, so a
+version cannot be re-released from somewhere else by accident. Pick the next version, or
+delete the stale tag if that release never shipped.
+
+To re-run a failed tag-driven release, delete the tag and push it again — the run number
+will have moved on, so the build number stays unique:
 
 ```bash
-git tag -d v1.1.0 && git push origin :refs/tags/v1.1.0
-git tag v1.1.0 && git push origin v1.1.0
+git tag -d v1.2.0 && git push origin :refs/tags/v1.2.0
+git tag v1.2.0 && git push origin v1.2.0
 ```
+
+A failed by-hand run leaves nothing behind: the tag and release are only created after
+the upload succeeds, so just run it again.
