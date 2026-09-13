@@ -136,8 +136,9 @@ The house rules in `WidgetSnapshot.swift:180-186` become the first section of
 
 ## 4. Tests
 
-- `HomeCopyTests`, `WidgetSnapshotTests`, `DayExceptionLabelTests` pin `Locale("en_US")`,
-  the current calendar with locale `en_US` and `firstWeekday = 1` (the time zone stays the simulator's, because `state(at:)` and its callers default to `Calendar.current`)
+- `HomeCopyTests`, `WidgetSnapshotTests`, `DayExceptionLabelTests` pin `Locale("en_US")` and
+  the current calendar with `firstWeekday = 1` through the new `locale:` parameters. The time
+  zone stays the simulator's, because `state(at:)` and its callers default to `Calendar.current`
   through the new `locale:` parameters. Expected strings update where the formatter
   changes the English ("12 AM" for "12a"; "3h 20m" is unchanged).
 - The voice guard (`WidgetSnapshotTests:196-206`) stays as a test of the English source.
