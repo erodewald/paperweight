@@ -271,16 +271,41 @@ class Cli(unittest.TestCase):
             self.assertTrue(os.path.exists(st))
             self.assertTrue(os.path.exists(summary_path))
 
+    def test_transport_failure_survives_a_save_error_in_finally(self):
+        # A TransportError has already been handled (rc == 3) by the time
+        # finally's own save runs; a failure there must not re-raise and
+        # turn the exit code back into an uncaught-exception 1.
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            cat_path, st, langs = self._files(d)
+            summary_path = os.path.join(d, "summary.json")
+
+            def factory(model, key):
+                def send(system, user):
+                    raise translate.TransportError("bad key")
+                return send
+
+            with mock.patch("translate.catalog.save", side_effect=RuntimeError("disk full")):
+                rc = translate.main(["--catalog", cat_path, "--status", st, "--languages-file", langs,
+                                     "--summary", summary_path],
+                                    send_factory=factory, env={"CLAUDE_PLATFORM_API_KEY": "k"}, log=lambda *_: None)
+            self.assertEqual(rc, 3)
+            self.assertTrue(os.path.exists(summary_path))
+
     def test_write_status_needs_no_key(self):
         import tempfile
         with tempfile.TemporaryDirectory() as d:
             cat_path, st, langs = self._files(d)
+            with open(cat_path, "rb") as f:
+                before = f.read()
             rc = translate.main(["--catalog", cat_path, "--status", st, "--languages-file", langs, "--write-status"],
                                 env={}, log=lambda *_: None)
             self.assertEqual(rc, 0)
             with open(st) as f:
                 self.assertEqual(json.load(f), {"languages": {
                     "nl": {"keys": 0, "needsReview": 0}, "ja": {"keys": 0, "needsReview": 0}}})
+            with open(cat_path, "rb") as f:
+                self.assertEqual(f.read(), before)
 
 
 if __name__ == "__main__":

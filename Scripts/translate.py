@@ -365,15 +365,22 @@ def main(argv=None, send_factory=anthropic_send, env=None, log=print):
     finally:
         # Runs on a normal finish too (harmless: save_progress() is
         # idempotent) and, after a TransportError, saves whatever the
-        # in-flight language had already applied. Guarded so a failure here
-        # never masks an exception still propagating (anything other than
-        # the TransportError just handled above); with nothing in flight, a
-        # save failure raises as it always did.
+        # in-flight language had already applied. By the time we're here a
+        # TransportError has already been caught above (rc == 3) and is no
+        # longer "in flight" as far as sys.exc_info() is concerned, so that
+        # alone can't distinguish "we just handled a transport failure"
+        # from "nothing went wrong" -- rc does. Only re-raise a save
+        # failure when rc is still None (a plain run, or some exception
+        # this function doesn't catch) *and* nothing is currently
+        # propagating: that reproduces the old, unguarded behaviour for a
+        # normal run, while never letting a save failure here downgrade an
+        # already-handled TransportError (rc == 3, which must survive as
+        # exit code 3) or mask an exception still on its way out.
         try:
             save_progress()
         except Exception as save_exc:
             log(f"::error::{save_exc}")
-            if sys.exc_info()[0] is None:
+            if rc is None and sys.exc_info()[0] is None:
                 raise
     if a.summary:
         # Written even on a transport failure, with whatever was applied

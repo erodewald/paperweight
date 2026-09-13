@@ -74,8 +74,8 @@ to `Scripts/languages.txt`.
 ## Checks
 
 - `swift Scripts/xcstrings-format.swift Scripts/tests/fixtures/xcode-style.xcstrings` —
-  the formatter reproduces Xcode's own file byte-for-byte (Ubuntu job's formatter-fixture
-  step).
+  the formatter reproduces Xcode's own file byte-for-byte (the macOS Build & test job's
+  formatter-fixture step; `swift` isn't on the Ubuntu job's path).
 - `Scripts/strings-sync.sh --check` — the catalog matches the code (macOS job).
 - `python3 Scripts/strings-check.py --languages "…" --status Shared/Resources/TranslationStatus.json`
   — no stale keys, placeholder parity (checked per plural form), no exclamation marks,

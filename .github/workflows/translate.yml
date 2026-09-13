@@ -58,7 +58,13 @@ jobs:
           # as warnings above; still worth a PR for the rest), 2 no key
           # (nothing translated), 3 a transport failure aborted the run
           # partway through. Only 0 and 1 continue past this line; anything
-          # else aborts the job here.
+          # else aborts the job here. A controlled exit 1 always writes the
+          # summary file; an uncaught crash in our own code also exits 1 but
+          # never does, so that's how the two are told apart below.
+          if [ "$rc" -eq 1 ] && [ ! -f "$RUNNER_TEMP/summary.json" ]; then
+            echo "::error::translate.py crashed (no summary written)"
+            exit 1
+          fi
           [ "$rc" -eq 0 ] || [ "$rc" -eq 1 ] || exit "$rc"
           if git diff --quiet -- Shared/Resources/Localizable.xcstrings Shared/Resources/TranslationStatus.json; then
             echo "Nothing to translate."
