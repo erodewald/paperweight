@@ -74,15 +74,15 @@ struct SettingsView: View {
                 }
 
                 #if DEBUG
-                Text("Developer").pwScreenLabel()
+                Text(verbatim: "Developer").pwScreenLabel()
                     .padding(.top, 22).padding(.bottom, 10)
                 GroupedCard {
                     Toggle(isOn: $debug.forceArmed) {
                         VStack(alignment: .leading, spacing: 3) {
-                            Text("Show armed-only screens")
+                            Text(verbatim: "Show armed-only screens")
                                 .font(.grotesk(15))
                                 .foregroundStyle(PW.textPrimary)
-                            Text("Reveals Emergency unlock and Turn off. Nothing is armed and nothing is quiet.")
+                            Text(verbatim: "Reveals Emergency unlock and Turn off. Nothing is armed and nothing is quiet.")
                                 .font(.grotesk(13))
                                 .foregroundStyle(PW.textMuted)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -96,10 +96,10 @@ struct SettingsView: View {
 
                     Toggle(isOn: $debug.forceQuiet) {
                         VStack(alignment: .leading, spacing: 3) {
-                            Text("Force quiet screen")
+                            Text(verbatim: "Force quiet screen")
                                 .font(.grotesk(15))
                                 .foregroundStyle(PW.textPrimary)
-                            Text("Shows the quiet screen without arming anything. Nothing actually goes quiet.")
+                            Text(verbatim: "Shows the quiet screen without arming anything. Nothing actually goes quiet.")
                                 .font(.grotesk(13))
                                 .foregroundStyle(PW.textMuted)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -114,14 +114,14 @@ struct SettingsView: View {
                     Button {
                         Task { try? await vm.disablePaperweight() }
                     } label: {
-                        NavRow(title: "Turn off without a token",
+                        NavRow(verbatim: "Turn off without a token",
                                titleColor: PW.clay,
                                showsChevron: false)
                     }
                     .buttonStyle(.plain)
                 }
 
-                Text("Debug builds only — none of this exists in a release build.")
+                Text(verbatim: "Debug builds only — none of this exists in a release build.")
                     .font(.grotesk(13))
                     .foregroundStyle(PW.textFaint)
                     .frame(maxWidth: .infinity)

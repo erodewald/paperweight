@@ -4,7 +4,24 @@
     "CFBundleDisplayName" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Paperweight" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paperweight"
+          }
+        }
+      }
+    },
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "PaperweightWidget"
+          }
+        }
       }
     }
   },
