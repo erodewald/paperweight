@@ -11,6 +11,7 @@ options:
     iOS: "17.0"
   xcodeVersion: "15.0"
   groupSortPosition: top
+  developmentLanguage: en
 
 schemes:
   Paperweight:
@@ -68,6 +69,11 @@ targets:
         INFOPLIST_FILE: Paperweight/Info.plist
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # The app compiles every view and every shared file, so its build alone
+        # sees every string. Scripts/strings-sync.sh merges the .stringsdata it
+        # emits into Shared/Resources/Localizable.xcstrings. The extensions only
+        # carry the catalog; they never extract.
+        SWIFT_EMIT_LOC_STRINGS: YES
     entitlements:
       path: Paperweight/Paperweight.entitlements
       properties:
@@ -126,6 +132,7 @@ targets:
       - path: Shared/Models/WidgetSnapshot.swift
       - path: Shared/Models/WidgetPresentation.swift
       - path: Shared/Store/WidgetSnapshotStore.swift
+      - path: Shared/Resources/Localizable.xcstrings
       - path: Paperweight/Views/Components/QuietGlassMotifs.swift
       - path: Paperweight/Resources/Fonts
         buildPhase: resources

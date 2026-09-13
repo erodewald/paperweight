@@ -1,0 +1,383 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "%@ %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$lld"
+          }
+        }
+      }
+    },
+    "%@. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@. %2$@"
+          }
+        }
+      }
+    },
+    "%lld minutes" : {
+
+    },
+    "%lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "+%lld more" : {
+
+    },
+    ". The quiet returns on its own." : {
+
+    },
+    "A day off has to be set the day before." : {
+
+    },
+    "A quiet day can start right now." : {
+
+    },
+    "A way out, briefly." : {
+
+    },
+    "Add a day" : {
+
+    },
+    "Any cheap NFC tag works. Paperweight reads the chip's built-in ID, so the tag never needs to be programmed — even a blank one is ready out of the pack." : {
+
+    },
+    "Before Paperweight can turn on, register an NFC token or generate recovery codes so you can always unlock." : {
+
+    },
+    "Before Paperweight can turn on, register an NFC token or generate recovery codes so you can always unlock. Your schedule is saved — finish setup and save again to arm it." : {
+
+    },
+    "Buy links may be affiliate links — they cost you nothing extra and help support Paperweight." : {
+
+    },
+    "Buying a Token" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Cancel timed unlock" : {
+
+    },
+    "Change reverted" : {
+
+    },
+    "Changes only what you see while apps are quiet. It never changes what's blocked." : {
+
+    },
+    "Choose Apps" : {
+
+    },
+    "Choose apps to block first" : {
+
+    },
+    "Choosing a token" : {
+
+    },
+    "Codes remaining" : {
+
+    },
+    "Configure" : {
+
+    },
+    "Cool-off if token lost" : {
+
+    },
+    "Copied!" : {
+
+    },
+    "Copy all codes" : {
+
+    },
+    "Days off & quiet days" : {
+
+    },
+    "Debug builds only — none of this exists in a release build." : {
+
+    },
+    "Developer" : {
+
+    },
+    "Deviation" : {
+
+    },
+    "Done" : {
+
+    },
+    "Each works once. Keep them somewhere you can reach without your phone." : {
+
+    },
+    "Edit day" : {
+
+    },
+    "Emergency unlock" : {
+
+    },
+    "Emergency unlock lives in Settings — never here." : {
+
+    },
+    "Enter one of the single-use codes you saved. This will permanently disable Paperweight." : {
+
+    },
+    "Error" : {
+
+    },
+    "Force quiet screen" : {
+
+    },
+    "Generate Recovery Codes Now" : {
+
+    },
+    "Generate recovery codes" : {
+
+    },
+    "Holidays, trips, exam days. Add one and the week bends around it." : {
+
+    },
+    "Invalid Code" : {
+
+    },
+    "Later" : {
+
+    },
+    "Lifts %@ (%@)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lifts %1$@ (%2$@)."
+          }
+        }
+      }
+    },
+    "Lost your token? " : {
+
+    },
+    "Lost your token? Start timed unlock" : {
+
+    },
+    "NFC Token & Recovery" : {
+
+    },
+    "No token registered" : {
+
+    },
+    "Not now" : {
+
+    },
+    "Note" : {
+
+    },
+    "Nothing more planned." : {
+
+    },
+    "Nothing planned." : {
+
+    },
+    "Now is a quiet period — saving locks restricted apps immediately." : {
+
+    },
+    "OK" : {
+
+    },
+    "OPEN ALL DAY" : {
+
+    },
+    "Open: All week" : {
+
+    },
+    "Open: Weekday evenings" : {
+
+    },
+    "Opening up takes effect from tomorrow, so today isn't offered." : {
+
+    },
+    "Optional" : {
+
+    },
+    "Paint your quiet hours." : {
+
+    },
+    "Paperweight has nothing to quiet yet. Pick the apps or categories to restrict first." : {
+
+    },
+    "Paperweight has nothing to quiet yet. Pick the apps or categories to restrict, then save again to arm." : {
+
+    },
+    "Paperweight stays on and keeps enforcing your schedule. After %lld day%@ it lifts automatically. Use this only if your token is lost — scanning it or a recovery code unlocks immediately." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paperweight stays on and keeps enforcing your schedule. After %1$lld day%2$@ it lifts automatically. Use this only if your token is lost — scanning it or a recovery code unlocks immediately."
+          }
+        }
+      }
+    },
+    "Physical token" : {
+
+    },
+    "Planned" : {
+
+    },
+    "Quiet: The whole week" : {
+
+    },
+    "Re-locks at %@" : {
+
+    },
+    "Recovery Code" : {
+
+    },
+    "Recovery Codes" : {
+
+    },
+    "Recovery code" : {
+
+    },
+    "Recovery codes" : {
+
+    },
+    "Regenerate all codes" : {
+
+    },
+    "Registered token" : {
+
+    },
+    "Releases on its own after a %lld-day cool-off." : {
+
+    },
+    "Remove" : {
+
+    },
+    "Replace token…" : {
+
+    },
+    "Restricted apps" : {
+
+    },
+    "Reveals Emergency unlock and Turn off. Nothing is armed and nothing is blocked." : {
+
+    },
+    "Save" : {
+
+    },
+    "Save your codes" : {
+
+    },
+    "Scan NFC token…" : {
+
+    },
+    "Scan token…" : {
+
+    },
+    "Scan your NFC token to remove all restrictions. The forest stops growing." : {
+
+    },
+    "Scanning…" : {
+
+    },
+    "Schedule" : {
+
+    },
+    "Set It Up" : {
+
+    },
+    "Set up a way back first" : {
+
+    },
+    "Settings" : {
+
+    },
+    "Show armed-only screens" : {
+
+    },
+    "Shows the quiet screen without arming anything. Nothing is actually blocked." : {
+
+    },
+    "Single-use backup codes to disable Paperweight if your token is lost. Shown once — save them somewhere safe." : {
+
+    },
+    "Somewhere, a forest is filling in." : {
+
+    },
+    "Start %lld-day Cool-off" : {
+
+    },
+    "Start timed unlock?" : {
+
+    },
+    "Tap your NFC sticker to register it. Place it on an object you won't carry everywhere." : {
+
+    },
+    "Tap your NFC token to lift restrictions for " : {
+
+    },
+    "That code is incorrect or has already been used." : {
+
+    },
+    "That code is spent. Paperweight is off." : {
+
+    },
+    "The week ahead" : {
+
+    },
+    "Theme" : {
+
+    },
+    "These codes will not be shown again." : {
+
+    },
+    "Timed unlock in progress" : {
+
+    },
+    "Token Registered" : {
+
+    },
+    "Turn off Paperweight" : {
+
+    },
+    "Unlock duration" : {
+
+    },
+    "Unlocked" : {
+
+    },
+    "Unlocks at %@" : {
+
+    },
+    "Use a recovery code" : {
+
+    },
+    "Version %@" : {
+
+    },
+    "XXXXX-XXXXX" : {
+
+    },
+    "Your NFC token has been saved. Generate recovery codes now in case you ever lose it." : {
+
+    },
+    "left" : {
+
+    }
+  },
+  "version" : "1.0"
+}
