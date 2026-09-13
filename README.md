@@ -20,6 +20,7 @@ An iOS focus tool built on Apple's Screen Time (Family Controls) framework. Ever
 - **CryptoKit** — SHA-256 hashing for recovery codes (stored hashed, never in plaintext).
 - **App Group** (`group.media.baltar.paperweight`) — shares config between the app and the monitor extension.
 - **WidgetKit** — small/medium Home Screen and circular/rectangular Lock Screen widgets, driven by a token-free `WidgetSnapshot` in the App Group so the widget never links FamilyControls. Read-only: no arming or disarming from a widget.
+- **Localization** — one String Catalog in `Shared/Resources`, synced by `Scripts/strings-sync.sh`; see [docs/LOCALIZATION.md](docs/LOCALIZATION.md).
 
 ```
 Paperweight/            iOS app (views, services, app entry)
