@@ -1,0 +1,108 @@
+name: Translate
+
+# Fills in missing translations with Claude and opens a pull request for
+# review. Runs when the catalog or the language list changes on main, or by
+# hand. Never pushes to main. Needs the CLAUDE_PLATFORM_API_KEY repository secret;
+# without it the run says so and exits green.
+on:
+  push:
+    branches: [main]
+    paths:
+      - Shared/Resources/Localizable.xcstrings
+      - Scripts/languages.txt
+  workflow_dispatch:
+    inputs:
+      language:
+        description: "Only this language code (blank = every language in Scripts/languages.txt)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: translate
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    name: Translate missing strings
+    # macOS so the catalog is formatted the way Xcode writes it (swift is on the path).
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Translate
+        id: translate
+        env:
+          CLAUDE_PLATFORM_API_KEY: ${{ secrets.CLAUDE_PLATFORM_API_KEY }}
+          LANGUAGE: ${{ inputs.language }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CLAUDE_PLATFORM_API_KEY:-}" ]; then
+            echo "::notice::CLAUDE_PLATFORM_API_KEY is not set; nothing translated. Add it under Settings → Secrets to enable this workflow."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          args=(--summary "$RUNNER_TEMP/summary.json")
+          [ -n "${LANGUAGE:-}" ] && args+=(--language "$LANGUAGE")
+          set +e
+          python3 Scripts/translate.py "${args[@]}"
+          rc=$?
+          set -e
+          # 1 = some units rejected (reported as warnings above); still worth a PR for the rest.
+          [ "$rc" -eq 0 ] || [ "$rc" -eq 1 ] || exit "$rc"
+          if git diff --quiet -- Shared/Resources/Localizable.xcstrings Shared/Resources/TranslationStatus.json; then
+            echo "Nothing to translate."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Lint the result
+        if: steps.translate.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          python3 -W error -m unittest Scripts/tests/test_catalog.py Scripts/tests/test_strings_check.py Scripts/tests/test_translate.py
+          python3 Scripts/strings-check.py --languages "$(tr '\n' ' ' < Scripts/languages.txt)" --status Shared/Resources/TranslationStatus.json
+
+      # A PR opened with GITHUB_TOKEN gets no CI run of its own, so the lint
+      # above is the check; full CI runs on main after the merge.
+      - name: Open or update the pull request
+        if: steps.translate.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B translations/auto
+          git add Shared/Resources/Localizable.xcstrings Shared/Resources/TranslationStatus.json
+          git commit -m "chore(l10n): machine translations for review"
+          git push --force origin translations/auto
+
+          python3 - "$RUNNER_TEMP/summary.json" > "$RUNNER_TEMP/body.md" <<'EOF'
+          import json, sys
+          s = json.load(open(sys.argv[1]))
+          print("Machine translations from the Translate workflow, marked *needs review* in the catalog.\n")
+          print("| Language | Applied | Rejected |\n|---|---|---|")
+          for lang, v in s.items():
+              print(f"| {lang} | {v['applied']} | {len(v['rejected'])} |")
+          rej = [f"- `{lang}`: {r}" for lang, v in s.items() for r in v["rejected"]]
+          if rej:
+              print("\nRejected units (left untranslated):\n" + "\n".join(rej))
+          print("\nReview in Xcode's String Catalog editor (filter *Needs review*), or run "
+                "`python3 Scripts/translate.py --verify CODE` for a back-translation pass. "
+                "The catalog lint passed in the workflow; full CI runs on main after merge.")
+          EOF
+
+          if [ "$(gh pr list --head translations/auto --state open --json number --jq length)" = "0" ]; then
+            gh pr create --base main --head translations/auto --label translation \
+              --title "Machine translations for review" --body-file "$RUNNER_TEMP/body.md"
+          else
+            gh pr edit translations/auto --body-file "$RUNNER_TEMP/body.md"
+          fi
