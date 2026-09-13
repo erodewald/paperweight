@@ -1,6 +1,9 @@
 name: Release
 
-# Cutting a release is `git tag v1.1.0 && git push origin v1.1.0`.
+# Cutting a release is either `git tag v1.2.0 && git push origin v1.2.0`, or
+# running this workflow by hand with the version typed in. Both paths upload to
+# TestFlight and then publish a GitHub release; the by-hand path also creates
+# the tag once the upload has succeeded, so a failed run leaves nothing behind.
 # See docs/RELEASING.md for the one-time Apple-side setup behind this.
 on:
   push:
@@ -8,9 +11,14 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Marketing version, e.g. 1.1.0 (dry runs only — no tag is created)'
+        description: 'Marketing version, e.g. 1.2.0. On success the run tags v<version> and publishes the GitHub release.'
         required: true
         type: string
+      publish:
+        description: 'Tag and publish the GitHub release after the upload. Untick for a TestFlight-only build that leaves no tag behind.'
+        required: false
+        type: boolean
+        default: true
 
 concurrency:
   group: release-${{ github.ref }}
@@ -24,6 +32,11 @@ env:
   # NEVER LOWER THIS. Build numbers may only ever increase.
   BUILD_NUMBER_OFFSET: 1000
 
+# contents: write is what lets the last step push the tag and create the
+# release. Nothing else in this workflow writes to the repository.
+permissions:
+  contents: write
+
 jobs:
   testflight:
     name: Build & upload to TestFlight
@@ -32,6 +45,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The tag step at the end pushes with this token; a fresh checkout
+          # only keeps it when persist-credentials is on (the default), stated
+          # here so nobody turns it off without seeing why it matters.
+          persist-credentials: true
 
       # App Store Connect rejects anything built with an older SDK, and it does
       # so at the very end — after the archive, the signing, and most of the
@@ -100,6 +118,30 @@ jobs:
           echo "Build number:      $build"
           echo "marketing=$marketing" >> "$GITHUB_OUTPUT"
           echo "build=$build" >> "$GITHUB_OUTPUT"
+
+      # A by-hand run will tag v<version> at the end. Refuse up front if that
+      # tag already exists somewhere else: re-releasing a version that shipped
+      # from a different commit is the mistake this catches, forty minutes
+      # early. The same commit is fine (a re-run after a flaky upload).
+      - name: Check the version is not already tagged elsewhere
+        if: github.event_name == 'workflow_dispatch' && inputs.publish
+        env:
+          MARKETING: ${{ steps.version.outputs.marketing }}
+        run: |
+          set -euo pipefail
+          git fetch --tags --quiet origin
+          tag="v$MARKETING"
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+            at=$(git rev-list -n 1 "$tag")
+            if [ "$at" != "$GITHUB_SHA" ]; then
+              echo "::error::Tag $tag already exists at ${at:0:7}, but this run is at ${GITHUB_SHA:0:7}."
+              echo "::error::Pick the next version, or delete the tag if that release never shipped."
+              exit 1
+            fi
+            echo "Tag $tag already points at this commit; the release step will reuse it."
+          else
+            echo "Tag $tag does not exist yet; it will be created after the upload succeeds."
+          fi
 
       - name: Install XcodeGen
         run: brew install xcodegen
@@ -275,6 +317,53 @@ jobs:
             exit "$status"
           fi
           echo "Uploaded $MARKETING ($BUILD) to App Store Connect."
+
+      # Only after a successful upload, so a tag or release never points at a
+      # build that is not on TestFlight. The tag push uses GITHUB_TOKEN, and
+      # GitHub does not start workflows for pushes made with that token, so a
+      # by-hand run cannot trigger a second, tag-driven run of itself.
+      #
+      # Release notes come from docs/releases/<version>.md when that file
+      # exists (the same text that goes in App Store Connect's What's New);
+      # otherwise GitHub generates them from the merged pull requests.
+      - name: Tag and publish the GitHub release
+        if: github.event_name != 'workflow_dispatch' || inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MARKETING: ${{ steps.version.outputs.marketing }}
+          BUILD: ${{ steps.version.outputs.build }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          tag="v$MARKETING"
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            if ! git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+              git tag -a "$tag" -m "Paperweight $MARKETING (build $BUILD)" "$GITHUB_SHA"
+              git push origin "refs/tags/$tag"
+              echo "Tagged $tag at ${GITHUB_SHA:0:7}."
+            fi
+          fi
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release $tag already exists; leaving it as it is."
+            exit 0
+          fi
+
+          notes="docs/releases/$MARKETING.md"
+          if [ -f "$notes" ]; then
+            gh release create "$tag" \
+              --title "Paperweight $MARKETING" \
+              --notes-file "$notes" \
+              --verify-tag
+            echo "Published release $tag from $notes."
+          else
+            gh release create "$tag" \
+              --title "Paperweight $MARKETING" \
+              --generate-notes \
+              --verify-tag
+            echo "Published release $tag with generated notes (no $notes found)."
+          fi
 
       # Only on failure: the archive is large, and on success the build is
       # already where it needs to be.
