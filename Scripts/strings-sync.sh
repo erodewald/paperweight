@@ -41,32 +41,86 @@ fi
 
 "$TOOL" sync "$target" --stringsdata "${files[@]}"
 
-# xcstringstool sync leaves a multi-argument format string (e.g. "%@ %lld")
-# in localizations.<sourceLanguage>.stringUnit.state = "new": Apple's tool
-# wants a human to confirm the positional reordering before compiling it.
-# But for the source language there is nothing to translate — it's the
-# code's own text — so xcstringstool compile skips these, and with nothing
-# else in the catalog needing an override, it emits no compiled table at all
-# (no en.lproj/Localizable.strings). Promote the source language's own
-# entries to "translated" immediately; this is a plain text substitution
-# scoped to the sourceLanguage key, so the rest of the file's formatting is
-# untouched, and other languages added later keep their own independent
-# "new" state.
-python3 - "$target" <<'EOF'
-import json, re, sys
+# xcstringstool sync leaves freshly-added source-language content in state
+# "new" wherever a human might plausibly want to confirm it — a plain
+# stringUnit, or one nested under "variations" (plural/device/width) or
+# "substitutions", at any depth. For the source language there is nothing to
+# translate — it's the code's own text — so xcstringstool compile silently
+# drops any entry that isn't "translated", and with nothing left to compile
+# it emits no table at all (no en.lproj/Localizable.strings). Promote every
+# "new" stringUnit under the source language to "translated", recursively,
+# then re-sync so the file ends up in xcstringstool's own canonical
+# formatting (the tool preserves the "translated" states we just set) —
+# that keeps --check diffs meaningful.
+promoted=$(python3 - "$target" <<'EOF'
+import json, sys
+
 path = sys.argv[1]
-text = open(path, encoding="utf-8").read()
-d = json.loads(text)
+
+def promote(node):
+    """Recursively promote every 'new' stringUnit state to 'translated',
+    descending through variations/substitutions at any depth. Returns the
+    number of promotions made."""
+    count = 0
+    if isinstance(node, dict):
+        unit = node.get("stringUnit")
+        if isinstance(unit, dict) and unit.get("state") == "new":
+            unit["state"] = "translated"
+            count += 1
+        for value in node.values():
+            count += promote(value)
+    elif isinstance(node, list):
+        for item in node:
+            count += promote(item)
+    return count
+
+d = json.load(open(path, encoding="utf-8"))
 source = d.get("sourceLanguage", "en")
 
-pattern = re.compile(
-    r'("%s"\s*:\s*\{\s*"stringUnit"\s*:\s*\{\s*"state"\s*:\s*)"new"' % re.escape(source)
+promoted = 0
+for entry in d["strings"].values():
+    loc = entry.get("localizations", {}).get(source)
+    if loc is not None:
+        promoted += promote(loc)
+
+with open(path, "w", encoding="utf-8") as f:
+    json.dump(d, f, indent=2, ensure_ascii=False)
+    f.write("\n")
+
+print(promoted)
+EOF
 )
-promoted = len(pattern.findall(text))
-if promoted:
-    text = pattern.sub(r'\1"translated"', text)
-    open(path, "w", encoding="utf-8").write(text)
-    d = json.loads(text)
+
+"$TOOL" sync "$target" --stringsdata "${files[@]}"
+
+python3 - "$target" "$promoted" <<'EOF'
+import json, sys
+
+path = sys.argv[1]
+promoted = sys.argv[2]
+
+def find_new(node):
+    """True if a 'new' stringUnit state remains anywhere below node."""
+    if isinstance(node, dict):
+        unit = node.get("stringUnit")
+        if isinstance(unit, dict) and unit.get("state") == "new":
+            return True
+        return any(find_new(v) for v in node.values())
+    if isinstance(node, list):
+        return any(find_new(item) for item in node)
+    return False
+
+d = json.load(open(path, encoding="utf-8"))
+source = d.get("sourceLanguage", "en")
+
+offenders = [
+    key for key, entry in d["strings"].items()
+    if (loc := entry.get("localizations", {}).get(source)) is not None and find_new(loc)
+]
+if offenders:
+    for key in offenders:
+        print(f"::error::{key!r} still has a source-language 'new' state after promotion", file=sys.stderr)
+    sys.exit(1)
 
 stale = sorted(k for k, v in d["strings"].items() if v.get("extractionState") == "stale")
 print(f"{len(d['strings'])} keys, {len(stale)} stale, {promoted} promoted to translated")
