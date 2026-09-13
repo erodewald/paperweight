@@ -89,10 +89,13 @@ def batched(units, size=40):
 
 
 def build_messages(units, lang, rules):
+    # Payload ids are the unit's position within this batch (short, so the
+    # reply and its tokens stay small), not the long "key|form" unit id;
+    # run() maps them back to real unit ids once the reply is parsed.
     name = LANGUAGE_NAMES.get(lang, lang)
     system = rules.rstrip() + "\n\nRegister for this language\n- " + REGISTER.get(lang, "Use the register a careful native app would use.") + "\n"
-    payload = [{"id": u["id"], "source": u["source"], "form": u["form"], "comment": u["comment"], "budget": u["budget"]}
-               for u in units]
+    payload = [{"id": str(i + 1), "source": u["source"], "form": u["form"], "comment": u["comment"], "budget": u["budget"]}
+               for i, u in enumerate(units)]
     user = (f"Translate these {len(units)} user-interface strings from English into {name} ({lang}). "
             "Return one JSON object mapping each id to its translation.\n\n" + json.dumps(payload, ensure_ascii=False, indent=1))
     return system, user
@@ -119,11 +122,15 @@ def _write_unit(entry, lang, form, value):
         loc.setdefault("variations", {}).setdefault(kind, {})[name] = su
 
 
+def _label(u):
+    return u["key"] if u["form"] == "" else f"{u['key']} [{u['form']}]"
+
+
 def apply(data, lang, units, mapping):
     """Write validated translations; return (applied, rejected descriptions)."""
     applied, rejected = 0, []
     for u in units:
-        label = u["key"] if u["form"] == "" else f"{u['key']} [{u['form']}]"
+        label = _label(u)
         value = mapping.get(u["id"])
         if value is None:
             rejected.append(f"{label}: no translation returned")
@@ -139,6 +146,32 @@ def apply(data, lang, units, mapping):
     return applied, rejected
 
 
+def _send_batch(data, lang, units, send, rules, log):
+    """Send one batch; on an unparseable or truncated reply, split it in half
+    and retry each half (recursively), so one bad sub-batch doesn't cost the
+    rest. A single unit that still fails is rejected, not raised."""
+    system, user = build_messages(units, lang, rules)
+    try:
+        reply = parse_reply(send(system, user))
+    except (json.JSONDecodeError, ValueError, RuntimeError) as e:
+        if len(units) == 1:
+            return 0, [f"{_label(units[0])}: reply unusable ({type(e).__name__})"]
+        mid = len(units) // 2
+        log(f"{lang}: batch of {len(units)} failed ({type(e).__name__}); splitting into {mid} and {len(units) - mid}")
+        a1, r1 = _send_batch(data, lang, units[:mid], send, rules, log)
+        a2, r2 = _send_batch(data, lang, units[mid:], send, rules, log)
+        return a1 + a2, r1 + r2
+    mapping = {}
+    for short, value in reply.items():
+        try:
+            idx = int(short) - 1
+        except ValueError:
+            continue
+        if 0 <= idx < len(units):
+            mapping[units[idx]["id"]] = value
+    return apply(data, lang, units, mapping)
+
+
 def run(data, lang, send, rules, size=40, retranslate=(), dry_run=False, log=print):
     units = collect(data, lang, retranslate)
     log(f"{lang}: {len(units)} units to translate")
@@ -149,9 +182,7 @@ def run(data, lang, send, rules, size=40, retranslate=(), dry_run=False, log=pri
         return 0, []
     applied, rejected = 0, []
     for i, b in enumerate(batched(units, size), 1):
-        system, user = build_messages(b, lang, rules)
-        mapping = parse_reply(send(system, user))
-        a, r = apply(data, lang, b, mapping)
+        a, r = _send_batch(data, lang, b, send, rules, log)
         applied += a
         rejected += r
         log(f"{lang}: batch {i}: {a} applied, {len(r)} rejected")
@@ -162,7 +193,7 @@ API = "https://api.anthropic.com/v1/messages"
 DEFAULT_MODEL = "claude-sonnet-5"
 
 
-def anthropic_send(model, key, max_tokens=8192, attempts=4):
+def anthropic_send(model, key, max_tokens=16384, attempts=4):
     """A send(system, user) -> text callable over the Messages API, retrying
     on rate limits and server errors with a growing pause."""
     def send(system, user):
@@ -176,6 +207,8 @@ def anthropic_send(model, key, max_tokens=8192, attempts=4):
             try:
                 with urllib.request.urlopen(req, timeout=120) as resp:
                     reply = json.loads(resp.read().decode("utf-8"))
+                if reply.get("stop_reason") == "max_tokens":
+                    raise RuntimeError("reply truncated at max_tokens")
                 return "".join(block.get("text", "") for block in reply.get("content", []) if block.get("type") == "text")
             except urllib.error.HTTPError as e:
                 if e.code in (429, 500, 502, 503, 529) and attempt < attempts:
@@ -220,6 +253,8 @@ def parse_reply_objects(text):
 
 
 def main(argv=None, send_factory=anthropic_send, env=None, log=print):
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(line_buffering=True)
     env = os.environ if env is None else env
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--catalog", default=CATALOG)
@@ -256,6 +291,15 @@ def main(argv=None, send_factory=anthropic_send, env=None, log=print):
         log("CLAUDE_PLATFORM_API_KEY is not set; nothing translated")
         return 2
     send = send_factory(a.model, key)
+    all_languages = read_languages(a.languages_file)
+
+    def save_progress():
+        # Written after every language (not only at the end) so a crash
+        # partway through a run keeps the languages already finished.
+        catalog.save(a.catalog, data)
+        with open(a.status, "w", encoding="utf-8") as f:
+            f.write(catalog.dumps_status(catalog.status(data, all_languages)))
+
     summary, failed = {}, False
     for lang in languages:
         applied, rejected = run(data, lang, send, rules, size=a.batch_size, retranslate=set(a.retranslate), log=log)
@@ -263,10 +307,8 @@ def main(argv=None, send_factory=anthropic_send, env=None, log=print):
         for r in rejected:
             log(f"::warning::{lang}: rejected {r}")
         failed = failed or bool(rejected)
-    catalog.save(a.catalog, data)
-    all_languages = read_languages(a.languages_file)
-    with open(a.status, "w", encoding="utf-8") as f:
-        f.write(catalog.dumps_status(catalog.status(data, all_languages)))
+        save_progress()
+    save_progress()
     if a.summary:
         with open(a.summary, "w", encoding="utf-8") as f:
             json.dump(summary, f, indent=2)

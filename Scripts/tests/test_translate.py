@@ -55,7 +55,7 @@ class Messages(unittest.TestCase):
         self.assertIn("RULES", system)
         self.assertIn(translate.REGISTER["nl"], system)
         self.assertIn("Dutch", user)
-        self.assertEqual(json.loads(user[user.index("["):])[0]["id"], "k1|")
+        self.assertEqual(json.loads(user[user.index("["):])[0]["id"], "1")
 
 
 class Parse(unittest.TestCase):
@@ -117,6 +117,21 @@ class Run(unittest.TestCase):
         self.assertEqual(translate.run(data, "nl", lambda s, u: self.fail("sent"), "RULES", dry_run=True, log=lambda *_: None), (0, []))
         self.assertNotIn("localizations", data["strings"]["Open"])
 
+    def test_batch_failure_splits_and_recovers(self):
+        data = cat({str(i): {} for i in range(5)})
+        calls = []
+
+        def send(system, user):
+            payload = json.loads(user[user.index("["):])
+            calls.append(len(payload))
+            if len(payload) > 2:
+                raise ValueError("too big")
+            return json.dumps({p["id"]: f"t{p['id']}" for p in payload})
+
+        applied, rejected = translate.run(data, "nl", send, "RULES", log=lambda *_: None)
+        self.assertEqual((applied, rejected), (5, []))
+        self.assertEqual(calls, [5, 2, 3, 1, 2])
+
 
 class Cli(unittest.TestCase):
     def _files(self, d):
@@ -160,7 +175,11 @@ class Cli(unittest.TestCase):
             cat_path, st, langs = self._files(d)
 
             def factory(model, key):
-                return lambda system, user: json.dumps({translate.unit_id("Open", ""): "Open!", translate.unit_id("Ready", ""): "Klaar"})
+                def send(system, user):
+                    payload = json.loads(user[user.index("["):])
+                    want = {"Open": "Open!", "Ready": "Klaar"}
+                    return json.dumps({p["id"]: want[p["source"]] for p in payload})
+                return send
 
             rc = translate.main(["--catalog", cat_path, "--status", st, "--languages-file", langs, "--language", "nl"],
                                 send_factory=factory, env={"CLAUDE_PLATFORM_API_KEY": "k"}, log=lambda *_: None)
