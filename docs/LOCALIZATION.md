@@ -39,6 +39,17 @@ plural category, to `PLURAL_FORMS` in `Scripts/catalog.py`). Merge; the Translat
 workflow fills it in. iOS shows the app's per-app Language row once the second
 language ships.
 
+## In the app
+
+Settings → Language & translations shows the running language, a notice while
+that language's translations are still unreviewed (driven by
+`Shared/Resources/TranslationStatus.json`, which the translator writes and the
+lint checks), a link to the iOS per-app language setting, and two GitHub issue
+forms opened in Safari with the language and version prefilled:
+`.github/ISSUE_TEMPLATE/translation-fix.yml` and `translation-request.yml`. Both
+carry the `translation` label. A language request is answered by adding the code
+to `Scripts/languages.txt`.
+
 ## Rules the code follows
 
 - The state words are quiet and open. Never blocked, free, banned, locked out.

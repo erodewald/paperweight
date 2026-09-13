@@ -255,7 +255,10 @@ it talks to a server; the two report actions are prefilled URLs opened in Safari
   (`Bundle.main.preferredLocalizations.first`). If that language still has unreviewed
   machine translations, a one-line notice in the app's voice: "This Korean translation
   was made by a machine and hasn't been checked by a Korean speaker yet. If something
-  reads wrong, say so." It disappears once the language is fully reviewed.
+  reads wrong, say so." It disappears once the language is fully reviewed. That notice
+  text is itself the catalog key `"This %@ translation was made by a machine and
+  hasn't been checked by a %@ speaker yet. If something reads wrong, say so."` added
+  to `Shared/Resources/Localizable.xcstrings` in Task 7.
 - **Report a wrong translation.** Opens
   `https://github.com/erodewald/paperweight/issues/new` with `template=translation-fix.yml`
   and the form's fields prefilled by id: app language, device preferred languages
