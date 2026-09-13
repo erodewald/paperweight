@@ -196,11 +196,51 @@ environment. It never runs in CI and the key is never in the repo.
 commit the catalog → `Scripts/translate.py` → review (Xcode's catalog editor shows
 `needs_review` rows) → mark reviewed → CI keeps it honest.
 
-## 8. Files
+## 8. Translation feedback from Settings (Phase 2)
+
+A **Language & translations** row in Settings opens a screen with four parts. Nothing on
+it talks to a server; the two report actions are prefilled URLs opened in Safari.
+
+- **Current language.** The language the app is running in
+  (`Bundle.main.preferredLocalizations.first`). If that language still has unreviewed
+  machine translations, a one-line notice in the app's voice: "This Korean translation
+  was made by a machine and hasn't been checked by a Korean speaker yet. If something
+  reads wrong, say so." It disappears once the language is fully reviewed.
+- **Report a wrong translation.** Opens
+  `https://github.com/erodewald/paperweight/issues/new` with `template=translation-fix.yml`
+  and the form's fields prefilled by id: app language, device preferred languages
+  (`Locale.preferredLanguages`), app version and build. The user types the wrong text and,
+  optionally, what it should say. The form applies the `translation` label.
+- **Request a language.** Same mechanism with `template=translation-request.yml`,
+  prefilled with the device's preferred languages.
+- **Change language.** A button that opens the app's page in iOS Settings
+  (`UIApplication.openSettingsURLString`), where per-app language lives. The app never
+  overrides the system choice.
+
+**Translation status.** `Scripts/translate.py` writes `Shared/Resources/TranslationStatus.json`
+after every run: for each language, the count of keys and of keys in `needs_review`.
+The catalog lint (§5) recomputes it from the catalog and fails if the committed file is
+stale. The app reads it once at launch; a language absent from the file, or with zero
+`needs_review`, shows no notice. The repo URL lives in `Shared/Constants.swift`.
+
+**Issue forms.** `.github/ISSUE_TEMPLATE/translation-fix.yml` (fields: `language`,
+`device-languages`, `app-version`, `screen`, `wrong-text`, `better-text`) and
+`.github/ISSUE_TEMPLATE/translation-request.yml` (fields: `device-languages`,
+`requested-language`, `can-help`). Both carry `labels: [translation]`. Field ids are the
+URL query parameter names the app fills.
+
+Tests: the two URL builders are pure functions in `Shared` (`TranslationFeedback.swift`)
+tested for correct template names, escaped values and field ids; the status reader is
+tested against a fixture with a reviewed and an unreviewed language.
+
+## 9. Files
 
 Phase 1 creates `Shared/Resources/Localizable.xcstrings`, `Paperweight/InfoPlist.xcstrings`,
 `PaperweightMonitor/InfoPlist.xcstrings`, `PaperweightWidget/InfoPlist.xcstrings`,
 `Scripts/strings-sync.sh`, `Scripts/strings-check.py`, `docs/LOCALIZATION.md`; modifies
 `project.yml`, `.github/workflows/ci.yml`, `.gitignore` (`.build/`), and the source files
 named in §2 plus their tests. Phase 2 creates `Scripts/translate.py`,
-`Scripts/languages.txt` and adds four languages to the catalog.
+`Scripts/languages.txt`, `Shared/Resources/TranslationStatus.json`,
+`Shared/TranslationFeedback.swift`, `Paperweight/Views/TranslationsView.swift`, the two
+issue forms under `.github/ISSUE_TEMPLATE/`, adds four languages to the catalog, and adds
+the Settings row.
