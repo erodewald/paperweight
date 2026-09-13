@@ -1,7 +1,6 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "": {},
     " · ": {
       "comment": "Joins short facts on one line; keep the spaces"
     },
@@ -276,6 +275,9 @@
     "Could not read the NFC tag.": {},
     "Couldn't read the token.": {
       "comment": "System NFC sheet"
+    },
+    "Date": {
+      "comment": "Accessibility label of the hidden date picker"
     },
     "Days off & quiet days": {},
     "Debug builds only — none of this exists in a release build.": {},

@@ -60,7 +60,7 @@ struct HomeView: View {
                 }
             }
             .pwScreen()
-            .navigationTitle("")
+            .navigationTitle(Text(verbatim: ""))
             // The root never swaps, so pushing/popping the schedule stays clean —
             // keep this on the Group, not inside the branches, since setupState,
             // lockedState, and openState swap out from under it as config changes.

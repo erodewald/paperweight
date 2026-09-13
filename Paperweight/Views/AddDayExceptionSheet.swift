@@ -102,7 +102,9 @@ struct AddDayExceptionSheet: View {
                         .padding(.horizontal, 16).padding(.vertical, 12)
                     }
 
-                    DatePicker("", selection: pickerSelection, in: pickerRange, displayedComponents: .date)
+                    DatePicker(selection: pickerSelection, in: pickerRange, displayedComponents: .date) {
+                        Text("Date", comment: "Accessibility label of the hidden date picker")
+                    }
                         .datePickerStyle(.graphical)
                         .tint(PW.sage)
                         .labelsHidden()
