@@ -12,7 +12,7 @@ extension View {
 // MARK: - Section label
 
 struct SectionHeader: View {
-    let text: String
+    let text: LocalizedStringKey
     var body: some View {
         Text(text)
             .pwSectionLabel()
@@ -41,7 +41,7 @@ struct CardDivider: View {
 
 /// A tappable navigation row: optional leading icon · title · trailing value · chevron.
 struct NavRow: View {
-    var title: String
+    var title: LocalizedStringKey
     var titleColor: Color = PW.textPrimary
     var systemImage: String? = nil
     var iconColor: Color = PW.sage
@@ -108,7 +108,7 @@ struct AccentButton: View {
 }
 
 struct GhostButton: View {
-    var title: String
+    var title: LocalizedStringKey
     var tint: Color = PW.textMuted
     var borderColor: Color = PW.hairline
     var action: () -> Void

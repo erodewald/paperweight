@@ -80,6 +80,11 @@ jobs:
             -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO
 
+      # The catalog is committed and synced by hand. If the code gained or lost
+      # a string since the last sync, the copy in temp differs from the file.
+      - name: Check the String Catalog is in sync with the code
+        run: Scripts/strings-sync.sh --check
+
       - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@v4
@@ -116,3 +121,19 @@ jobs:
             1) echo "No team ID committed." ;;
             *) echo "::error::git grep failed with status $rc"; exit 1 ;;
           esac
+
+  # Cheap catalog lint: stale keys, placeholder mismatches, exclamation marks,
+  # and (once languages are listed in Scripts/languages.txt) missing
+  # translations. Runs on Ubuntu; needs no Xcode.
+  string-catalog:
+    name: String Catalog lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint the catalog
+        run: |
+          set -euo pipefail
+          languages=""
+          [ -f Scripts/languages.txt ] && languages="$(tr '\n' ' ' < Scripts/languages.txt)"
+          python3 -W error -m unittest Scripts/tests/test_strings_check.py
+          python3 Scripts/strings-check.py --languages "$languages"

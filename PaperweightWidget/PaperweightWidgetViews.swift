@@ -216,7 +216,7 @@ struct RibbonWidgetView: View {
     }
 
     private static func weekdayName(_ date: Date) -> String {
-        date.formatted(.dateTime.weekday(.wide)).uppercased()
+        date.formatted(.dateTime.weekday(.wide)).uppercased(with: .current)
     }
 }
 

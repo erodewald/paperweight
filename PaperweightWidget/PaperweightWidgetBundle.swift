@@ -16,8 +16,8 @@ struct PaperweightWidget: Widget {
         StaticConfiguration(kind: "PaperweightWidget", provider: PaperweightProvider()) { entry in
             PaperweightWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Paperweight")
-        .description("How long the quiet lasts.")
+        .configurationDisplayName(WidgetCopy.displayName)
+        .description(WidgetCopy.widgetDescription)
         .supportedFamilies([
             .systemSmall,
             .systemMedium,

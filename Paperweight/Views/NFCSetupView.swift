@@ -12,9 +12,12 @@ struct NFCSetupView: View {
     @State private var generatedCodes: [String] = []
     @State private var showingCodes = false
 
-    private let durations: [(value: TimeInterval, label: String)] =
-        [(300, "5m"), (900, "15m"), (1800, "30m"), (3600, "1h")]
-    private let coolOffs: [(value: Int, label: String)] = [(1, "1 day"), (2, "2 days"), (3, "3 days")]
+    private let durations: [(value: TimeInterval, label: String)] = [300, 900, 1800, 3600].map {
+        ($0, Duration.seconds($0).formatted(.units(allowed: [.hours, .minutes], width: .narrow)))
+    }
+    private let coolOffs: [(value: Int, label: String)] = [1, 2, 3].map {
+        ($0, String(localized: "\($0) days", bundle: L10n.bundle, comment: "Duration in whole days; has a plural rule"))
+    }
 
     var body: some View {
         ScrollView {
@@ -76,7 +79,7 @@ struct NFCSetupView: View {
                         HStack {
                             Text("Codes remaining").font(.grotesk(14.5)).foregroundStyle(PW.textPrimary)
                             Spacer()
-                            Text("\(unused) of \(RecoveryCodeService.codeCount)")
+                            Text("\(unused) of \(RecoveryCodeService.codeCount)", comment: "Recovery codes left: unused of total")
                                 .font(.grotesk(13)).foregroundStyle(PW.textMuted)
                         }
                         .padding(.horizontal, 16).padding(.vertical, 13)
@@ -131,7 +134,7 @@ struct NFCSetupView: View {
         }
         .alert("Token Registered", isPresented: $didRegister) {
             Button("Generate Recovery Codes Now") { generateCodes() }
-            Button("Later", role: .cancel) {}
+            Button(role: .cancel) {} label: { Text("Later", comment: "Button: postpone this step") }
         } message: {
             Text("Your NFC token has been saved. Generate recovery codes now in case you ever lose it.")
         }
@@ -174,7 +177,7 @@ struct NFCSetupView: View {
     }
 
     private var coolOffLabel: String {
-        "\(vm.config.coolOffDays) day\(vm.config.coolOffDays == 1 ? "" : "s")"
+        String(localized: "\(vm.config.coolOffDays) days", bundle: L10n.bundle, comment: "Duration in whole days; has a plural rule")
     }
 
     private func scan() {

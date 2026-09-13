@@ -60,7 +60,7 @@ struct HomeView: View {
                 }
             }
             .pwScreen()
-            .navigationTitle("")
+            .navigationTitle(Text(verbatim: ""))
             // The root never swaps, so pushing/popping the schedule stays clean —
             // keep this on the Group, not inside the branches, since setupState,
             // lockedState, and openState swap out from under it as config changes.
@@ -89,8 +89,8 @@ struct HomeView: View {
         }
         .tint(PW.sage)
         .familyActivityPicker(
-            headerText: "Choose apps and categories to restrict.",
-            footerText: "Do not select Paperweight itself — blocking it could lock you out of these controls.",
+            headerText: String(localized: "Choose apps and categories to make quiet.", bundle: L10n.bundle),
+            footerText: String(localized: "Do not select Paperweight itself — quieting it could lock you out of these controls.", bundle: L10n.bundle),
             isPresented: $showingPicker,
             selection: $vm.config.selection)
         .onChange(of: showingPicker) { _, isPresented in
@@ -124,11 +124,11 @@ struct HomeView: View {
         .alert("Change reverted", isPresented: Binding(
             get: { selectionRevertMessage != nil }, set: { if !$0 { selectionRevertMessage = nil } }
         )) { Button("OK", role: .cancel) {} } message: { Text(selectionRevertMessage ?? "") }
-        .alert("Choose apps to block first", isPresented: $showNeedsApps) {
+        .alert("Choose apps to quiet first", isPresented: $showNeedsApps) {
             Button("Choose Apps") { showingPicker = true }
             Button("Not now", role: .cancel) {}
         } message: {
-            Text("Paperweight has nothing to quiet yet. Pick the apps or categories to restrict first.")
+            Text("Paperweight has nothing to quiet yet. Pick the apps or categories to make quiet first.")
         }
         .alert("Set up a way back first", isPresented: $showNeedsUnlock) {
             Button("Set It Up") { showUnlockSetup = true }
@@ -150,11 +150,12 @@ struct HomeView: View {
             let status = vm.config.resolver.quietStatus(at: context.date)
             VStack(alignment: .leading, spacing: 0) {
                 banner(
-                    eyebrow: "● Locked",
+                    eyebrow: String(localized: "● Locked", bundle: L10n.bundle, comment: "Banner eyebrow; keep the dot"),
                     eyebrowColor: PW.dawnGlow,
                     headline: status.map {
-                        "Down until \(WidgetState.dayClock($0.ends, from: context.date))"
-                    } ?? "Down until you say otherwise",
+                        String(localized: "Down until \(WidgetState.dayClock($0.ends, from: context.date))", bundle: L10n.bundle,
+                               comment: "A time (maybe with a day) follows")
+                    } ?? String(localized: "Down until you say otherwise", bundle: L10n.bundle),
                     borderColor: PW.dawnGlow.opacity(0.4),
                     glow: true)
 
@@ -163,7 +164,7 @@ struct HomeView: View {
                         Text(HomeCopy.countdown(status.remaining))
                             .font(.grotesk(44, weight: .bold))
                             .foregroundStyle(PW.textPrimary)
-                        Text("left")
+                        Text("left", comment: "Unit after the countdown: '2:14 left'")
                             .font(.grotesk(14, weight: .medium))
                             .foregroundStyle(PW.textMuted)
                     }
@@ -181,7 +182,7 @@ struct HomeView: View {
                 quietScene
                     .frame(maxHeight: .infinity)
 
-                AccentButton(title: "View schedule") { showingSchedule = true }
+                AccentButton(title: String(localized: "View schedule", bundle: L10n.bundle)) { showingSchedule = true }
                     .padding(.top, 8)
 
                 Text("Emergency unlock lives in Settings — never here.")
@@ -238,13 +239,16 @@ struct HomeView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     banner(
-                        eyebrow: "○ Open",
+                        eyebrow: String(localized: "○ Open", bundle: L10n.bundle, comment: "Banner eyebrow; keep the dot"),
                         eyebrowColor: PW.textLabel,
-                        headline: "In your hands.",
+                        headline: String(localized: "In your hands.", bundle: L10n.bundle),
                         borderColor: PW.hairline,
                         glow: false,
                         detail: status.map {
-                            "Locks at \(WidgetState.dayClock($0.ends, from: context.date)) · in \(WidgetState.compactDuration($0.remaining))"
+                            let at = WidgetState.dayClock($0.ends, from: context.date)
+                            let inn = WidgetState.compactDuration($0.remaining)
+                            return String(localized: "Locks at \(at) · in \(inn)", bundle: L10n.bundle,
+                                          comment: "A time, then a duration")
                         })
 
                     if !(vm.config.schedule?.isEmpty ?? true) || !vm.config.dayExceptions.isEmpty {
@@ -271,7 +275,7 @@ struct HomeView: View {
                     }
                     .padding(.top, 18)
 
-                    AccentButton(title: "Edit schedule") { showingSchedule = true }
+                    AccentButton(title: String(localized: "Edit schedule", bundle: L10n.bundle)) { showingSchedule = true }
                         .padding(.top, 18)
                 }
                 .padding(.horizontal, 20)
@@ -285,9 +289,9 @@ struct HomeView: View {
 
     private var setupState: some View {
         VStack(alignment: .leading, spacing: 0) {
-            banner(eyebrow: "○ Off",
+            banner(eyebrow: String(localized: "○ Off", bundle: L10n.bundle, comment: "Banner eyebrow; keep the dot"),
                    eyebrowColor: PW.textLabel,
-                   headline: "Nothing is quiet yet.",
+                   headline: String(localized: "Nothing is quiet yet.", bundle: L10n.bundle),
                    borderColor: PW.hairline,
                    glow: false,
                    detail: setupDetail)
@@ -295,11 +299,11 @@ struct HomeView: View {
             Spacer()
 
             if !vm.hasAppsSelected {
-                AccentButton(title: "Choose apps") { showingPicker = true }
+                AccentButton(title: String(localized: "Choose apps", bundle: L10n.bundle)) { showingPicker = true }
             } else if !vm.hasUnlockMethod {
-                AccentButton(title: "Set up a way back") { showUnlockSetup = true }
+                AccentButton(title: String(localized: "Set up a way back", bundle: L10n.bundle)) { showUnlockSetup = true }
             } else {
-                AccentButton(title: "Set a schedule") { showingSchedule = true }
+                AccentButton(title: String(localized: "Set a schedule", bundle: L10n.bundle)) { showingSchedule = true }
             }
         }
         .padding(.horizontal, 22)
@@ -308,12 +312,12 @@ struct HomeView: View {
 
     private var setupDetail: String {
         if !vm.hasAppsSelected {
-            return "First, choose the apps and categories to quiet."
+            return String(localized: "First, choose the apps and categories to quiet.", bundle: L10n.bundle)
         }
         if !vm.hasUnlockMethod {
-            return "Now set up a way back — an NFC token or recovery codes."
+            return String(localized: "Now set up a way back — an NFC token or recovery codes.", bundle: L10n.bundle)
         }
-        return "Paint a schedule and it arms itself. There is no switch to forget."
+        return String(localized: "Paint a schedule and it arms itself. There is no switch to forget.", bundle: L10n.bundle)
     }
 
     // MARK: - Shared pieces
@@ -376,7 +380,7 @@ struct HomeView: View {
     private var restrictedCountText: String {
         let s = vm.config.selection
         let total = s.applicationTokens.count + s.categoryTokens.count + s.webDomainTokens.count
-        return "\(total) app\(total == 1 ? "" : "s")"
+        return String(localized: "\(total) apps", bundle: L10n.bundle, comment: "How many apps are chosen; has a plural rule")
     }
 
     /// Applies a picker change. While Paperweight is active, *removing* any app
@@ -408,7 +412,7 @@ struct HomeView: View {
             } catch {
                 vm.config.selection = old
                 vm.saveSelection()
-                selectionRevertMessage = "Removing a blocked app needs your NFC token. Your list is unchanged."
+                selectionRevertMessage = String(localized: "Removing a quiet app needs your NFC token. Your list is unchanged.", bundle: L10n.bundle)
             }
         }
     }
@@ -457,11 +461,13 @@ struct HomeView: View {
     private func updateShortcutItems(isEnabled: Bool) {
         UIApplication.shared.shortcutItems = isEnabled
             ? [UIApplicationShortcutItem(
-                type: "disable-paperweight", localizedTitle: "Turn Off Paperweight",
-                localizedSubtitle: "Requires NFC token",
+                type: "disable-paperweight",
+                localizedTitle: String(localized: "Turn Off Paperweight", bundle: L10n.bundle, comment: "Home Screen quick action"),
+                localizedSubtitle: String(localized: "Requires NFC token", bundle: L10n.bundle, comment: "Home Screen quick action subtitle"),
                 icon: UIApplicationShortcutIcon(systemImageName: "lock.slash"), userInfo: nil)]
             : [UIApplicationShortcutItem(
-                type: "enable-paperweight", localizedTitle: "Turn On Paperweight",
+                type: "enable-paperweight",
+                localizedTitle: String(localized: "Turn On Paperweight", bundle: L10n.bundle, comment: "Home Screen quick action"),
                 localizedSubtitle: nil,
                 icon: UIApplicationShortcutIcon(systemImageName: "lock.fill"), userInfo: nil)]
     }

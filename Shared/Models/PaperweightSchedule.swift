@@ -171,39 +171,24 @@ struct PaperweightSchedule: Codable, Equatable {
         return (remaining, max(0, min(1, elapsed)), ends)
     }
 
-    /// A human-readable summary of free windows for a given day index (0 = Sun).
-    func summary(forDay day: Int) -> String {
-        var parts: [String] = []
-        var half = 0
-        while half < Self.halfHoursPerDay {
-            guard isFreeSlot(day: day, halfHour: half) else { half += 1; continue }
-            let start = half
-            var end = half
-            while end < Self.halfHoursPerDay && isFreeSlot(day: day, halfHour: end) { end += 1 }
-            parts.append("\(Self.timeLabel(halfHour: start))–\(Self.timeLabel(halfHour: end))")
-            half = end
-        }
-        return parts.isEmpty ? "Blocked all day" : parts.joined(separator: ", ")
+    /// Label for the top of a clock hour in the locale's own clock: "6 AM" and
+    /// "12 PM" where the day has halves, "6" and "18" where it doesn't. Hour 24
+    /// is the end of the day, shown as hour 0.
+    static func hourLabel(_ hour: Int, calendar: Calendar = .current, locale: Locale = .current) -> String {
+        var comps = DateComponents()
+        comps.year = 2001; comps.month = 1; comps.day = 1; comps.hour = hour % 24
+        guard let date = calendar.date(from: comps) else { return "\(hour % 24)" }
+        let style = Date.FormatStyle(locale: locale, calendar: calendar, timeZone: calendar.timeZone)
+            .hour(.defaultDigits(amPM: .abbreviated))
+        return date.formatted(style)
     }
 
-    /// Compact label for the top of a clock hour, e.g. "6a", "12p".
-    static func hourLabel(_ hour: Int) -> String {
-        let h = hour % 24
-        switch h {
-        case 0: return "12a"
-        case 12: return "12p"
-        case let x where x < 12: return "\(x)a"
-        default: return "\(h - 12)p"
-        }
-    }
-
-    /// Compact label for a half-hour index, e.g. "6:30a".
-    static func timeLabel(halfHour: Int) -> String {
-        let hour = (halfHour / 2) % 24
-        let minute = (halfHour % 2) * 30
-        let suffix = hour < 12 ? "a" : "p"
-        let h12 = hour % 12 == 0 ? 12 : hour % 12
-        return minute == 0 ? "\(h12)\(suffix)" : "\(h12):30\(suffix)"
+    /// Day indexes (0 = Sunday … 6 = Saturday) in the order a locale reads a
+    /// week, starting at the calendar's first weekday. Display only: storage,
+    /// `weekdayIndex` and every slot index stay Sunday-based.
+    static func displayOrder(calendar: Calendar = .current) -> [Int] {
+        let first = ((calendar.firstWeekday - 1) % 7 + 7) % 7
+        return (0..<7).map { (first + $0) % 7 }
     }
 
     // MARK: Presets
