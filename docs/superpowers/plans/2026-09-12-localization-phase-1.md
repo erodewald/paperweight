@@ -1327,6 +1327,13 @@ class Findings(unittest.TestCase):
             "nl": {"variations": {"plural": {"one": unit("dag"), "other": unit("%lld dagen")}}}}}}, ["nl"])
         self.assertIn("placeholders differ in nl: '%lld days'", p)
 
+    def test_plural_forms_are_compared_form_for_form(self):
+        en = {"variations": {"plural": {"one": unit("1 item"), "other": unit("%lld items")}}}
+        same = {"variations": {"plural": {"one": unit("1 item"), "other": unit("%lld items")}}}
+        self.assertEqual(self.check({"%lld items": {"localizations": {"en": en, "nl": same}}}, ["nl"]), [])
+        extra = {"variations": {"plural": {"one": unit("1 item"), "many": unit("%lld items"), "other": unit("%lld items")}}}
+        self.assertEqual(self.check({"%lld items": {"localizations": {"en": en, "ru": extra}}}, ["ru"]), [])
+
     def test_budget_comment_warns_but_does_not_fail(self):
         strings = {"until %@": {"comment": "Lock Screen; keep under 24 characters",
                                 "localizations": {"en": unit("until %@"),
@@ -1339,9 +1346,11 @@ class Cli(unittest.TestCase):
     def test_exit_code_reflects_problems(self):
         with tempfile.TemporaryDirectory() as d:
             path = os.path.join(d, "c.xcstrings")
-            json.dump(catalog({"Old": {"extractionState": "stale", "localizations": {"en": unit("Old")}}}), open(path, "w"))
+            with open(path, "w") as f:
+                json.dump(catalog({"Old": {"extractionState": "stale", "localizations": {"en": unit("Old")}}}), f)
             self.assertEqual(strings_check.main(["--catalog", path]), 1)
-            json.dump(catalog({"Ok": {"localizations": {"en": unit("Ok")}}}), open(path, "w"))
+            with open(path, "w") as f:
+                json.dump(catalog({"Ok": {"localizations": {"en": unit("Ok")}}}), f)
             self.assertEqual(strings_check.main(["--catalog", path]), 0)
 
 
@@ -1400,30 +1409,40 @@ def problems(catalog, languages):
         if entry.get("extractionState") == "stale":
             out.append(f"stale: {key!r}")
         locs = entry.get("localizations", {})
-        source_units = list(_units(locs.get(source, {}))) or [("", key, "translated")]
-        source_ph = _placeholders(source_units[0][1])
+        # Placeholders per source form: "" for the flat unit, "plural.one" …
+        # A translation form is compared with the same source form; a form the
+        # source lacks (few, many) falls back to "plural.other", then the flat
+        # unit, then the key itself.
+        source_ph = {form: _placeholders(value) for form, value, _ in _units(locs.get(source, {}))}
+        if not source_ph:
+            source_ph[""] = _placeholders(key)
         for lang in languages:
             if lang not in locs:
                 out.append(f"missing {lang}: {key!r}")
         for lang, loc in locs.items():
             if lang == source:
                 continue
-            for _, value, _ in _units(loc):
+            for form, value, _ in _units(loc):
                 if "!" in value:
                     out.append(f"exclamation mark in {lang}: {key!r}")
-                if _placeholders(value) != source_ph:
+                expected = source_ph.get(form, source_ph.get("plural.other", source_ph.get("", _placeholders(key))))
+                if _placeholders(value) != expected:
                     out.append(f"placeholders differ in {lang}: {key!r}")
     return sorted(set(out))
 
 
 def warnings(catalog, languages):
+    """Budget overruns in translations only; English lengths are covered by XCTest."""
     out = []
+    source = catalog.get("sourceLanguage", "en")
     for key, entry in catalog.get("strings", {}).items():
         m = BUDGET.search(entry.get("comment", "") or "")
         if not m:
             continue
         budget = int(m.group(1))
         for lang, loc in entry.get("localizations", {}).items():
+            if lang == source:
+                continue
             for _, value, _ in _units(loc):
                 if len(value) > budget:
                     out.append(f"over {budget} characters in {lang}: {key!r}")
@@ -1435,7 +1454,8 @@ def main(argv=None):
     p.add_argument("--catalog", default="Shared/Resources/Localizable.xcstrings")
     p.add_argument("--languages", default="", help="space-separated codes that must be fully translated")
     a = p.parse_args(argv)
-    catalog = json.load(open(a.catalog, encoding="utf-8"))
+    with open(a.catalog, encoding="utf-8") as f:
+        catalog = json.load(f)
     languages = a.languages.split()
     for w in warnings(catalog, languages):
         print(f"::warning::{w}")
@@ -1463,7 +1483,7 @@ Because the shim imports `strings_check` from its own directory, run it as `pyth
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `python3 -m unittest Scripts/tests/test_strings_check.py -v`
-Expected: 9 tests OK.
+Expected: 10 tests OK, run with `python3 -W error -m unittest …` so a ResourceWarning would fail.
 
 Run against the real catalog: `python3 Scripts/strings-check.py`
 Expected: `NNN keys checked, 0 problems, 0 warnings`.
