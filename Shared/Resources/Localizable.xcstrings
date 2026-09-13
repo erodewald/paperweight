@@ -2,6 +2,9 @@
   "sourceLanguage": "en",
   "strings": {
     "": {},
+    " · ": {
+      "comment": "Joins short facts on one line; keep the spaces"
+    },
     "%@ %@": {
       "comment": "A time and a weekday name; reorder freely",
       "localizations": {
@@ -23,6 +26,10 @@
         }
       }
     },
+    "%@ hours open up at midnight.": {
+      "comment": "A number of hours (may be 2.5) that become open at the day boundary"
+    },
+    "%@ quiet hours this week": {},
     "%@ tmrw": {
       "comment": "Lock Screen; a time then 'tomorrow' shortened; keep under 24 characters"
     },
@@ -73,7 +80,7 @@
       }
     },
     "%lld days": {
-      "comment": "Duration in whole days; has a plural rule",
+      "comment": "Duration in whole days; has a plural rule\nLength of a planned range; has a plural rule",
       "localizations": {
         "en": {
           "variations": {
@@ -155,6 +162,7 @@
     "Changes only what you see while apps are quiet. It never changes what's blocked.": {},
     "Choose Apps": {},
     "Choose apps to block first": {},
+    "Choose apps to quiet first": {},
     "Choosing a token": {},
     "Codes remaining": {},
     "Configure": {},
@@ -170,9 +178,15 @@
     "Edit day": {},
     "Emergency unlock": {},
     "Emergency unlock lives in Settings — never here.": {},
+    "Ends tonight": {
+      "comment": "A planned day whose last day is today"
+    },
     "Enter one of the single-use codes you saved. This will permanently disable Paperweight.": {},
     "Error": {},
     "Force quiet screen": {},
+    "From": {
+      "comment": "First day of a range"
+    },
     "Generate Recovery Codes Now": {},
     "Generate recovery codes": {},
     "Holidays, trips, exam days. Add one and the week bends around it.": {},
@@ -194,6 +208,13 @@
     "Like %@": {
       "comment": "Day treatment: use another weekday's schedule; a weekday name follows"
     },
+    "Like a weekday…": {
+      "comment": "Day treatment: pick a weekday to copy"
+    },
+    "Locked — quiet": {
+      "comment": "Legend swatch"
+    },
+    "Loosening takes effect tomorrow.": {},
     "Lost your token? ": {},
     "Lost your token? Start timed unlock": {},
     "NFC Token & Recovery": {},
@@ -216,7 +237,7 @@
     "Nothing is quiet right now": {},
     "Nothing more planned.": {},
     "Nothing planned.": {},
-    "Now is a quiet period — saving locks restricted apps immediately.": {},
+    "Now is a quiet period — saving makes restricted apps quiet at once.": {},
     "OK": {},
     "OPEN": {
       "comment": "Widget eyebrow, emphasis form"
@@ -224,6 +245,9 @@
     "OPEN ALL DAY": {},
     "Off": {
       "comment": "Lock Screen; keep under 24 characters"
+    },
+    "Open": {
+      "comment": "Legend swatch"
     },
     "Open Paperweight to begin": {},
     "Open all day": {
@@ -233,7 +257,14 @@
     "Open: All week": {},
     "Open: Weekday evenings": {},
     "Opening up takes effect from tomorrow, so today isn't offered.": {},
+    "Opening up takes effect from tomorrow.": {},
+    "Opens tomorrow": {
+      "comment": "Legend swatch"
+    },
     "Optional": {},
+    "Overlaps %@. Remove that one first.": {
+      "comment": "A date or date range follows 'Overlaps'"
+    },
     "PAPERWEIGHT": {
       "comment": "Widget eyebrow; the app name, never translated"
     },
@@ -241,8 +272,8 @@
     "Paperweight": {
       "comment": "Widget gallery name; the app name, never translated"
     },
+    "Paperweight has nothing to quiet yet. Pick the apps or categories to make quiet, then save again to arm.": {},
     "Paperweight has nothing to quiet yet. Pick the apps or categories to restrict first.": {},
-    "Paperweight has nothing to quiet yet. Pick the apps or categories to restrict, then save again to arm.": {},
     "Paperweight stays on and keeps enforcing your schedule. After %lld day%@ it lifts automatically. Use this only if your token is lost — scanning it or a recovery code unlocks immediately.": {
       "localizations": {
         "en": {
@@ -280,7 +311,11 @@
     "Replace token…": {},
     "Restricted apps": {},
     "Reveals Emergency unlock and Turn off. Nothing is armed and nothing is blocked.": {},
+    "Same day": {
+      "comment": "Range end when the range is a single day"
+    },
     "Save": {},
+    "Save schedule": {},
     "Save your codes": {},
     "Scan NFC token…": {},
     "Scan token…": {},
@@ -304,10 +339,14 @@
     "Tap your NFC token to lift restrictions for ": {},
     "That code is incorrect or has already been used.": {},
     "That code is spent. Paperweight is off.": {},
+    "The last day is before the first.": {},
     "The week ahead": {},
     "Theme": {},
     "These codes will not be shown again.": {},
     "Timed unlock in progress": {},
+    "To": {
+      "comment": "Last day of a range"
+    },
     "Token Registered": {},
     "Turn off Paperweight": {},
     "UNLOCKED": {
@@ -354,6 +393,9 @@
     },
     "set up a way back first": {},
     "still quiet until then": {},
+    "the change lands tomorrow": {
+      "comment": "After 'Ends tonight': an edit or removal applies from tomorrow"
+    },
     "then it closes on its own": {},
     "unlocks %@": {
       "comment": "Lock Screen; keep under 24 characters; a relative time follows ('in 2 days')"

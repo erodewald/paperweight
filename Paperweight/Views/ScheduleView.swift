@@ -13,13 +13,25 @@ struct ScheduleView: View {
     @State private var showNeedsApps = false
     @State private var showingPicker = false
 
-    private let dayLabels = ["S", "M", "T", "W", "T", "F", "S"]
     private let hours = 24
-    private let leftInset: CGFloat = 30
     private let colGap: CGFloat = 3
     private let rowGap: CGFloat = 3
     private let headerHeight: CGFloat = 18
     private let stackSpacing: CGFloat = 8
+
+    /// Columns in the locale's week order; `order[column]` is the Sunday-based
+    /// day index the model uses.
+    private let order = PaperweightSchedule.displayOrder()
+    private let dayLabels = Calendar.current.veryShortWeekdaySymbols
+    private let hourLabels = (0..<24).map { PaperweightSchedule.hourLabel($0) }
+
+    /// Wide enough for the widest hour label in this locale ("12 AM", "오후 12시"),
+    /// never narrower than the original 30pt.
+    private var leftInset: CGFloat {
+        let font = UIFont.systemFont(ofSize: 9, weight: .semibold)
+        let widest = hourLabels.map { ($0 as NSString).size(withAttributes: [.font: font]).width }.max() ?? 0
+        return max(30, ceil(widest) + 4)
+    }
 
     init(vm: HomeViewModel) {
         self.vm = vm
@@ -53,9 +65,12 @@ struct ScheduleView: View {
     /// there's no deferral rule to explain otherwise.
     private var pendingFooterText: String? {
         guard vm.config.isEnabled else { return nil }
-        guard hasPendingChange else { return "Loosening takes effect tomorrow." }
-        let hours = Double(openingSlots.count) / 2.0
-        return String(format: "%g hours open up at midnight.", hours)
+        guard hasPendingChange else {
+            return String(localized: "Loosening takes effect tomorrow.", bundle: L10n.bundle)
+        }
+        let hours = (Double(openingSlots.count) / 2.0).formatted()
+        return String(localized: "\(hours) hours open up at midnight.", bundle: L10n.bundle,
+                      comment: "A number of hours (may be 2.5) that become open at the day boundary")
     }
 
     private var now: (day: Int, hour: Int) {
@@ -69,10 +84,10 @@ struct ScheduleView: View {
                 Text("Paint your quiet hours.")
                     .font(.grotesk(13)).foregroundStyle(PW.textMuted)
                 HStack(spacing: 12) {
-                    legend(color: PW.moss, label: "Locked — quiet")
-                    legend(color: nil, label: "Open")
+                    legend(color: PW.moss, label: String(localized: "Locked — quiet", bundle: L10n.bundle, comment: "Legend swatch"))
+                    legend(color: nil, label: String(localized: "Open", bundle: L10n.bundle, comment: "Legend swatch"))
                     if hasPendingChange {
-                        legend(color: PW.moss.opacity(0.35), label: "Opens tomorrow", dashed: true)
+                        legend(color: PW.moss.opacity(0.35), label: String(localized: "Opens tomorrow", bundle: L10n.bundle, comment: "Legend swatch"), dashed: true)
                     }
                 }
             }
@@ -100,8 +115,7 @@ struct ScheduleView: View {
             }
             .padding(.horizontal, 18)
 
-            Text(String(format: "%g quiet hours this week",
-                        PaperweightSchedule(freeSlots: freeSlots).quietHourCount))
+            Text("\(PaperweightSchedule(freeSlots: freeSlots).quietHourCount.formatted()) quiet hours this week")
                 .font(.grotesk(13)).foregroundStyle(PW.textMuted)
                 .padding(.top, 2)
 
@@ -111,7 +125,7 @@ struct ScheduleView: View {
                     .padding(.horizontal, 24).padding(.top, 2)
             }
 
-            AccentButton(title: "Save schedule") { Task { await save() } }
+            AccentButton(title: String(localized: "Save schedule", bundle: L10n.bundle)) { Task { await save() } }
                 .padding(.horizontal, 24).padding(.top, 4).padding(.bottom, 8)
         }
         .padding(.vertical, 8)
@@ -129,11 +143,11 @@ struct ScheduleView: View {
                 }
             }
         }
-        .alert("Choose apps to block first", isPresented: $showNeedsApps) {
+        .alert("Choose apps to quiet first", isPresented: $showNeedsApps) {
             Button("Choose Apps") { showingPicker = true }
             Button("Not now", role: .cancel) { dismiss() }
         } message: {
-            Text("Paperweight has nothing to quiet yet. Pick the apps or categories to restrict, then save again to arm.")
+            Text("Paperweight has nothing to quiet yet. Pick the apps or categories to make quiet, then save again to arm.")
         }
         .alert("Set up a way back first", isPresented: $showNeedsUnlock) {
             Button("Set It Up") { showUnlockSetup = true }
@@ -155,7 +169,7 @@ struct ScheduleView: View {
     private var lockWarning: some View {
         HStack(spacing: 6) {
             Image(systemName: "exclamationmark.triangle.fill")
-            Text("Now is a quiet period — saving locks restricted apps immediately.")
+            Text("Now is a quiet period — saving makes restricted apps quiet at once.")
         }
         .font(.grotesk(13)).foregroundStyle(PW.clay)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -187,8 +201,8 @@ struct ScheduleView: View {
     private func dayHeader(cellW: CGFloat) -> some View {
         HStack(spacing: colGap) {
             Color.clear.frame(width: leftInset, height: 1)
-            ForEach(0..<7, id: \.self) { day in
-                Text(dayLabels[day])
+            ForEach(0..<7, id: \.self) { column in
+                Text(dayLabels[order[column]])
                     .font(.grotesk(13, weight: .semibold))
                     .foregroundStyle(PW.textFaint)
                     .frame(width: cellW)
@@ -201,7 +215,7 @@ struct ScheduleView: View {
         HStack(spacing: colGap) {
             VStack(spacing: rowGap) {
                 ForEach(0..<hours, id: \.self) { hour in
-                    Text(PaperweightSchedule.hourLabel(hour))
+                    Text(hourLabels[hour])
                         .font(.system(size: 9, weight: hour % 6 == 0 ? .semibold : .regular))
                         .foregroundStyle(hour % 6 == 0 ? PW.textFaint : PW.textFaintest)
                         .frame(width: leftInset, height: cellH, alignment: .trailing)
@@ -211,7 +225,8 @@ struct ScheduleView: View {
                 let nowCell = now
                 ForEach(0..<hours, id: \.self) { hour in
                     HStack(spacing: colGap) {
-                        ForEach(0..<7, id: \.self) { day in
+                        ForEach(0..<7, id: \.self) { column in
+                            let day = order[column]
                             cell(day: day, hour: hour, w: cellW, h: cellH,
                                  isNow: day == nowCell.day && hour == nowCell.hour)
                         }
@@ -307,7 +322,7 @@ struct ScheduleView: View {
     private func cellAt(_ location: CGPoint, cellW: CGFloat, cellH: CGFloat) -> (day: Int, hour: Int)? {
         let xInCells = location.x - leftInset - colGap
         guard xInCells >= 0 else { return nil }
-        let day = min(max(Int(xInCells / (cellW + colGap)), 0), 6)
+        let day = order[min(max(Int(xInCells / (cellW + colGap)), 0), 6)]
         let hour = min(max(Int(location.y / (cellH + rowGap)), 0), hours - 1)
         return (day, hour)
     }

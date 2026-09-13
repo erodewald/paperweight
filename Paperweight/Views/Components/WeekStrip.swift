@@ -13,7 +13,7 @@ struct WeekStrip: View {
     /// Today and the six days after; see `DayKey.weekAhead(from:)`.
     let week: [DayKey]
 
-    private static let dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    private static let dayNames = Calendar.current.shortWeekdaySymbols
     private static let barHeight: CGFloat = 15
 
     var body: some View {
@@ -38,8 +38,8 @@ struct WeekStrip: View {
             }
 
             HStack(spacing: 12) {
-                legend(color: PW.moss, label: "Locked — quiet")
-                legend(color: nil, label: "Open")
+                legend(color: PW.moss, label: String(localized: "Locked — quiet", bundle: L10n.bundle, comment: "Legend swatch"))
+                legend(color: nil, label: String(localized: "Open", bundle: L10n.bundle, comment: "Legend swatch"))
                 HStack(spacing: 6) {
                     Circle().fill(PW.sage).frame(width: 6, height: 6)
                     Text("Planned").font(.grotesk(13)).foregroundStyle(PW.textMuted)
