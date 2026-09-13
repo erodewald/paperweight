@@ -24,7 +24,8 @@ struct WeekStrip: View {
                 ForEach(week, id: \.self) { day in
                     HStack(spacing: 8) {
                         HStack(spacing: 4) {
-                            Text("\(Self.dayNames[day.weekdayIndex()]) \(day.day)")
+                            let name = Self.dayNames[day.weekdayIndex()]
+                            Text("\(name) \(day.day)", comment: "Short weekday name then day of month: 'Mon 14'; reorder freely")
                                 .font(.grotesk(13, weight: .semibold))
                                 .foregroundStyle(PW.textMuted)
                             if resolver.exception(on: day) != nil {
@@ -42,7 +43,7 @@ struct WeekStrip: View {
                 legend(color: nil, label: String(localized: "Open", bundle: L10n.bundle, comment: "Legend swatch"))
                 HStack(spacing: 6) {
                     Circle().fill(PW.sage).frame(width: 6, height: 6)
-                    Text("Planned").font(.grotesk(13)).foregroundStyle(PW.textMuted)
+                    Text("Planned", comment: "Legend: a day with a planned exception").font(.grotesk(13)).foregroundStyle(PW.textMuted)
                 }
             }
         }

@@ -59,7 +59,7 @@ struct SettingsView: View {
                 }
 
                 if showsArmedSections {
-                    Text("Deviation").pwScreenLabel()
+                    Text("Deviation", comment: "Section heading over the options for turning Paperweight off early").pwScreenLabel()
                         .padding(.top, 22).padding(.bottom, 10)
                     GroupedCard {
                         Button(action: onTurnOff) {
@@ -164,8 +164,8 @@ struct SettingsView: View {
     }
 
     private var scheduleStatusText: String {
-        guard let s = vm.config.schedule, !s.isEmpty else { return String(localized: "Set up", bundle: L10n.bundle) }
+        guard let s = vm.config.schedule, !s.isEmpty else { return String(localized: "Set up", bundle: L10n.bundle, comment: "Status: this still needs setting up") }
         if vm.config.isEnabled && !vm.config.resolver.isFree(at: Date()) { return String(localized: "Quiet now", bundle: L10n.bundle) }
-        return String(localized: "Ready", bundle: L10n.bundle)
+        return String(localized: "Ready", bundle: L10n.bundle, comment: "Status: set up and usable")
     }
 }

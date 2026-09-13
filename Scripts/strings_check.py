@@ -29,7 +29,23 @@ def _units(localization):
 
 
 def _placeholders(value):
-    return sorted(m.group(0) for m in PLACEHOLDER.finditer(value))
+    """Every placeholder in value as a (position, type) tuple, so a
+    positional form (`%1$@`) and an equivalent ordinal form (`%@` as the
+    first unindexed placeholder) compare equal. `position` is the explicit
+    `%N$` index for an indexed placeholder, or the 1-based ordinal among
+    unindexed placeholders otherwise; `type` is the specifier without the
+    position (`@`, `lld`, ...)."""
+    result = []
+    ordinal = 0
+    for m in PLACEHOLDER.finditer(value):
+        index, kind = m.groups()
+        if index:
+            position = int(index.rstrip("$"))
+        else:
+            ordinal += 1
+            position = ordinal
+        result.append((position, kind))
+    return sorted(result)
 
 
 def problems(catalog, languages):

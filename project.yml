@@ -40,6 +40,9 @@ schemes:
       config: Debug
       targets:
         - PaperweightTests
+      commandLineArguments:
+        "-AppleLanguages (en)": true
+        "-AppleLocale en_US": true
 
 settings:
   base:

@@ -79,7 +79,7 @@ struct NFCSetupView: View {
                         HStack {
                             Text("Codes remaining").font(.grotesk(14.5)).foregroundStyle(PW.textPrimary)
                             Spacer()
-                            Text("\(unused) of \(RecoveryCodeService.codeCount)")
+                            Text("\(unused) of \(RecoveryCodeService.codeCount)", comment: "Recovery codes left: unused of total")
                                 .font(.grotesk(13)).foregroundStyle(PW.textMuted)
                         }
                         .padding(.horizontal, 16).padding(.vertical, 13)
@@ -134,7 +134,7 @@ struct NFCSetupView: View {
         }
         .alert("Token Registered", isPresented: $didRegister) {
             Button("Generate Recovery Codes Now") { generateCodes() }
-            Button("Later", role: .cancel) {}
+            Button(role: .cancel) {} label: { Text("Later", comment: "Button: postpone this step") }
         } message: {
             Text("Your NFC token has been saved. Generate recovery codes now in case you ever lose it.")
         }

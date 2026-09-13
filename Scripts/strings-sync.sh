@@ -48,10 +48,11 @@ fi
 # translate — it's the code's own text — so xcstringstool compile silently
 # drops any entry that isn't "translated", and with nothing left to compile
 # it emits no table at all (no en.lproj/Localizable.strings). Promote every
-# "new" stringUnit under the source language to "translated", recursively,
-# then re-sync so the file ends up in xcstringstool's own canonical
-# formatting (the tool preserves the "translated" states we just set) —
-# that keeps --check diffs meaningful.
+# "new" stringUnit under the source language to "translated", recursively.
+# The Python json.dump below, not xcstringstool's own formatting, is the
+# canonical form that gets committed and that --check compares against — a
+# hand edit made in Xcode's string catalog editor is normalized back to this
+# form the next time this script runs.
 promoted=$(python3 - "$target" <<'EOF'
 import json, sys
 
@@ -90,8 +91,6 @@ with open(path, "w", encoding="utf-8") as f:
 print(promoted)
 EOF
 )
-
-"$TOOL" sync "$target" --stringsdata "${files[@]}"
 
 python3 - "$target" "$promoted" <<'EOF'
 import json, sys

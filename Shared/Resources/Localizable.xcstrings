@@ -17,6 +17,7 @@
       }
     },
     "%@ %lld": {
+      "comment": "Short weekday name then day of month: 'Mon 14'; reorder freely",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -59,6 +60,7 @@
       }
     },
     "%@. %@": {
+      "comment": "Theme title, then its one-line description",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -172,6 +174,7 @@
       }
     },
     "%lld of %lld": {
+      "comment": "Recovery codes left: unused of total",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -264,6 +267,7 @@
     "Choose apps and categories to make quiet.": {},
     "Choose apps to quiet first": {},
     "Choosing a token": {},
+    "Code": {},
     "Codes remaining": {},
     "Configure": {},
     "Cool-off if token lost": {},
@@ -276,7 +280,9 @@
     "Days off & quiet days": {},
     "Debug builds only — none of this exists in a release build.": {},
     "Developer": {},
-    "Deviation": {},
+    "Deviation": {
+      "comment": "Section heading over the options for turning Paperweight off early"
+    },
     "Diorama": {
       "comment": "Quiet theme name"
     },
@@ -314,8 +320,11 @@
     },
     "In your hands.": {},
     "Invalid Code": {},
-    "Later": {},
+    "Later": {
+      "comment": "Button: postpone this step"
+    },
     "Lifts %@ (%@).": {
+      "comment": "A relative time ('in 2 days'), then the exact date and time",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -346,7 +355,7 @@
       }
     },
     "Loosening takes effect tomorrow.": {},
-    "Lost your token? ": {},
+    "Lost your token?": {},
     "Lost your token? Start timed unlock": {},
     "Metal detunes the antenna and the phone won't read it. If it must go on a fridge or lockbox, buy an “on-metal” / “anti-metal” tag.": {},
     "NFC Token & Recovery": {},
@@ -404,7 +413,9 @@
     "Opens tomorrow": {
       "comment": "Legend swatch"
     },
-    "Optional": {},
+    "Optional": {
+      "comment": "Placeholder for the optional note field"
+    },
     "Overgrown": {
       "comment": "Quiet theme name"
     },
@@ -419,12 +430,17 @@
     "Paperweight": {
       "comment": "Widget gallery name; the app name, never translated"
     },
+    "Paperweight Recovery Codes": {
+      "comment": "Default file name when saving recovery codes"
+    },
     "Paperweight has nothing to quiet yet. Pick the apps or categories to make quiet first.": {},
     "Paperweight has nothing to quiet yet. Pick the apps or categories to make quiet, then save again to arm.": {},
     "Paperweight stays on and keeps enforcing your schedule. After %@ it lifts automatically. Use this only if your token is lost — scanning it or a recovery code unlocks immediately.": {},
     "Password manager": {},
     "Physical token": {},
-    "Planned": {},
+    "Planned": {
+      "comment": "Legend: a day with a planned exception"
+    },
     "QUIET": {
       "comment": "Widget eyebrow, emphasis form"
     },
@@ -441,7 +457,9 @@
     "Quiet: The whole week": {},
     "Re-lock now": {},
     "Re-locks at %@": {},
-    "Ready": {},
+    "Ready": {
+      "comment": "Status: set up and usable"
+    },
     "Recovery Code": {},
     "Recovery Codes": {},
     "Recovery code": {},
@@ -475,7 +493,9 @@
     },
     "Set It Up": {},
     "Set a schedule": {},
-    "Set up": {},
+    "Set up": {
+      "comment": "Status: this still needs setting up"
+    },
     "Set up a way back": {},
     "Set up a way back first": {},
     "Settings": {},
@@ -547,10 +567,14 @@
     "What to Avoid": {},
     "Where to Buy": {},
     "Where to buy a token": {},
-    "XXXXX-XXXXX": {},
+    "XXXXX-XXXXX": {
+      "comment": "Recovery code shape; do not translate"
+    },
     "Your NFC token has been saved. Generate recovery codes now in case you ever lose it.": {},
     "before it goes quiet": {},
-    "left": {},
+    "left": {
+      "comment": "Unit after the countdown: '2:14 left'"
+    },
     "no open hours set": {
       "comment": "Lock Screen; keep under 24 characters"
     },

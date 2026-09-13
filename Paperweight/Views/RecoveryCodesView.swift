@@ -113,7 +113,8 @@ struct RecoveryCodesView: View {
             .fileExporter(isPresented: $showingExporter,
                           document: TextFile(text: shareText),
                           contentType: .plainText,
-                          defaultFilename: "Paperweight Recovery Codes") { _ in }
+                          defaultFilename: String(localized: "Paperweight Recovery Codes", bundle: L10n.bundle,
+                                                   comment: "Default file name when saving recovery codes")) { _ in }
         }
     }
 

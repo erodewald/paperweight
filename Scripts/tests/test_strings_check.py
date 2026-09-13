@@ -1,4 +1,4 @@
-import json, os, sys, tempfile, unittest
+import contextlib, io, json, os, sys, tempfile, unittest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 import strings_check  # noqa: E402
 
@@ -68,6 +68,24 @@ class Findings(unittest.TestCase):
         self.assertEqual(self.check(strings, ["nl"]), [])
         self.assertIn("over 24 characters in nl: 'until %@'", strings_check.warnings(catalog(strings), ["nl"]))
 
+    def test_positional_and_ordinal_placeholders_are_equivalent(self):
+        # An unindexed placeholder and its ordinal-equivalent indexed form are
+        # the same placeholder, so a translation may switch forms freely.
+        ordinal = {"%@ tomorrow": {"localizations": {
+            "en": unit("%@ tomorrow"), "nl": unit("%1$@ morgen")}}}
+        self.assertEqual(self.check(ordinal, ["nl"]), [])
+
+        # Indexed placeholders may also be reordered relative to each other.
+        reordered = {"%1$@ %2$lld": {"localizations": {
+            "en": unit("%1$@ %2$lld"), "nl": unit("%2$lld %1$@")}}}
+        self.assertEqual(self.check(reordered, ["nl"]), [])
+
+        # But the underlying type still has to match.
+        mismatched_type = {"%@ x": {"localizations": {
+            "en": unit("%@ x"), "nl": unit("%lld x")}}}
+        p = self.check(mismatched_type, ["nl"])
+        self.assertIn("placeholders differ in nl: '%@ x'", p)
+
 
 class Cli(unittest.TestCase):
     def test_exit_code_reflects_problems(self):
@@ -75,10 +93,15 @@ class Cli(unittest.TestCase):
             path = os.path.join(d, "c.xcstrings")
             with open(path, "w") as f:
                 json.dump(catalog({"Old": {"extractionState": "stale", "localizations": {"en": unit("Old")}}}), f)
-            self.assertEqual(strings_check.main(["--catalog", path]), 1)
+            # main() prints "::error::..." lines to stdout; swallow them here so
+            # a passing test run stays quiet (GitHub Actions turns any
+            # "::error::" on stdout into an annotation, even on a green job).
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(strings_check.main(["--catalog", path]), 1)
             with open(path, "w") as f:
                 json.dump(catalog({"Ok": {"localizations": {"en": unit("Ok")}}}), f)
-            self.assertEqual(strings_check.main(["--catalog", path]), 0)
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(strings_check.main(["--catalog", path]), 0)
 
 
 if __name__ == "__main__":

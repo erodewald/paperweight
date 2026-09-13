@@ -164,7 +164,7 @@ struct HomeView: View {
                         Text(HomeCopy.countdown(status.remaining))
                             .font(.grotesk(44, weight: .bold))
                             .foregroundStyle(PW.textPrimary)
-                        Text("left")
+                        Text("left", comment: "Unit after the countdown: '2:14 left'")
                             .font(.grotesk(14, weight: .medium))
                             .foregroundStyle(PW.textMuted)
                     }

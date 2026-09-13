@@ -114,7 +114,8 @@ struct DisablePaperweightSheet: View {
             VStack(spacing: 8) {
                 Label("Timed unlock in progress", systemImage: "hourglass")
                     .font(.grotesk(13.5, weight: .semibold)).foregroundStyle(PW.clay)
-                Text("Lifts \(release.formatted(.relative(presentation: .named))) (\(release.formatted(date: .abbreviated, time: .shortened))).")
+                Text("Lifts \(release.formatted(.relative(presentation: .named))) (\(release.formatted(date: .abbreviated, time: .shortened))).",
+                     comment: "A relative time ('in 2 days'), then the exact date and time")
                     .font(.grotesk(13)).foregroundStyle(PW.textFaint)
                     .multilineTextAlignment(.center)
                 Button("Cancel timed unlock") { vm.cancelCoolOffUnlock() }
@@ -181,7 +182,9 @@ struct RecoveryCodeEntryView: View {
                         .frame(height: 56)
                         .padding(.horizontal, 24).padding(.top, 28)
                 } else {
-                    TextField("", text: $codeInput, prompt: Text("XXXXX-XXXXX").foregroundColor(PW.textFaint))
+                    TextField("Code", text: $codeInput,
+                              prompt: Text("XXXXX-XXXXX", comment: "Recovery code shape; do not translate").foregroundColor(PW.textFaint))
+                        .labelsHidden()
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.characters)
                         .font(.grotesk(20, weight: .semibold))

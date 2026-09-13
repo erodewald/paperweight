@@ -89,7 +89,7 @@ struct QuietThemePicker: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(theme.title). \(theme.blurb)")
+        .accessibilityLabel(Text("\(theme.title). \(theme.blurb)", comment: "Theme title, then its one-line description"))
         .accessibilityAddTraits(selected ? [.isSelected] : [])
     }
 

@@ -87,7 +87,9 @@ struct AddDayExceptionSheet: View {
                         HStack {
                             Text("Note").font(.grotesk(15)).foregroundStyle(PW.textPrimary)
                             Spacer(minLength: 12)
-                            TextField("Optional", text: $note)
+                            TextField("Note", text: $note,
+                                       prompt: Text("Optional", comment: "Placeholder for the optional note field"))
+                                .labelsHidden()
                                 .font(.grotesk(15))
                                 .multilineTextAlignment(.trailing)
                                 .foregroundStyle(PW.textMuted)

@@ -135,5 +135,5 @@ jobs:
           set -euo pipefail
           languages=""
           [ -f Scripts/languages.txt ] && languages="$(tr '\n' ' ' < Scripts/languages.txt)"
-          python3 -m unittest Scripts/tests/test_strings_check.py
+          python3 -W error -m unittest Scripts/tests/test_strings_check.py
           python3 Scripts/strings-check.py --languages "$languages"
