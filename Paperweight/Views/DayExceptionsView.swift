@@ -5,6 +5,15 @@ import SwiftUI
 /// swipe-to-remove comes for free; styled to sit with the grouped cards.
 struct DayExceptionsView: View {
     @ObservedObject var vm: HomeViewModel
+    /// The row to pulse on arrival — the planned day that brought the user
+    /// here from Home or a widget. Nil when the list was opened on its own.
+    var highlight: UUID? = nil
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Opacity of the sage ring around the highlighted row. Driven to 1 with a
+    /// repeating animation, then eased back to 0, so the row beats a few times
+    /// and settles rather than staying lit.
+    @State private var pulse: Double = 0
 
     /// One sheet, one presentation target: SwiftUI honours only one `.sheet`
     /// per view, so add and edit share it.
@@ -26,6 +35,13 @@ struct DayExceptionsView: View {
     private var later: [DayException] { upcoming.filter { !$0.covers(today) } }
 
     var body: some View {
+        ScrollViewReader { proxy in
+            list
+                .onAppear { beginHighlight(scrollingWith: proxy) }
+        }
+    }
+
+    private var list: some View {
         List {
             if let current {
                 section("Today") { row(current) }
@@ -119,12 +135,49 @@ struct DayExceptionsView: View {
             .padding(.vertical, 4)
         }
         .buttonStyle(.plain)
-        .listRowBackground(PW.surface)
+        .id(e.id)
+        .listRowBackground(rowBackground(for: e))
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button(role: .destructive) {
                 vm.removeDayException(id: e.id)
             } label: { Text("Remove") }
                 .tint(PW.clay)
+        }
+    }
+
+    /// The plain surface, ringed in sage for the highlighted row while `pulse`
+    /// is up. The ring is on the row background rather than the row so it
+    /// covers the inset-grouped cell edge to edge.
+    @ViewBuilder
+    private func rowBackground(for e: DayException) -> some View {
+        if e.id == highlight {
+            PW.surface
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(PW.sage, lineWidth: 1.5)
+                        .shadow(color: PW.sage.opacity(0.6), radius: 6)
+                        .opacity(pulse)
+                )
+        } else {
+            PW.surface
+        }
+    }
+
+    /// Scrolls the highlighted row into view and beats its ring three times,
+    /// then lets it fade. Under Reduce Motion the ring simply shows and fades,
+    /// no beating. Nothing happens when `highlight` names no row: the day was
+    /// removed between the widget's last refresh and the tap.
+    private func beginHighlight(scrollingWith proxy: ScrollViewProxy) {
+        guard let highlight, upcoming.contains(where: { $0.id == highlight }) else { return }
+        proxy.scrollTo(highlight, anchor: .center)
+        if reduceMotion {
+            pulse = 1
+        } else {
+            withAnimation(.easeInOut(duration: 0.45).repeatCount(5, autoreverses: true)) { pulse = 1 }
+        }
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(reduceMotion ? 1.8 : 2.4))
+            withAnimation(.easeOut(duration: 0.8)) { pulse = 0 }
         }
     }
 

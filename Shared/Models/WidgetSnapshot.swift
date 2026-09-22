@@ -113,6 +113,18 @@ extension WidgetSnapshot {
         return .quietOpen
     }
 
+    /// The planned day deciding the schedule at `date`, when the state is one
+    /// the schedule decides. Nil in every other state: a timed unlock or a
+    /// cool-off outranks the schedule, and a setup gate outranks everything,
+    /// so calling out a planned day there would name the wrong cause.
+    func plannedDay(at date: Date, calendar: Calendar = .current) -> DayException? {
+        switch state(at: date, calendar: calendar) {
+        case .quietBounded, .quietOpen, .freeWindow: break
+        case .unwritten, .notAuthorized, .nothingChosen, .noWayBack, .off, .timedUnlock, .coolOff: return nil
+        }
+        return resolver(calendar: calendar).exception(on: DayKey(date, calendar: calendar))
+    }
+
     /// The next moment the state could change on its own — the widget's timeline
     /// pivot. Nil when nothing is scheduled to happen.
     func nextBoundary(at date: Date, calendar: Calendar = .current) -> Date? {
@@ -196,6 +208,10 @@ struct WidgetCopy: Equatable {
     var accessoryLine: String
     /// Footer of the medium day-ribbon — a whole sentence, since there's room.
     var boundaryLine: String
+    /// "Planned · Demo day" while a planned day is deciding the schedule; nil
+    /// otherwise. Each widget places it where it has room: the small widget's
+    /// caption, the ribbon's header, the rectangular widget's eyebrow.
+    var planned: String? = nil
 
     /// The widget gallery's name and one-line description. Kept here, in a file
     /// the app compiles, so the app target's build extracts them; the widget
@@ -209,7 +225,24 @@ struct WidgetCopy: Equatable {
 }
 
 extension WidgetState {
-    func copy(at date: Date, calendar: Calendar = .current, locale: Locale = .current) -> WidgetCopy {
+    /// The widget's words for this state. `plannedDay` is the exception in
+    /// force (see `WidgetSnapshot.plannedDay(at:)`); it only ever adds the
+    /// `planned` line, so every other line reads the same with or without it.
+    func copy(at date: Date, plannedDay: DayException? = nil,
+              calendar: Calendar = .current, locale: Locale = .current) -> WidgetCopy {
+        var copy = baseCopy(at: date, calendar: calendar, locale: locale)
+        copy.planned = plannedDay?.plannedLine(calendar: calendar, locale: locale)
+        return copy
+    }
+
+    /// Where a tap lands. A planned day in force outranks the state's own
+    /// target: the day is the reason for what the widget shows, so the tap
+    /// goes to it.
+    func url(plannedDay: DayException?) -> URL? {
+        plannedDay?.deepLink ?? url
+    }
+
+    private func baseCopy(at date: Date, calendar: Calendar, locale: Locale) -> WidgetCopy {
         let b = L10n.bundle
         switch self {
         case .quietBounded(let ends, _):

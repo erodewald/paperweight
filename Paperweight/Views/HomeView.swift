@@ -20,6 +20,10 @@ struct HomeView: View {
     @State private var showUnlockSetup = false
     @State private var showNeedsApps = false
     @State private var showingSchedule = false
+    /// Pushes the planned-days list; `highlightedPlannedDayID` is the row it
+    /// pulses on arrival, set by the Home callout row or a widget deep link.
+    @State private var showingPlannedDays = false
+    @State private var highlightedPlannedDayID: UUID?
     /// Selection captured when the picker opens, to detect (and gate) removals.
     @State private var selectionSnapshot: FamilyActivitySelection?
     @State private var selectionRevertMessage: String?
@@ -41,6 +45,14 @@ struct HomeView: View {
         #endif
         guard vm.config.isEnabled else { return false }
         return !vm.config.resolver.isFree(at: Date())
+    }
+
+    /// The planned day deciding the schedule right now, while armed. It is the
+    /// one thing the weekly grid on the Schedule screen cannot show, so Home
+    /// names it wherever the lock (or the day off) came from it.
+    private var plannedDayNow: DayException? {
+        guard vm.config.isEnabled else { return nil }
+        return vm.config.resolver.exception(on: .today())
     }
 
     var body: some View {
@@ -65,6 +77,9 @@ struct HomeView: View {
             // keep this on the Group, not inside the branches, since setupState,
             // lockedState, and openState swap out from under it as config changes.
             .navigationDestination(isPresented: $showingSchedule) { ScheduleView(vm: vm) }
+            .navigationDestination(isPresented: $showingPlannedDays) {
+                DayExceptionsView(vm: vm, highlight: highlightedPlannedDayID)
+            }
             .onAppear {
                 // Already quiet at launch: start fully grown rather than replaying
                 // the sprout, which would read as though the lock just happened.
@@ -159,6 +174,11 @@ struct HomeView: View {
                     borderColor: PW.dawnGlow.opacity(0.4),
                     glow: true)
 
+                if let planned = plannedDayNow {
+                    plannedDayRow(planned)
+                        .padding(.top, 12)
+                }
+
                 if let status {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text(HomeCopy.countdown(status.remaining))
@@ -250,6 +270,11 @@ struct HomeView: View {
                             return String(localized: "Locks at \(at) · in \(inn)", bundle: L10n.bundle,
                                           comment: "A time, then a duration")
                         })
+
+                    if let planned = plannedDayNow {
+                        plannedDayRow(planned)
+                            .padding(.top, 12)
+                    }
 
                     if !(vm.config.schedule?.isEmpty ?? true) || !vm.config.dayExceptions.isEmpty {
                         WeekStrip(resolver: vm.config.resolver, week: DayKey.weekAhead(from: .today()))
@@ -364,6 +389,52 @@ struct HomeView: View {
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(borderColor, lineWidth: 1))
     }
 
+    /// "● Planned · Demo day   Quiet all day ›" — the reason today doesn't
+    /// follow the weekly grid, and the way to it. Tapping lands on that row in
+    /// the planned-days list, pulsed so there is no hunting for it.
+    private func plannedDayRow(_ e: DayException) -> some View {
+        Button {
+            openPlannedDay(id: e.id)
+        } label: {
+            HStack(spacing: 10) {
+                Circle().fill(PW.sage).frame(width: 6, height: 6)
+                Text(e.plannedLine())
+                    .font(.grotesk(15))
+                    .foregroundStyle(PW.textPrimary)
+                    .lineLimit(1)
+                Spacer(minLength: 8)
+                // The kind sits after the name when there is a name; when the
+                // note is empty the kind *is* the name and would repeat.
+                if e.callout() != e.treatment.title() {
+                    Text(e.treatment.title())
+                        .font(.grotesk(13))
+                        .foregroundStyle(PW.textMuted)
+                        .lineLimit(1)
+                }
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(PW.textFaint)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .background(PW.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(PW.sage.opacity(0.35), lineWidth: 1))
+        .accessibilityHint(Text("Opens this planned day", comment: "Accessibility hint on the Home callout row"))
+    }
+
+    /// Pushes the planned-days list with `id` pulsing. Pops the schedule first:
+    /// two `isPresented` destinations true at once is a state the stack can't
+    /// show, and a widget tap can arrive with the schedule open.
+    private func openPlannedDay(id: UUID?) {
+        showingSchedule = false
+        highlightedPlannedDayID = id
+        showingPlannedDays = true
+    }
+
     private func progressBar(elapsed: Double) -> some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
@@ -452,6 +523,11 @@ struct HomeView: View {
                 showUnlockSetup = true
             case "unlock":
                 showingDisableSheet = true
+            case DayException.deepLinkHost:
+                // A widget tapped while a planned day was in force. An id the
+                // list no longer has (the day was removed) still opens the list;
+                // nothing pulses.
+                openPlannedDay(id: DayException.plannedDayID(from: url))
             default:
                 break   // "home" — the root is already what's on screen
             }

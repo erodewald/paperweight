@@ -10,19 +10,19 @@ struct PaperweightWidgetEntryView: View {
         case .systemMedium:
             RibbonWidgetView(entry: entry)
                 .containerBackground(PW.black, for: .widget)
-                .widgetURL(entry.state.url)
+                .widgetURL(entry.url)
         case .accessoryCircular:
             CircularWidgetView(entry: entry)
                 .containerBackground(.clear, for: .widget)
-                .widgetURL(entry.state.url)
+                .widgetURL(entry.url)
         case .accessoryRectangular:
             RectangularWidgetView(entry: entry)
                 .containerBackground(.clear, for: .widget)
-                .widgetURL(entry.state.url)
+                .widgetURL(entry.url)
         default:
             PaperweightSmallView(entry: entry)
                 .containerBackground(PW.black, for: .widget)
-                .widgetURL(entry.state.url)
+                .widgetURL(entry.url)
         }
     }
 }
@@ -118,9 +118,12 @@ struct PaperweightSmallView: View {
             WidgetHeadline(value: copy.value, now: entry.date,
                            font: .grotesk(22, weight: .bold), color: state.headlineColor)
 
-            Text(copy.caption)
+            // A planned day takes the caption's place: "Planned · Demo day"
+            // says why the number is what it is, which matters more than the
+            // poetic line while the week is bending around an exception.
+            Text(copy.planned ?? copy.caption)
                 .font(.spectral(11, italic: true))
-                .foregroundStyle(PW.encourage)
+                .foregroundStyle(copy.planned == nil ? PW.encourage : PW.sage)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.85)
@@ -158,9 +161,23 @@ struct RibbonWidgetView: View {
 
     private func ribbon(openSlots: Set<Int>) -> some View {
         return VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .firstTextBaseline) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(Self.weekdayName(entry.date)).pwSectionLabel()
-                Spacer()
+                if let planned = copy.planned {
+                    // The same sage dot the Home week strip puts on a planned
+                    // day, then its name, so the ribbon says why today's bar
+                    // doesn't match the weekly pattern.
+                    HStack(spacing: 5) {
+                        Circle().fill(PW.sage).frame(width: 5, height: 5)
+                        Text(planned)
+                            .font(.grotesk(10, weight: .medium))
+                            .foregroundStyle(PW.sage)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                    }
+                    .layoutPriority(-1)
+                }
+                Spacer(minLength: 6)
                 WidgetHeadline(value: copy.value, now: entry.date,
                                font: .grotesk(15, weight: .semibold), color: state.headlineColor)
             }
@@ -313,9 +330,15 @@ struct RectangularWidgetView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
-            Text(copy.eyebrow)
+            // Three lines is all the rectangle has, so a planned day takes the
+            // eyebrow's place: the ring and the boundary line still say quiet
+            // or open, and the eyebrow says why.
+            Text(copy.planned ?? copy.eyebrow)
                 .font(.grotesk(9, weight: .semibold))
                 .tracking(1.4)
+                .textCase(.uppercase)
+                .lineLimit(1)
+                .truncationMode(.tail)
                 .widgetAccentable()
 
             switch copy.value {
