@@ -4299,6 +4299,35 @@
         }
       }
     },
+    "Opens this planned day" : {
+      "comment" : "Accessibility hint on the Home callout row",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Abre este día planificado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "この予定の日を開きます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "이 예정된 날을 엽니다"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Opent deze geplande dag"
+          }
+        }
+      }
+    },
     "Opens tomorrow" : {
       "comment" : "Legend swatch",
       "localizations" : {
@@ -4752,6 +4781,35 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Gepland"
+          }
+        }
+      }
+    },
+    "Planned · %@" : {
+      "comment" : "A planned day is deciding the schedule right now; its note or kind follows",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Planificado · %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "予定あり · %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "예정됨 · %@"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Gepland · %@"
           }
         }
       }

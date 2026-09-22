@@ -144,3 +144,18 @@ extension PaperweightConfig {
         return dayExceptions.filter { $0.lastDay >= today }.sorted { $0.firstDay < $1.firstDay }
     }
 }
+
+extension PaperweightConfig {
+    /// The Home row's trailing value: the next planned day and how many are
+    /// upcoming, or nil when there are none.
+    func dayExceptionsRowValue(now: Date = Date(), calendar: Calendar = .current,
+                               locale: Locale = .current) -> String? {
+        let upcoming = upcomingDayExceptions(now: now, calendar: calendar)
+        guard let next = upcoming.first else { return nil }
+        let day = next.shortDateLabel(now: now, calendar: calendar, locale: locale)
+        let count = String(localized: "\(upcoming.count) upcoming", bundle: L10n.bundle, locale: locale,
+                           comment: "How many planned days are ahead; has a plural rule")
+        return String(localized: "\(day) · \(count)", bundle: L10n.bundle, locale: locale,
+                      comment: "Two short phrases joined by a middle dot")
+    }
+}

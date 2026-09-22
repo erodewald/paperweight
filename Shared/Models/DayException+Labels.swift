@@ -66,17 +66,20 @@ extension DayException {
     }
 }
 
-extension PaperweightConfig {
-    /// The Home row's trailing value: the next planned day and how many are
-    /// upcoming, or nil when there are none.
-    func dayExceptionsRowValue(now: Date = Date(), calendar: Calendar = .current,
-                               locale: Locale = .current) -> String? {
-        let upcoming = upcomingDayExceptions(now: now, calendar: calendar)
-        guard let next = upcoming.first else { return nil }
-        let day = next.shortDateLabel(now: now, calendar: calendar, locale: locale)
-        let count = String(localized: "\(upcoming.count) upcoming", bundle: L10n.bundle, locale: locale,
-                           comment: "How many planned days are ahead; has a plural rule")
-        return String(localized: "\(day) · \(count)", bundle: L10n.bundle, locale: locale,
-                      comment: "Two short phrases joined by a middle dot")
+extension DayException {
+    /// What to call this day when it is in force: its note, or failing that its
+    /// treatment ("Quiet all day"). Never empty.
+    func callout(calendar: Calendar = .current, locale: Locale = .current) -> String {
+        let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? treatment.title(calendar: calendar, locale: locale) : trimmed
+    }
+
+    /// The one line Home and the widgets show while this day decides the
+    /// schedule: "Planned · Demo day". The same sentence everywhere, so a user
+    /// who reads it on the Lock Screen finds it again in the app.
+    func plannedLine(calendar: Calendar = .current, locale: Locale = .current) -> String {
+        let name = callout(calendar: calendar, locale: locale)
+        return String(localized: "Planned · \(name)", bundle: L10n.bundle, locale: locale,
+                      comment: "A planned day is deciding the schedule right now; its note or kind follows")
     }
 }

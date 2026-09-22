@@ -132,6 +132,7 @@ targets:
       - path: Shared/Models/PaperweightSchedule+Week.swift
       - path: Shared/Models/DayKey.swift
       - path: Shared/Models/DayException.swift
+      - path: Shared/Models/DayException+Labels.swift
       - path: Shared/Models/ScheduleResolver.swift
       - path: Shared/Models/WidgetSnapshot.swift
       - path: Shared/Models/WidgetPresentation.swift

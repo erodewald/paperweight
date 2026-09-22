@@ -7,8 +7,13 @@ struct PaperweightEntry: TimelineEntry {
     /// Carried on the entry rather than re-read at render time, so the medium
     /// ribbon draws the same week the state was derived from.
     let resolver: ScheduleResolver?
+    /// The planned day deciding the schedule at `date`, if one is. Every widget
+    /// names it, and a tap opens it rather than Home — the day is the reason
+    /// for what the widget shows.
+    var plannedDay: DayException? = nil
 
-    var copy: WidgetCopy { state.copy(at: date) }
+    var copy: WidgetCopy { state.copy(at: date, plannedDay: plannedDay) }
+    var url: URL? { state.url(plannedDay: plannedDay) }
 
     /// The frame that sells the product. Used for the widget gallery and every
     /// placeholder — never an empty state, which would suggest the app does
@@ -56,6 +61,7 @@ struct PaperweightProvider: TimelineProvider {
     private func entry(at date: Date, from snapshot: WidgetSnapshot?) -> PaperweightEntry {
         PaperweightEntry(date: date,
                          state: snapshot?.state(at: date) ?? .unwritten,
-                         resolver: snapshot?.resolver())
+                         resolver: snapshot?.resolver(),
+                         plannedDay: snapshot?.plannedDay(at: date))
     }
 }

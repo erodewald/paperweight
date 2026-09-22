@@ -186,6 +186,50 @@ final class WidgetSnapshotTests: XCTestCase {
         XCTAssertEqual(ends, Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 5))!)
     }
 
+    // MARK: Planned day
+
+    /// Sunday quiet by exception: the widget names the day and a tap opens it.
+    func test_plannedDay_isTheExceptionDecidingTheSchedule() {
+        var s = readySnapshot(schedule: .weekdayEvenings())
+        let sunday = DayKey(year: 2026, month: 1, day: 4)
+        let demo = DayException(firstDay: sunday, lastDay: sunday, treatment: .quietAllDay, note: "Demo day")
+        s.dayExceptions = [demo]
+
+        XCTAssertEqual(s.plannedDay(at: reference)?.id, demo.id)
+        let state = s.state(at: reference)
+        XCTAssertEqual(state.url(plannedDay: demo), demo.deepLink)
+        XCTAssertEqual(state.copy(at: reference, plannedDay: demo, calendar: cal, locale: en).planned,
+                       "Planned · Demo day")
+    }
+
+    func test_plannedDay_nilOnAnOrdinaryDay() {
+        let s = readySnapshot(schedule: .weekdayEvenings())
+        XCTAssertNil(s.plannedDay(at: reference))
+        XCTAssertNil(s.state(at: reference).copy(at: reference, calendar: cal, locale: en).planned)
+        XCTAssertEqual(s.state(at: reference).url(plannedDay: nil), URL(string: "paperweight://home"))
+    }
+
+    /// A day off is planned too: an open-all-day exception reads as a free
+    /// window, and the widget still says why.
+    func test_plannedDay_coversADayOff() {
+        var s = readySnapshot(schedule: .weekdayEvenings())
+        let sunday = DayKey(year: 2026, month: 1, day: 4)
+        s.dayExceptions = [DayException(firstDay: sunday, lastDay: sunday, treatment: .openAllDay)]
+        guard case .freeWindow = s.state(at: reference) else { return XCTFail("expected freeWindow") }
+        XCTAssertNotNil(s.plannedDay(at: reference))
+    }
+
+    /// A timed unlock is the reason the shield is down, not the planned day, so
+    /// the unlock keeps its own copy and its own link.
+    func test_plannedDay_yieldsToATimedUnlock() {
+        var s = readySnapshot(schedule: .weekdayEvenings())
+        let sunday = DayKey(year: 2026, month: 1, day: 4)
+        s.dayExceptions = [DayException(firstDay: sunday, lastDay: sunday, treatment: .quietAllDay)]
+        s.unlockExpiresAt = reference.addingTimeInterval(600)
+        XCTAssertNil(s.plannedDay(at: reference))
+        XCTAssertEqual(s.state(at: reference).url(plannedDay: nil), URL(string: "paperweight://unlock"))
+    }
+
     // MARK: Copy
 
     func test_copyNeverSaysBlocked() {
@@ -198,10 +242,12 @@ final class WidgetSnapshotTests: XCTestCase {
             .coolOff(ends: reference.addingTimeInterval(86_400), fraction: 0.5),
         ]
 
+        let sunday = DayKey(year: 2026, month: 1, day: 4)
+        let planned = DayException(firstDay: sunday, lastDay: sunday, treatment: .quietAllDay)
         for state in states {
-            let copy = state.copy(at: reference, calendar: cal, locale: en)
+            let copy = state.copy(at: reference, plannedDay: planned, calendar: cal, locale: en)
             for line in [copy.eyebrow, copy.caption, copy.accessoryValue,
-                         copy.accessoryLine, copy.boundaryLine] {
+                         copy.accessoryLine, copy.boundaryLine, copy.planned ?? ""] {
                 XCTAssertFalse(line.lowercased().contains("block"),
                                "\(state) says \"block\" in: \(line)")
                 XCTAssertFalse(line.lowercased().contains("restrict"),

@@ -36,3 +36,26 @@ struct DayException: Codable, Equatable, Identifiable {
                                  to: lastDay.date(calendar: calendar)).day ?? 0) + 1
     }
 }
+
+// MARK: - Deep link
+
+extension DayException {
+    /// Host of the `paperweight://` link that opens this day in the app. One
+    /// host for all planned days; the id rides in the path.
+    static let deepLinkHost = "planned-day"
+
+    /// `paperweight://planned-day/<id>` — what a widget opens while this day is
+    /// deciding the schedule, and what Home follows to land on the row itself.
+    var deepLink: URL {
+        URL(string: "paperweight://\(Self.deepLinkHost)/\(id.uuidString)")!
+    }
+
+    /// The id inside a `deepLink`, or nil for any other URL.
+    static func plannedDayID(from url: URL) -> UUID? {
+        guard url.scheme == "paperweight", url.host == deepLinkHost else { return nil }
+        // pathComponents is ["/", "<id>"]; anything else isn't ours.
+        let parts = url.pathComponents.filter { $0 != "/" }
+        guard parts.count == 1 else { return nil }
+        return UUID(uuidString: parts[0])
+    }
+}
