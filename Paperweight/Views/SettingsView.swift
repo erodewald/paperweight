@@ -8,6 +8,7 @@ struct SettingsView: View {
     @ObservedObject var vm: HomeViewModel
     @Binding var showingPicker: Bool
     var onTurnOff: () -> Void
+    @AppStorage(CrashReporting.optInKey) private var shareCrashReports = false
     #if DEBUG
     @ObservedObject private var debug = DebugSettings.shared
     #endif
@@ -75,6 +76,31 @@ struct SettingsView: View {
                                    showsChevron: true)
                         }
                         .buttonStyle(.plain)
+                    }
+                }
+
+                if CrashReporting.isAvailable {
+                    Text("Privacy", comment: "Section heading over the crash-report switch").pwScreenLabel()
+                        .padding(.top, 22).padding(.bottom, 10)
+                    GroupedCard {
+                        Toggle(isOn: $shareCrashReports) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Share crash reports", comment: "Switch label: whether to send a report if the app crashes")
+                                    .font(.grotesk(15))
+                                    .foregroundStyle(PW.textPrimary)
+                                Text("Off by default. If Paperweight crashes, a report is sent with no schedule, apps, NFC token or personal details.",
+                                     comment: "Explains the crash-report switch; off by default; nothing personal is included")
+                                    .font(.grotesk(13))
+                                    .foregroundStyle(PW.textMuted)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                        .toggleStyle(PWToggleStyle())
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                        .onChange(of: shareCrashReports) { _, enabled in
+                            CrashReporting.setEnabled(enabled)
+                        }
                     }
                 }
 

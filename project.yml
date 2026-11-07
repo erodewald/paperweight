@@ -44,6 +44,14 @@ schemes:
         "-AppleLanguages (en)": true
         "-AppleLocale en_US": true
 
+# Crash reporting. Linked into the app target only: the monitor and widget
+# extensions stay SDK-free, and the widget in particular must not grow
+# dependencies. See Paperweight/Services/CrashReporting.swift.
+packages:
+  Sentry:
+    url: https://github.com/getsentry/sentry-cocoa
+    from: "8.40.0"
+
 settings:
   base:
     SWIFT_VERSION: "5.9"
@@ -88,6 +96,7 @@ targets:
     dependencies:
       - target: PaperweightMonitor
       - target: PaperweightWidget
+      - package: Sentry
       - sdk: FamilyControls.framework
       - sdk: ManagedSettings.framework
       - sdk: DeviceActivity.framework

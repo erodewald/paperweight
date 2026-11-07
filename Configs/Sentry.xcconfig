@@ -1,0 +1,17 @@
+// Crash-report destination (Sentry project "paperweight", org baltar-media).
+//
+// The DSN is empty here, so a fresh clone builds with crash reporting inert and
+// nothing about the Sentry project is committed. Set it once in a local,
+// git-ignored override:
+//
+//     echo 'SENTRY_DSN = https:/$()/<KEY>@<HOST>/<PROJECT_ID>' > Configs/Sentry.local.xcconfig
+//
+// The `$()` matters: xcconfig treats `//` as a comment, so a bare https:// URL
+// is cut off at the slashes. `$()` expands to nothing and breaks that up.
+//
+// The value reaches the app through Info.plist (SentryDSN). Reporting also
+// needs the user's opt-in; see Settings > Privacy.
+
+SENTRY_DSN =
+
+#include? "Sentry.local.xcconfig"

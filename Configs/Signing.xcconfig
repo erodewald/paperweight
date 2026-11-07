@@ -16,3 +16,6 @@
 DEVELOPMENT_TEAM =
 
 #include? "Signing.local.xcconfig"
+
+// Crash-report destination; empty unless a local override sets it.
+#include "Sentry.xcconfig"

@@ -29,6 +29,8 @@
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>SentryDSN</key>
+	<string>$(SENTRY_DSN)</string>
 	<key>NFCReaderUsageDescription</key>
 	<string>Paperweight uses NFC to read your unlock token.</string>
 	<key>UIAppFonts</key>
