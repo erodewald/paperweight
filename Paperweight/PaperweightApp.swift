@@ -5,6 +5,11 @@ import UIKit
 struct PaperweightApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
+    init() {
+        // No-op unless the user opted in and this build carries a DSN.
+        CrashReporting.startIfOptedIn()
+    }
+
     var body: some Scene {
         WindowGroup {
             HomeView()

@@ -158,6 +158,21 @@ jobs:
           printf 'DEVELOPMENT_TEAM = %s\n' "$APPLE_TEAM_ID" > Configs/Signing.local.xcconfig
           echo "Wrote Configs/Signing.local.xcconfig (git-ignored)."
 
+      # Optional: without the SENTRY_DSN secret the build ships with crash
+      # reporting inert. xcconfig treats `//` as a comment, so the URL's slashes
+      # are split with `$()`; see Configs/Sentry.xcconfig.
+      - name: Configure crash reporting
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+        run: |
+          set -euo pipefail
+          if [ -n "$SENTRY_DSN" ]; then
+            printf 'SENTRY_DSN = %s\n' "${SENTRY_DSN//\/\//\/\$()\/}" > Configs/Sentry.local.xcconfig
+            echo "Wrote Configs/Sentry.local.xcconfig (git-ignored)."
+          else
+            echo "No SENTRY_DSN secret; crash reporting stays inert in this build."
+          fi
+
       - name: Generate project
         run: xcodegen generate
 

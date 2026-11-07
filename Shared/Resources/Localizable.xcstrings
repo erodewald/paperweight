@@ -3931,6 +3931,35 @@
         }
       }
     },
+    "Off by default. If Paperweight crashes, a report is sent with no schedule, apps, NFC token or personal details." : {
+      "comment" : "Explains the crash-report switch; off by default; nothing personal is included",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Desactivado por defecto. Si Paperweight falla, se envía un informe sin horario, apps, token NFC ni datos personales."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "初期設定ではオフです。Paperweightがクラッシュしたときに、スケジュール、アプリ、NFCトークン、個人情報を含まないレポートを送信します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "기본값은 꺼짐입니다. Paperweight가 비정상 종료되면 일정, 앱, NFC 토큰, 개인 정보가 없는 보고서를 보냅니다."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Standaard uit. Als Paperweight crasht, wordt er een rapport verstuurd zonder schema, apps, NFC-token of persoonlijke gegevens."
+          }
+        }
+      }
+    },
     "OK" : {
       "localizations" : {
         "es" : {
@@ -4752,6 +4781,35 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Gepland"
+          }
+        }
+      }
+    },
+    "Privacy" : {
+      "comment" : "Section heading over the crash-report switch",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Privacidad"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "プライバシー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "개인정보 보호"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Privacy"
           }
         }
       }
@@ -6107,6 +6165,35 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Instellingen"
+          }
+        }
+      }
+    },
+    "Share crash reports" : {
+      "comment" : "Switch label: whether to send a report if the app crashes",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Compartir informes de fallos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "クラッシュレポートを共有"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "비정상 종료 보고서 공유"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Crashrapporten delen"
           }
         }
       }

@@ -58,4 +58,5 @@ design_handoff_paperweight/
 
 # Local signing override (your own Apple Developer Team ID)
 Configs/Signing.local.xcconfig
+Configs/Sentry.local.xcconfig
 .superpowers/

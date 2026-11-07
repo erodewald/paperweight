@@ -2,7 +2,7 @@
 
 **Make your phone a paperweight.** Paperweight turns an iPhone into a calm, quiet object on a schedule you set — distracting apps are shielded outside the windows you choose, and the only way back early is a deliberate tap of a physical NFC token you've placed somewhere inconvenient.
 
-An iOS focus tool built on Apple's Screen Time (Family Controls) framework. Everything runs on-device; no account, no tracking.
+An iOS focus tool built on Apple's Screen Time (Family Controls) framework. Everything runs on-device; no account, no tracking. Anonymous crash reports (Sentry) exist but are off unless you opt in under Settings → Privacy.
 
 · [Support](https://paperweight.baltar.media/) · [Privacy](https://paperweight.baltar.media/privacy.html)
 

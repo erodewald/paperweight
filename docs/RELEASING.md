@@ -119,6 +119,12 @@ secret**, six times:
 
 That is the whole list. Note there are no provisioning-profile secrets — see below.
 
+**Optional: `SENTRY_DSN`.** The DSN of the Sentry project `paperweight` (org
+`baltar-media`), for opt-in crash reports. Without it the build works and crash reporting
+is simply inert. Locally, put it in the git-ignored `Configs/Sentry.local.xcconfig`; the
+format is in `Configs/Sentry.xcconfig`. Crash reports are readable in Sentry only if
+symbols are uploaded; that is not wired up yet.
+
 ### 6. Fill in the first TestFlight compliance answers
 
 The first upload lands in App Store Connect needing export-compliance answers before it
